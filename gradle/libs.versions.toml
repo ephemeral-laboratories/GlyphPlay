@@ -1,0 +1,13 @@
+[versions]
+kotlin = "2.0.0"
+compose = "1.6.11"
+icu = "75.1"
+
+[libraries]
+icu4j = {module = "com.ibm.icu:icu4j", version.ref = "icu"}
+kotlin-test = {module = "org.jetbrains.kotlin:kotlin-test"}
+
+[plugins]
+kotlin-jvm = {id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin"}
+compose = {id = "org.jetbrains.compose", version.ref = "compose"}
+compose-compiler = {id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin"}
