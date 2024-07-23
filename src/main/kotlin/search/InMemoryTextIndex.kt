@@ -24,7 +24,13 @@ internal class InMemoryTextIndex : SearchableIndex {
 
         val searchTime = measureTime {
             for (term in tokenize(query)) {
-                val matches = allIndex[term] ?: return emptySequence()
+                // Special bypass if the user types in a U+ sequence directly
+                val matches = if (term.startsWith("u+")) {
+                    setOf(term.substring("u+".length).toInt(16))
+                } else {
+                    allIndex[term] ?: emptySet()
+                }
+
                 viableResults = viableResults?.union(matches) ?: matches
             }
         }
