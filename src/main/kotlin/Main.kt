@@ -67,10 +67,14 @@ fun main() = application {
                             searchResults.clear()
                             searchResults.addAll(results)
                         }
-                        SearchResultsGrid(
-                            codePoints = searchResults,
-                            onCodePointClicked = setCurrentCodePoint,
-                        )
+                        if (searchResults.size > 0) {
+                            SearchResultsGrid(
+                                codePoints = searchResults,
+                                onCodePointClicked = setCurrentCodePoint,
+                            )
+                        } else {
+                            NoSearchResultsPlaceholder()
+                        }
                     }
                     Box(Modifier.fillMaxWidth()) {
                         val scrollBarState = rememberScrollState()
@@ -103,9 +107,6 @@ fun SearchTextField(onExecuteSearch: (query: String) -> Unit) {
         modifier = Modifier
             .requiredWidth(48.dp * 7 + 8.dp * 6)
             .focusRequester(focusRequester),
-//        leadingIcon = {
-//            Icon(imageVector = Icons.Filled.Search, contentDescription = "Search icon")
-//                      },
         trailingIcon = {
             Row {
                 if (textFieldValue.text.trim().isNotEmpty()) {
@@ -142,3 +143,12 @@ fun SearchResultsGrid(codePoints: List<Int>, onCodePointClicked: (Int) -> Unit) 
         }
     }
 }
+
+@Composable
+fun NoSearchResultsPlaceholder() {
+    Text(
+        text = "No code points found.",
+        modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+    )
+}
+
