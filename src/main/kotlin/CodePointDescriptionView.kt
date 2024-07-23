@@ -46,7 +46,9 @@ fun CodePointDescriptionView(codePoint: Int) {
                     CodePointCell(
                         description = description,
                         size = 150.dp,
-                        onClick = ::copyToClipboard,
+                        // XXX: Not using a reference here because somehow using a reference causes the
+                        //      incorrect code point to be passed when the view recomposes!
+                        onClick = { copyToClipboard() },
                         modifier = Modifier.debugLineAtY(titleY),
                     )
                 }

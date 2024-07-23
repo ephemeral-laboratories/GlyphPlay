@@ -5,7 +5,7 @@ import com.ibm.icu.lang.UProperty
 import com.ibm.icu.text.Normalizer2
 import kotlin.streams.asSequence
 
-class CodePointDescription private constructor(var codePoint: Int) {
+class CodePointDescription private constructor(val codePoint: Int) {
     val uPlusForm = codePoint.toUPlusString()
     val stringForm = String(codePoints = intArrayOf(codePoint), offset = 0, length = 1)
     val name = formatCodePointName(codePoint)
