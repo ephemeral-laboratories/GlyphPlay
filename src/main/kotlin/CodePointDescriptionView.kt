@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -17,9 +18,11 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import garden.ephemeral.glyphplay.components.FlashBox
+import garden.ephemeral.glyphplay.components.GridLayout
 import garden.ephemeral.glyphplay.components.rememberFlashBoxState
 import garden.ephemeral.glyphplay.theme.AppTheme
 
@@ -75,61 +78,108 @@ fun CodePointDescriptionView(codePoint: Int) {
                     )
                     Text(text = description.name, style = MaterialTheme.typography.displayMedium)
 
-                    Text(
-                        "${description.uPlusForm} was added to Unicode in version " +
-                                "${description.versionInfoSummary.versionString} " +
-                                "(${description.versionInfoSummary.versionDateString})"
-                    )
-
-                    Text("It belongs to the block ${description.blockName} in the ${description.planeName}")
-
-                    val scriptDescription = description.scriptName.let { scriptName ->
-                        if (scriptName == "Common") {
-                            "is commonly used, that is, in no specific script"
-                        } else {
-                            "is mainly used in the $scriptName script"
+                    GridLayout(columnCount = 2) {
+                        if (description.nameAlias != null) {
+                            Text(text = "Alias:", fontWeight = FontWeight.Bold)
+                            Text(text = description.nameAlias)
                         }
-                    }
-                    Text(
-                        "This character is a ${description.codePointCategory} " +
-                                "and ${scriptDescription}."
-                    )
-                    if (description.hasLowerCaseMapping || description.hasUpperCaseMapping || description.hasTitleCaseMapping) {
-                        val relatedDescriptions = buildList {
+
+                        val indent = Modifier.padding(start = 8.dp)
+                        row {
+                            Text(text = "Added in:", fontWeight = FontWeight.Bold)
+                            Text(text = "${description.versionInfoSummary.versionString} (${description.versionInfoSummary.versionDateString})")
+                        }
+                        row {
+                            Text(text = "Location:", fontWeight = FontWeight.Bold)
+                        }
+                        row {
+                            Text(text = "Block:", fontWeight = FontWeight.Bold, modifier = indent)
+                            Text(text = description.blockName)
+                        }
+                        row {
+                            Text(text = "Plane:", fontWeight = FontWeight.Bold, modifier = indent)
+                            Text(text = description.planeName)
+                        }
+                        row {
+                            Text(text = "Script:", fontWeight = FontWeight.Bold)
+                            Text(text = description.scriptName)
+                        }
+                        row {
+                            Text(text = "Category:", fontWeight = FontWeight.Bold)
+                            Text(text = description.codePointCategory)
+                        }
+
+                        if (description.hasLowerCaseMapping || description.hasUpperCaseMapping || description.hasTitleCaseMapping) {
+                            row {
+                                Text(text = "Variants:", fontWeight = FontWeight.Bold)
+                            }
                             if (description.hasLowerCaseMapping) {
-                                add("its lowercase variant ${description.lowerCaseCodePointName}")
+                                row {
+                                    Text(text = "Lowercase:", fontWeight = FontWeight.Bold, modifier = indent)
+                                    Text(text = description.lowerCaseCodePointName)
+                                }
                             }
                             if (description.hasUpperCaseMapping) {
-                                add("its uppercase variant ${description.upperCaseCodePointName}")
+                                row {
+                                    Text(text = "Uppercase:", fontWeight = FontWeight.Bold, modifier = indent)
+                                    Text(text = description.upperCaseCodePointName)
+                                }
                             }
                             if (description.hasTitleCaseMapping) {
-                                add("its titlecase variant ${description.titleCaseCodePointName}")
+                                row {
+                                    Text(text = "Titlecase:", fontWeight = FontWeight.Bold, modifier = indent)
+                                    Text(text = description.titleCaseCodePointName)
+                                }
                             }
                         }
-                        Text("It is related to ${relatedDescriptions.formatToString()}.")
+
+                        if (description.hasDecomposition) {
+                            row {
+                                Text("Decomposition:", fontWeight = FontWeight.Bold)
+                            }
+                            row {
+                                Text(text = "Type:", fontWeight = FontWeight.Bold, modifier = indent)
+                                Text(text = description.decompositionType)
+                            }
+                            row {
+                                Text(text = "Decomposed:", fontWeight = FontWeight.Bold, modifier = indent)
+                                Text(text = description.decompositionGlyphNames.formatToString())
+                            }
+                        }
+
+                        row {
+                            Text(text = "East Asian Width:", fontWeight = FontWeight.Bold)
+                            Text(text = description.eastAsianWidth)
+                        }
+
+                        row {
+                            Text(text = "Bidirectional:", fontWeight = FontWeight.Bold)
+                        }
+                        row {
+                            Text(text = "Mirrored:", fontWeight = FontWeight.Bold, modifier = indent)
+                            Text(text = if (description.isMirrored) "Yes" else "No")
+                        }
+
+                        row {
+                            Text(text = "Breaking:", fontWeight = FontWeight.Bold)
+                        }
+                        row {
+                            Text(text = "Line Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
+                            Text(text = description.lineBreakType)
+                        }
+                        row {
+                            Text(text = "Sentence Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
+                            Text(text = description.sentenceBreakType)
+                        }
+                        row {
+                            Text(text = "Word Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
+                            Text(text = description.wordBreakType)
+                        }
+                        row {
+                            Text(text = "Grapheme Cluster Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
+                            Text(text = description.graphemeClusterBreakType)
+                        }
                     }
-
-                    if (description.nameAlias != null) {
-                        Text("The character is also known as ${description.nameAlias}.")
-                    }
-
-                    if (description.hasDecomposition) {
-                        Text(
-                            "The glyph is a ${description.decompositionType} composition of the glyphs " +
-                                    "${description.decompositionGlyphNames.formatToString()}."
-                        )
-                    }
-
-                    Text("It has a ${description.eastAsianWidth} East Asian Width.")
-
-                    Text(
-                        "In bidirectional context it acts as ${description.bidiDirection} and " +
-                                (if (description.isMirrored) "is mirrored" else "is not mirrored") +
-                                ". " +
-                                "In text ${description.uPlusForm} behaves as ${description.lineBreakType} regarding line breaks. " +
-                                "It has type ${description.sentenceBreakType} for sentence and ${description.wordBreakType} for word breaks. " +
-                                "The Grapheme Cluster Break is ${description.graphemeClusterBreakType}."
-                    )
                 }
             }
         }
