@@ -156,6 +156,10 @@ fun CodePointDescriptionView(codePoint: Int) {
                             Text(text = "Bidirectional:", fontWeight = FontWeight.Bold)
                         }
                         row {
+                            Text(text = "Direction:", fontWeight = FontWeight.Bold, modifier = indent)
+                            Text(text = description.bidiDirection)
+                        }
+                        row {
                             Text(text = "Mirrored:", fontWeight = FontWeight.Bold, modifier = indent)
                             Text(text = if (description.isMirrored) "Yes" else "No")
                         }
