@@ -1,4 +1,4 @@
-package unicode
+package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UProperty
 import garden.ephemeral.glyphplay.unicode.UnicodeProperties

@@ -1,13 +1,12 @@
-package unicode
+package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacterCategory
-import garden.ephemeral.glyphplay.unicode.UnicodeCharacterCategory
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.inspectors.shouldForAll
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeEmpty
-import io.kotest.matchers.types.shouldBeInstanceOf
 
 class UnicodeCharacterCategoryTest : FreeSpec({
     "is up to date with ICU4J" {
@@ -18,7 +17,7 @@ class UnicodeCharacterCategoryTest : FreeSpec({
         "can fetch all known values" {
             (0..<23).forEach { icuValue ->
                 UnicodeCharacterCategory.ofIcuValue(icuValue)
-                    .shouldBeInstanceOf<UnicodeCharacterCategory>()
+                    .shouldNotBeNull()
                     .icuValue.shouldBe(icuValue)
             }
         }

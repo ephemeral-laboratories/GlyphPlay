@@ -6,8 +6,13 @@ import com.ibm.icu.text.Normalizer2
 import garden.ephemeral.glyphplay.unicode.UnicodeBlock
 import garden.ephemeral.glyphplay.unicode.UnicodeCharacterCategory
 import garden.ephemeral.glyphplay.unicode.UnicodeCharacterDirection
+import garden.ephemeral.glyphplay.unicode.UnicodeEastAsianWidth
+import garden.ephemeral.glyphplay.unicode.UnicodeGraphemeClusterBreak
+import garden.ephemeral.glyphplay.unicode.UnicodeLineBreak
 import garden.ephemeral.glyphplay.unicode.UnicodePlane
 import garden.ephemeral.glyphplay.unicode.UnicodeScript
+import garden.ephemeral.glyphplay.unicode.UnicodeSentenceBreak
+import garden.ephemeral.glyphplay.unicode.UnicodeWordBreak
 import kotlin.streams.asSequence
 
 class CodePointDescription private constructor(codePoint: Int) : MinimalCodePointDescription(codePoint) {
@@ -49,14 +54,14 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
                 .toList()
         } else null
 
-    val eastAsianWidth = getIntPropertyValueAsString(codePoint, UProperty.EAST_ASIAN_WIDTH)
+    val eastAsianWidth = UnicodeEastAsianWidth.ofCodePoint(codePoint)
 
     val bidiDirection = UnicodeCharacterDirection.ofCodePoint(codePoint)
     val isMirrored = UCharacter.isMirrored(codePoint)
-    val lineBreakType = getIntPropertyValueAsString(codePoint, UProperty.LINE_BREAK)
-    val sentenceBreakType = getIntPropertyValueAsString(codePoint, UProperty.SENTENCE_BREAK)
-    val wordBreakType = getIntPropertyValueAsString(codePoint, UProperty.WORD_BREAK)
-    val graphemeClusterBreakType = getIntPropertyValueAsString(codePoint, UProperty.GRAPHEME_CLUSTER_BREAK)
+    val lineBreakType = UnicodeLineBreak.ofCodePoint(codePoint)
+    val sentenceBreakType = UnicodeSentenceBreak.ofCodePoint(codePoint)
+    val wordBreakType = UnicodeWordBreak.ofCodePoint(codePoint)
+    val graphemeClusterBreakType = UnicodeGraphemeClusterBreak.ofCodePoint(codePoint)
 
     companion object {
         fun ofCodePoint(codePoint: Int) = CodePointDescription(codePoint)

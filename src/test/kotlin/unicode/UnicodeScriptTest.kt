@@ -1,13 +1,12 @@
-package unicode
+package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UScript
-import garden.ephemeral.glyphplay.unicode.UnicodeScript
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.inspectors.shouldForAll
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeEmpty
-import io.kotest.matchers.types.shouldBeInstanceOf
 
 class UnicodeScriptTest : FreeSpec({
     "is up to date with ICU4J" {
@@ -19,7 +18,7 @@ class UnicodeScriptTest : FreeSpec({
         "can fetch all known values" {
             (0..<201).forEach { icuValue ->
                 UnicodeScript.ofIcuValue(icuValue)
-                    .shouldBeInstanceOf<UnicodeScript>()
+                    .shouldNotBeNull()
                     .icuValue.shouldBe(icuValue)
             }
         }

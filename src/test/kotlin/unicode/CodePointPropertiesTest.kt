@@ -1,4 +1,4 @@
-package unicode
+package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacter.IdentifierType
 import com.ibm.icu.util.VersionInfo

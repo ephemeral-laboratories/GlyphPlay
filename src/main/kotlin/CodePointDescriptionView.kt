@@ -193,7 +193,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
 
                         row {
                             Text(text = "East Asian Width:", fontWeight = FontWeight.Bold)
-                            Text(text = description.eastAsianWidth)
+                            Text(text = description.eastAsianWidth.longName)
                         }
 
                         row {
@@ -213,19 +213,19 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         }
                         row {
                             Text(text = "Line Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.lineBreakType)
+                            Text(text = description.lineBreakType.longName)
                         }
                         row {
                             Text(text = "Sentence Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.sentenceBreakType)
+                            Text(text = description.sentenceBreakType.longName)
                         }
                         row {
                             Text(text = "Word Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.wordBreakType)
+                            Text(text = description.wordBreakType.longName)
                         }
                         row {
                             Text(text = "Grapheme Cluster Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.graphemeClusterBreakType)
+                            Text(text = description.graphemeClusterBreakType.longName)
                         }
                     }
                 }
