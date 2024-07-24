@@ -166,13 +166,26 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                                 Text(text = description.decompositionType)
                             }
                             row {
-                                Text(text = "Decomposed:", fontWeight = FontWeight.Bold, modifier = indent)
+                                Text(text = "Canonical:", fontWeight = FontWeight.Bold, modifier = indent)
                                 Column {
                                     decompositionCodePoints.forEach { codePoint ->
                                         ClickableCodePoint(
                                             description = codePoint,
                                             onCodePointLinkClicked = onCodePointLinkClicked
                                         )
+                                    }
+                                }
+                            }
+                            description.compatibilityDecompositionCodePoints?.let { compatibilityDecompositionCodePoints ->
+                                row {
+                                    Text(text = "Compatibility:", fontWeight = FontWeight.Bold, modifier = indent)
+                                    Column {
+                                        compatibilityDecompositionCodePoints.forEach { codePoint ->
+                                            ClickableCodePoint(
+                                                description = codePoint,
+                                                onCodePointLinkClicked = onCodePointLinkClicked
+                                            )
+                                        }
                                     }
                                 }
                             }

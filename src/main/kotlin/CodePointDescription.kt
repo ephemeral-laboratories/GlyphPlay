@@ -27,13 +27,22 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
         ?.let(MinimalCodePointDescription::of)
 
     val decompositionType = getIntPropertyValueAsString(codePoint, UProperty.DECOMPOSITION_TYPE)
-    val decompositionCodePoints = if (UCharacter.getIntPropertyValue(codePoint, UProperty.DECOMPOSITION_TYPE) != UCharacter.DecompositionType.NONE) {
-        stringForm
-            .normalize(Normalizer2.getNFDInstance())
-            .codePoints().asSequence()
-            .map(MinimalCodePointDescription::of)
-            .toList()
-    } else null
+    val decompositionCodePoints =
+        if (UCharacter.getIntPropertyValue(codePoint, UProperty.DECOMPOSITION_TYPE) != UCharacter.DecompositionType.NONE) {
+            stringForm
+                .normalize(Normalizer2.getNFDInstance())
+                .codePoints().asSequence()
+                .map(MinimalCodePointDescription::of)
+                .toList()
+        } else null
+    val compatibilityDecompositionCodePoints =
+        if (UCharacter.getIntPropertyValue(codePoint, UProperty.DECOMPOSITION_TYPE) != UCharacter.DecompositionType.NONE) {
+            stringForm
+                .normalize(Normalizer2.getNFKDInstance())
+                .codePoints().asSequence()
+                .map(MinimalCodePointDescription::of)
+                .toList()
+        } else null
 
     val eastAsianWidth = getIntPropertyValueAsString(codePoint, UProperty.EAST_ASIAN_WIDTH)
 
