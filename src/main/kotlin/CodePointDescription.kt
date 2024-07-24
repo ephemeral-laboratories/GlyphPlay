@@ -4,6 +4,8 @@ import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UProperty
 import com.ibm.icu.text.Normalizer2
 import garden.ephemeral.glyphplay.unicode.UnicodeBlock
+import garden.ephemeral.glyphplay.unicode.UnicodeCharacterCategory
+import garden.ephemeral.glyphplay.unicode.UnicodeCharacterDirection
 import garden.ephemeral.glyphplay.unicode.UnicodePlane
 import garden.ephemeral.glyphplay.unicode.UnicodeScript
 import kotlin.streams.asSequence
@@ -13,11 +15,11 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
 
     val versionInfoSummary = VersionInfoSummary.of(UCharacter.getAge(codePoint))
 
-    val blockName = UnicodeBlock.ofCodePoint(codePoint).longName
-    val planeName = UnicodePlane.ofCodePoint(codePoint).longName
+    val block = UnicodeBlock.ofCodePoint(codePoint)
+    val plane = UnicodePlane.ofCodePoint(codePoint)
 
-    val codePointCategory = getIntPropertyValueAsString(codePoint, UProperty.GENERAL_CATEGORY)
-    val scriptName = UnicodeScript.ofCodePoint(codePoint).longName
+    val characterCategory = UnicodeCharacterCategory.ofCodePoint(codePoint)
+    val script = UnicodeScript.ofCodePoint(codePoint)
 
     val lowerCaseCodePoint = UCharacter.toLowerCase(codePoint)
         .takeIf { it != codePoint }
@@ -49,7 +51,7 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
 
     val eastAsianWidth = getIntPropertyValueAsString(codePoint, UProperty.EAST_ASIAN_WIDTH)
 
-    val bidiDirection = getIntPropertyValueAsString(codePoint, UProperty.BIDI_CLASS)
+    val bidiDirection = UnicodeCharacterDirection.ofCodePoint(codePoint)
     val isMirrored = UCharacter.isMirrored(codePoint)
     val lineBreakType = getIntPropertyValueAsString(codePoint, UProperty.LINE_BREAK)
     val sentenceBreakType = getIntPropertyValueAsString(codePoint, UProperty.SENTENCE_BREAK)
