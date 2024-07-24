@@ -1,5 +1,7 @@
 package garden.ephemeral.glyphplay.unicode
 
+import com.ibm.icu.lang.UCharacter.getIntPropertyValue
+import com.ibm.icu.lang.UProperty
 import com.ibm.icu.lang.UScript
 import java.util.BitSet
 
@@ -214,17 +216,14 @@ enum class UnicodeScript(val icuValue: Int, val code: String, val codeAliases: L
     ARABIC_NASTALIQ(UScript.ARABIC_NASTALIQ, "Aran"),
     ;
 
-    init {
-        @Suppress("DEPRECATION")
-        check (UScript.CODE_LIMIT == 201) { "Script codes changed!" }
-    }
-
     val shortName: String get() = UScript.getShortName(icuValue)
     val longName: String get() = UScript.getName(icuValue)
 
     companion object {
         fun ofIcuValue(icuValue: Int) = entries.find { e -> e.icuValue == icuValue }
             ?: throw IllegalArgumentException("Unknown ICU script value: $icuValue")
+
+        fun ofCodePoint(codePoint: Int) = ofIcuValue(getIntPropertyValue(codePoint, UProperty.SCRIPT))
 
         fun buildSetFromBitSet(bitSet: BitSet) = buildSet {
             var index = 0

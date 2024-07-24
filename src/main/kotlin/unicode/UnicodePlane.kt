@@ -1,4 +1,6 @@
-package garden.ephemeral.glyphplay
+package garden.ephemeral.glyphplay.unicode
+
+import garden.ephemeral.glyphplay.prettyPrintName
 
 enum class UnicodePlane(val range: IntRange) {
     BASIC_MULTILINGUAL_PLANE(0x0000..0xFFFF),
@@ -11,8 +13,10 @@ enum class UnicodePlane(val range: IntRange) {
     SUPPLEMENTARY_PRIVATE_USE_AREA_B(0x10_0000..0x10_FFFF),
     ;
 
+    val longName: String get() = name.prettyPrintName()
+
     companion object {
-        fun of(codePoint: Int): UnicodePlane {
+        fun ofCodePoint(codePoint: Int): UnicodePlane {
             return entries.find { p -> codePoint in p.range }
                 ?: throw IllegalArgumentException("Invalid code point: $codePoint")
         }

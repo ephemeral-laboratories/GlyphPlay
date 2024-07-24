@@ -24,7 +24,7 @@ fun CodePointCell(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) = CodePointCell(
-    description = CodePointDescription.of(codePoint),
+    description = CodePointDescription.ofCodePoint(codePoint),
     size = size,
     firstBaselineToTop = firstBaselineToTop,
     onClick = onClick,

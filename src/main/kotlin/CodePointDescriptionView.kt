@@ -37,7 +37,7 @@ private fun ClickableCodePoint(description: MinimalCodePointDescription, onCodeP
 
 @Composable
 fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Unit) {
-    val description = CodePointDescription.of(codePoint)
+    val description = CodePointDescription.ofCodePoint(codePoint)
 
     Surface(modifier = Modifier.fillMaxSize()) {
         // 12.dp is a magic number here, to align the top of the large code point box

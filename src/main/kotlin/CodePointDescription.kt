@@ -3,6 +3,9 @@ package garden.ephemeral.glyphplay
 import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UProperty
 import com.ibm.icu.text.Normalizer2
+import garden.ephemeral.glyphplay.unicode.UnicodeBlock
+import garden.ephemeral.glyphplay.unicode.UnicodePlane
+import garden.ephemeral.glyphplay.unicode.UnicodeScript
 import kotlin.streams.asSequence
 
 class CodePointDescription private constructor(codePoint: Int) : MinimalCodePointDescription(codePoint) {
@@ -10,11 +13,11 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
 
     val versionInfoSummary = VersionInfoSummary.of(UCharacter.getAge(codePoint))
 
-    val blockName = UCharacter.UnicodeBlock.of(codePoint).toString().prettyPrintName()
-    val planeName = UnicodePlane.of(codePoint).toString().prettyPrintName()
+    val blockName = UnicodeBlock.ofCodePoint(codePoint).longName
+    val planeName = UnicodePlane.ofCodePoint(codePoint).longName
 
     val codePointCategory = getIntPropertyValueAsString(codePoint, UProperty.GENERAL_CATEGORY)
-    val scriptName = getIntPropertyValueAsString(codePoint, UProperty.SCRIPT)
+    val scriptName = UnicodeScript.ofCodePoint(codePoint).longName
 
     val lowerCaseCodePoint = UCharacter.toLowerCase(codePoint)
         .takeIf { it != codePoint }
@@ -54,7 +57,7 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
     val graphemeClusterBreakType = getIntPropertyValueAsString(codePoint, UProperty.GRAPHEME_CLUSTER_BREAK)
 
     companion object {
-        fun of(codePoint: Int) = CodePointDescription(codePoint)
+        fun ofCodePoint(codePoint: Int) = CodePointDescription(codePoint)
 
         private fun getIntPropertyValueAsString(codePoint: Int, propertyId: Int): String {
             val value = UCharacter.getIntPropertyValue(codePoint, propertyId)
