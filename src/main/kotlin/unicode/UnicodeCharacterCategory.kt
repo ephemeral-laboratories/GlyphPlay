@@ -1,11 +1,11 @@
 package garden.ephemeral.glyphplay.unicode
 
-import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UCharacterCategory
 import com.ibm.icu.lang.UProperty
-import garden.ephemeral.glyphplay.prettyPrintName
 
-enum class UnicodeCharacterCategory(val icuValue: Int, val typeString: String) {
+enum class UnicodeCharacterCategory(override val icuValue: Int, val typeString: String) :
+    UnicodeValueEnum<UnicodeCharacterCategory> {
+
     GENERAL_OTHER_TYPES(UCharacterCategory.GENERAL_OTHER_TYPES.toInt(), "Cn"),
     UPPERCASE_LETTER(UCharacterCategory.UPPERCASE_LETTER.toInt(), "Lu"),
     LOWERCASE_LETTER(UCharacterCategory.LOWERCASE_LETTER.toInt(), "Ll"),
@@ -38,12 +38,20 @@ enum class UnicodeCharacterCategory(val icuValue: Int, val typeString: String) {
     FINAL_PUNCTUATION(UCharacterCategory.FINAL_PUNCTUATION.toInt(), "Pf"),
     ;
 
-    val longName: String get() = name.prettyPrintName()
-
-    companion object {
-        fun ofIcuValue(icuValue: Int) = entries.find { entry -> entry.icuValue == icuValue }
-            ?: throw IllegalArgumentException("Unknown character category ID: $icuValue")
-
-        fun ofCodePoint(codePoint: Int) = ofIcuValue(UCharacter.getIntPropertyValue(codePoint, UProperty.GENERAL_CATEGORY))
+    companion object : UnicodeValueEnum.CompanionImpl<UnicodeCharacterCategory>(
+        enumType = UnicodeCharacterCategory::class,
+        icuPropertyId = UProperty.GENERAL_CATEGORY,
+    ) {
+        fun buildSetFromMask(mask: Int): Set<UnicodeCharacterCategory> {
+            var temp = mask
+            return buildSet {
+                while (temp != 0) {
+                    val highestBit = temp.takeHighestOneBit()
+                    val highestBitValue = temp.countTrailingZeroBits()
+                    add(ofIcuValue(highestBitValue))
+                    temp = temp.xor(highestBit)
+                }
+            }
+        }
     }
 }

@@ -1,11 +1,11 @@
 package garden.ephemeral.glyphplay.unicode
 
-import com.ibm.icu.lang.UCharacter.getIntPropertyValue
 import com.ibm.icu.lang.UProperty
 import com.ibm.icu.lang.UScript
 import java.util.BitSet
 
-enum class UnicodeScript(val icuValue: Int, val code: String, val codeAliases: List<String> = emptyList()) {
+enum class UnicodeScript(override val icuValue: Int, val code: String, val codeAliases: List<String> = emptyList()) :
+    UnicodeValueEnum<UnicodeScript> {
 
     COMMON(UScript.COMMON, "Zyyy"),
 
@@ -217,14 +217,13 @@ enum class UnicodeScript(val icuValue: Int, val code: String, val codeAliases: L
     ;
 
     val shortName: String get() = UScript.getShortName(icuValue)
-    val longName: String get() = UScript.getName(icuValue)
 
-    companion object {
-        fun ofIcuValue(icuValue: Int) = entries.find { e -> e.icuValue == icuValue }
-            ?: throw IllegalArgumentException("Unknown ICU script value: $icuValue")
+    override val longName: String get() = UScript.getName(icuValue)
 
-        fun ofCodePoint(codePoint: Int) = ofIcuValue(getIntPropertyValue(codePoint, UProperty.SCRIPT))
-
+    companion object : UnicodeValueEnum.CompanionImpl<UnicodeScript>(
+        enumType = UnicodeScript::class,
+        icuPropertyId = UProperty.SCRIPT,
+    ) {
         fun buildSetFromBitSet(bitSet: BitSet) = buildSet {
             var index = 0
             while (true) {

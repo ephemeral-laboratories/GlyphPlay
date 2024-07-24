@@ -2,9 +2,8 @@ package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UProperty
-import garden.ephemeral.glyphplay.prettyPrintName
 
-enum class UnicodeBlock(val icuValue: Int) {
+enum class UnicodeBlock(override val icuValue: Int) : UnicodeValueEnum<UnicodeBlock> {
     NO_BLOCK(0),
 
     BASIC_LATIN(UCharacter.UnicodeBlock.BASIC_LATIN_ID),
@@ -339,12 +338,8 @@ enum class UnicodeBlock(val icuValue: Int) {
     INVALID_CODE(UCharacter.UnicodeBlock.INVALID_CODE_ID),
     ;
 
-    val longName: String get() = name.prettyPrintName()
-
-    companion object {
-        fun ofIcuValue(icuValue: Int) = entries.find { entry -> entry.icuValue == icuValue }
-            ?: throw IllegalArgumentException("Unknown block ID: $icuValue")
-
-        fun ofCodePoint(codePoint: Int) = ofIcuValue(UCharacter.getIntPropertyValue(codePoint, UProperty.BLOCK))
-    }
+    companion object : UnicodeValueEnum.CompanionImpl<UnicodeBlock>(
+        enumType = UnicodeBlock::class,
+        icuPropertyId = UProperty.BLOCK,
+    )
 }

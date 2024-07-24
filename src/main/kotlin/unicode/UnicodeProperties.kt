@@ -2,7 +2,6 @@ package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UCharacter.IdentifierType
-import com.ibm.icu.lang.UCharacterCategory
 import com.ibm.icu.lang.UProperty
 import com.ibm.icu.lang.UScript
 import com.ibm.icu.text.BreakIterator
@@ -183,7 +182,7 @@ object UnicodeProperties {
         )
     }
 
-    object Ints : PropertyCollection<Int> {
+    object Ints : PropertyCollection<Any> {
         private val INT_GETTER = UCharacter::getIntPropertyValue
         private val INT_DESCRIBER = { value: Int, icuValue: Int ->
             UCharacter.getPropertyValueName(icuValue, value, UProperty.NameChoice.LONG).prettyPrintName()
@@ -191,17 +190,26 @@ object UnicodeProperties {
 
         private fun intProperty(icuValue: Int) = UnicodeProperty(icuValue, INT_GETTER, INT_DESCRIBER)
 
-        val BIDI_CLASS = intProperty(UProperty.BIDI_CLASS)
-        val BLOCK = intProperty(UProperty.BLOCK)
+        private fun <T : UnicodeValueEnum<T>> enumProperty(
+            icuValue: Int,
+            enumValueCompanion: UnicodeValueEnum.Companion<T>
+        ) = UnicodeProperty(
+            icuValue = icuValue,
+            propertyGetter = { codePoint, _ -> enumValueCompanion.ofCodePoint(codePoint) },
+            propertyValueDescriber = { value, _ -> value.longName },
+        )
+
+        val BIDI_CLASS = enumProperty(UProperty.BIDI_CLASS, UnicodeCharacterDirection.Companion)
+        val BLOCK = enumProperty(UProperty.BLOCK, UnicodeBlock.Companion)
         val CANONICAL_COMBINING_CLASS = intProperty(UProperty.CANONICAL_COMBINING_CLASS)
         val DECOMPOSITION_TYPE = intProperty(UProperty.DECOMPOSITION_TYPE)
-        val EAST_ASIAN_WIDTH = intProperty(UProperty.EAST_ASIAN_WIDTH)
-        val GENERAL_CATEGORY = intProperty(UProperty.GENERAL_CATEGORY)
+        val EAST_ASIAN_WIDTH = enumProperty(UProperty.EAST_ASIAN_WIDTH, UnicodeEastAsianWidth.Companion)
+        val GENERAL_CATEGORY = enumProperty(UProperty.GENERAL_CATEGORY, UnicodeCharacterCategory.Companion)
         val JOINING_GROUP = intProperty(UProperty.JOINING_GROUP)
         val JOINING_TYPE = intProperty(UProperty.JOINING_TYPE)
-        val LINE_BREAK = intProperty(UProperty.LINE_BREAK)
-        val NUMERIC_TYPE = intProperty(UProperty.NUMERIC_TYPE)
-        val SCRIPT = intProperty(UProperty.SCRIPT)
+        val LINE_BREAK = enumProperty(UProperty.LINE_BREAK, UnicodeLineBreak.Companion)
+        val NUMERIC_TYPE = enumProperty(UProperty.NUMERIC_TYPE, UnicodeNumericType.Companion)
+        val SCRIPT = enumProperty(UProperty.SCRIPT, UnicodeScript.Companion)
         val HANGUL_SYLLABLE_TYPE = intProperty(UProperty.HANGUL_SYLLABLE_TYPE)
         val NFD_QUICK_CHECK = intProperty(UProperty.NFD_QUICK_CHECK)
         val NFKD_QUICK_CHECK = intProperty(UProperty.NFKD_QUICK_CHECK)
@@ -209,16 +217,20 @@ object UnicodeProperties {
         val NFKC_QUICK_CHECK = intProperty(UProperty.NFKC_QUICK_CHECK)
         val LEAD_CANONICAL_COMBINING_CLASS = intProperty(UProperty.LEAD_CANONICAL_COMBINING_CLASS)
         val TRAIL_CANONICAL_COMBINING_CLASS = intProperty(UProperty.TRAIL_CANONICAL_COMBINING_CLASS)
-        val GRAPHEME_CLUSTER_BREAK = intProperty(UProperty.GRAPHEME_CLUSTER_BREAK)
-        val SENTENCE_BREAK = intProperty(UProperty.SENTENCE_BREAK)
-        val WORD_BREAK = intProperty(UProperty.WORD_BREAK)
+        val GRAPHEME_CLUSTER_BREAK = enumProperty(UProperty.GRAPHEME_CLUSTER_BREAK, UnicodeGraphemeClusterBreak.Companion)
+        val SENTENCE_BREAK = enumProperty(UProperty.SENTENCE_BREAK, UnicodeSentenceBreak.Companion)
+        val WORD_BREAK = enumProperty(UProperty.WORD_BREAK, UnicodeWordBreak.Companion)
         val BIDI_PAIRED_BRACKET_TYPE = intProperty(UProperty.BIDI_PAIRED_BRACKET_TYPE)
         val INDIC_POSITIONAL_CATEGORY = intProperty(UProperty.INDIC_POSITIONAL_CATEGORY)
         val INDIC_SYLLABIC_CATEGORY = intProperty(UProperty.INDIC_SYLLABIC_CATEGORY)
         val VERTICAL_ORIENTATION = intProperty(UProperty.VERTICAL_ORIENTATION)
         val IDENTIFIER_STATUS = intProperty(UProperty.IDENTIFIER_STATUS)
 
-        override fun all(): Sequence<UnicodeProperty<Int>> = sequenceOf(
+        /**
+         * Although all the properties are treated by ICU as ints, the actual types we
+         * return are sometimes enums for the improved type-safety.
+         */
+        override fun all(): Sequence<UnicodeProperty<out Any>> = sequenceOf(
             BIDI_CLASS,
             BLOCK,
             CANONICAL_COMBINING_CLASS,
@@ -248,24 +260,24 @@ object UnicodeProperties {
         )
     }
 
-    object Masks : PropertyCollection<Int> {
+    object Masks : PropertyCollection<Any> {
         val GENERAL_CATEGORY_MASK = UnicodeProperty(
             UProperty.GENERAL_CATEGORY_MASK,
-            { codePoint, icuValue -> UCharacter.getIntPropertyValue(codePoint, icuValue) },
+            { codePoint, icuValue ->
+                val mask = UCharacter.getIntPropertyValue(codePoint, icuValue)
+                UnicodeCharacterCategory.buildSetFromMask(mask)
+            },
             { value, _ ->
-                var temp = value
-                val result = mutableListOf<String>()
-                while (temp != 0) {
-                    val highestBit = temp.takeHighestOneBit()
-                    val highestBitValue = temp.countTrailingZeroBits()
-                    result += UCharacterCategory.toString(highestBitValue)
-                    temp = temp.xor(highestBit)
-                }
-                result.formatToString()
+                value
+                    .map { element -> element.longName }
+                    .formatToString()
             }
         )
 
-        override fun all(): Sequence<UnicodeProperty<Int>> = sequenceOf(
+        /**
+         * Although masks are returned by ICU as ints, we generally convert them to sets.
+         */
+        override fun all(): Sequence<UnicodeProperty<out Any>> = sequenceOf(
             GENERAL_CATEGORY_MASK
         )
     }

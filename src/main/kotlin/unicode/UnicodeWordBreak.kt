@@ -2,9 +2,8 @@ package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UProperty
-import garden.ephemeral.glyphplay.prettyPrintName
 
-enum class UnicodeWordBreak(val icuValue: Int, val typeString: String) {
+enum class UnicodeWordBreak(override val icuValue: Int, val typeString: String) : UnicodeValueEnum<UnicodeWordBreak> {
     OTHER(UCharacter.WordBreak.OTHER, "Other"),
     ALETTER(UCharacter.WordBreak.ALETTER, "ALetter"),
     FORMAT(UCharacter.WordBreak.FORMAT, "Format"),
@@ -27,15 +26,11 @@ enum class UnicodeWordBreak(val icuValue: Int, val typeString: String) {
     E_MODIFIER(UCharacter.WordBreak.E_MODIFIER, "EM"),
     GLUE_AFTER_ZWJ(UCharacter.WordBreak.GLUE_AFTER_ZWJ, "GAZ"),
     ZWJ(UCharacter.WordBreak.ZWJ, "ZWJ"),
-    WSEGSPACE(UCharacter.WordBreak.WSEGSPACE, "WSEGSPACE"),
+    WSEGSPACE(UCharacter.WordBreak.WSEGSPACE, "WSegSpace"),
     ;
 
-    val longName: String get() = name.prettyPrintName()
-
-    companion object {
-        fun ofIcuValue(icuValue: Int) = entries.find { entry -> entry.icuValue == icuValue }
-            ?: throw IllegalArgumentException("Unknown word break ID: $icuValue")
-
-        fun ofCodePoint(codePoint: Int) = ofIcuValue(UCharacter.getIntPropertyValue(codePoint, UProperty.WORD_BREAK))
-    }
+    companion object : UnicodeValueEnum.CompanionImpl<UnicodeWordBreak>(
+        enumType = UnicodeWordBreak::class,
+        icuPropertyId = UProperty.WORD_BREAK,
+    )
 }

@@ -1,11 +1,11 @@
 package garden.ephemeral.glyphplay.unicode
 
-import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UCharacterDirection
 import com.ibm.icu.lang.UProperty
-import garden.ephemeral.glyphplay.prettyPrintName
 
-enum class UnicodeCharacterDirection(val icuValue: Int, val typeString: String) {
+enum class UnicodeCharacterDirection(override val icuValue: Int, val typeString: String) :
+    UnicodeValueEnum<UnicodeCharacterDirection> {
+
     LEFT_TO_RIGHT(UCharacterDirection.LEFT_TO_RIGHT, "L"),
     RIGHT_TO_LEFT(UCharacterDirection.RIGHT_TO_LEFT, "R"),
     EUROPEAN_NUMBER(UCharacterDirection.EUROPEAN_NUMBER, "EN"),
@@ -32,12 +32,8 @@ enum class UnicodeCharacterDirection(val icuValue: Int, val typeString: String) 
     UNDEFINED(UCharacterDirection.DIRECTIONALITY_UNDEFINED.toInt(), "Undefined");
     ;
 
-    val longName: String get() = name.prettyPrintName()
-
-    companion object {
-        fun ofIcuValue(icuValue: Int) = UnicodeCharacterDirection.entries.find { entry -> entry.icuValue == icuValue }
-            ?: throw IllegalArgumentException("Unknown character direction ID: $icuValue")
-
-        fun ofCodePoint(codePoint: Int) = ofIcuValue(UCharacter.getIntPropertyValue(codePoint, UProperty.BIDI_CLASS))
-    }
+    companion object : UnicodeValueEnum.CompanionImpl<UnicodeCharacterDirection>(
+        enumType = UnicodeCharacterDirection::class,
+        icuPropertyId = UProperty.BIDI_CLASS,
+    )
 }

@@ -2,9 +2,8 @@ package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UProperty
-import garden.ephemeral.glyphplay.prettyPrintName
 
-enum class UnicodeLineBreak(val icuValue: Int, val typeString: String) {
+enum class UnicodeLineBreak(override val icuValue: Int, val typeString: String) : UnicodeValueEnum<UnicodeLineBreak> {
     UNKNOWN(UCharacter.LineBreak.UNKNOWN, "UNKNOWN"),
     AMBIGUOUS(UCharacter.LineBreak.AMBIGUOUS, "AMBIGUOUS"),
     ALPHABETIC(UCharacter.LineBreak.ALPHABETIC, "ALPHABETIC"),
@@ -55,12 +54,8 @@ enum class UnicodeLineBreak(val icuValue: Int, val typeString: String) {
     JV(UCharacter.LineBreak.JV, "JV"),
     ;
 
-    val longName: String get() = name.prettyPrintName()
-
-    companion object {
-        fun ofIcuValue(icuValue: Int) = entries.find { entry -> entry.icuValue == icuValue }
-            ?: throw IllegalArgumentException("Unknown line break ID: $icuValue")
-
-        fun ofCodePoint(codePoint: Int) = ofIcuValue(UCharacter.getIntPropertyValue(codePoint, UProperty.LINE_BREAK))
-    }
+    companion object : UnicodeValueEnum.CompanionImpl<UnicodeLineBreak>(
+        enumType = UnicodeLineBreak::class,
+        icuPropertyId = UProperty.LINE_BREAK,
+    )
 }

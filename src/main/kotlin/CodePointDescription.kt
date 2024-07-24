@@ -3,6 +3,7 @@ package garden.ephemeral.glyphplay
 import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UProperty
 import com.ibm.icu.text.Normalizer2
+import garden.ephemeral.glyphplay.search2.CodePointProperties
 import garden.ephemeral.glyphplay.unicode.UnicodeBlock
 import garden.ephemeral.glyphplay.unicode.UnicodeCharacterCategory
 import garden.ephemeral.glyphplay.unicode.UnicodeCharacterDirection
@@ -62,6 +63,8 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
     val sentenceBreakType = UnicodeSentenceBreak.ofCodePoint(codePoint)
     val wordBreakType = UnicodeWordBreak.ofCodePoint(codePoint)
     val graphemeClusterBreakType = UnicodeGraphemeClusterBreak.ofCodePoint(codePoint)
+
+    val advancedProperties = CodePointProperties.ofCodePoint(codePoint)
 
     companion object {
         fun ofCodePoint(codePoint: Int) = CodePointDescription(codePoint)

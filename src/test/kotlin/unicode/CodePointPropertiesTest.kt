@@ -3,16 +3,13 @@ package garden.ephemeral.glyphplay.unicode
 import com.ibm.icu.lang.UCharacter.IdentifierType
 import com.ibm.icu.util.VersionInfo
 import garden.ephemeral.glyphplay.search2.CodePointProperties
-import garden.ephemeral.glyphplay.unicode.UnicodeProperties
-import garden.ephemeral.glyphplay.unicode.UnicodePropertyValue
-import garden.ephemeral.glyphplay.unicode.UnicodeScript
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.maps.shouldHaveSize
 
 class CodePointPropertiesTest : FreeSpec({
     "CodePointProperties" - {
-        val map = CodePointProperties.of("ば".codePointAt(0)).map
+        val map = CodePointProperties.ofCodePoint("ば".codePointAt(0)).map
 
         fun value(value: Any, description: String = value.toString()) =
             UnicodePropertyValue(value = value, description = description)
@@ -99,17 +96,23 @@ class CodePointPropertiesTest : FreeSpec({
                     UnicodeProperties.Booleans.ID_COMPAT_MATH_START to value(false, "No"),
                     UnicodeProperties.Booleans.ID_COMPAT_MATH_CONTINUE to value(false, "No"),
                     // Ints
-                    UnicodeProperties.Ints.BIDI_CLASS to value(0, "Left To Right"),
-                    UnicodeProperties.Ints.BLOCK to value(62, "Hiragana"),
+                    UnicodeProperties.Ints.BIDI_CLASS to value(
+                        value = UnicodeCharacterDirection.LEFT_TO_RIGHT,
+                        description = "Left To Right"
+                    ),
+                    UnicodeProperties.Ints.BLOCK to value(UnicodeBlock.HIRAGANA, "Hiragana"),
                     UnicodeProperties.Ints.CANONICAL_COMBINING_CLASS to value(0, "Not Reordered"),
                     UnicodeProperties.Ints.DECOMPOSITION_TYPE to value(1, "Canonical"),
-                    UnicodeProperties.Ints.EAST_ASIAN_WIDTH to value(5, "Wide"),
-                    UnicodeProperties.Ints.GENERAL_CATEGORY to value(5, "Other Letter"),
+                    UnicodeProperties.Ints.EAST_ASIAN_WIDTH to value(UnicodeEastAsianWidth.WIDE, "Wide"),
+                    UnicodeProperties.Ints.GENERAL_CATEGORY to value(
+                        value = UnicodeCharacterCategory.OTHER_LETTER,
+                        description = "Other Letter",
+                    ),
                     UnicodeProperties.Ints.JOINING_GROUP to value(0, "No Joining Group"),
                     UnicodeProperties.Ints.JOINING_TYPE to value(0, "Non Joining"),
-                    UnicodeProperties.Ints.LINE_BREAK to value(14, "Ideographic"),
-                    UnicodeProperties.Ints.NUMERIC_TYPE to value(0, "None"),
-                    UnicodeProperties.Ints.SCRIPT to value(20, "Hiragana"),
+                    UnicodeProperties.Ints.LINE_BREAK to value(UnicodeLineBreak.IDEOGRAPHIC, "Ideographic"),
+                    UnicodeProperties.Ints.NUMERIC_TYPE to value(UnicodeNumericType.NONE, "None"),
+                    UnicodeProperties.Ints.SCRIPT to value(UnicodeScript.HIRAGANA, "Hiragana"),
                     UnicodeProperties.Ints.HANGUL_SYLLABLE_TYPE to value(0, "Not Applicable"),
                     UnicodeProperties.Ints.NFD_QUICK_CHECK to value(0, "No"),
                     UnicodeProperties.Ints.NFKD_QUICK_CHECK to value(0, "No"),
@@ -117,16 +120,28 @@ class CodePointPropertiesTest : FreeSpec({
                     UnicodeProperties.Ints.NFKC_QUICK_CHECK to value(1, "Yes"),
                     UnicodeProperties.Ints.LEAD_CANONICAL_COMBINING_CLASS to value(0, "Not Reordered"),
                     UnicodeProperties.Ints.TRAIL_CANONICAL_COMBINING_CLASS to value(8, "Kana Voicing"),
-                    UnicodeProperties.Ints.GRAPHEME_CLUSTER_BREAK to value(0, "Other"),
-                    UnicodeProperties.Ints.SENTENCE_BREAK to value(6, "Oletter"),
-                    UnicodeProperties.Ints.WORD_BREAK to value(0, "Other"),
+                    UnicodeProperties.Ints.GRAPHEME_CLUSTER_BREAK to value(
+                        value = UnicodeGraphemeClusterBreak.OTHER,
+                        description = "Other"
+                    ),
+                    UnicodeProperties.Ints.SENTENCE_BREAK to value(
+                        value = UnicodeSentenceBreak.OLETTER,
+                        description = "Oletter"
+                    ),
+                    UnicodeProperties.Ints.WORD_BREAK to value(
+                        value = UnicodeWordBreak.OTHER,
+                        description = "Other"
+                    ),
                     UnicodeProperties.Ints.BIDI_PAIRED_BRACKET_TYPE to value(0, "None"),
                     UnicodeProperties.Ints.INDIC_POSITIONAL_CATEGORY to value(0, "Na"),
                     UnicodeProperties.Ints.INDIC_SYLLABIC_CATEGORY to value(0, "Other"),
                     UnicodeProperties.Ints.VERTICAL_ORIENTATION to value(3, "Upright"),
                     UnicodeProperties.Ints.IDENTIFIER_STATUS to value(1, "Allowed"),
                     // Masks
-                    UnicodeProperties.Masks.GENERAL_CATEGORY_MASK to value(32, "Letter, Other"),
+                    UnicodeProperties.Masks.GENERAL_CATEGORY_MASK to value(
+                        value = setOf(UnicodeCharacterCategory.OTHER_LETTER),
+                        description = "Other Letter"
+                    ),
                     // Doubles
                     UnicodeProperties.Doubles.NUMERIC_VALUE to value(-1.23456789E8, "No Numeric Value"),
                     // Strings

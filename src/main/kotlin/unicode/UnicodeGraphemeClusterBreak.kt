@@ -2,9 +2,10 @@ package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UProperty
-import garden.ephemeral.glyphplay.prettyPrintName
 
-enum class UnicodeGraphemeClusterBreak(val icuValue: Int, val typeString: String) {
+enum class UnicodeGraphemeClusterBreak(override val icuValue: Int, val typeString: String) :
+    UnicodeValueEnum<UnicodeGraphemeClusterBreak> {
+
     OTHER(UCharacter.GraphemeClusterBreak.OTHER, "Other"),
     CONTROL(UCharacter.GraphemeClusterBreak.CONTROL, "Control"),
     CR(UCharacter.GraphemeClusterBreak.CR, "CR"),
@@ -25,12 +26,8 @@ enum class UnicodeGraphemeClusterBreak(val icuValue: Int, val typeString: String
     ZWJ(UCharacter.GraphemeClusterBreak.ZWJ, "ZWJ"),
     ;
 
-    val longName: String get() = name.prettyPrintName()
-
-    companion object {
-        fun ofIcuValue(icuValue: Int) = entries.find { entry -> entry.icuValue == icuValue }
-            ?: throw IllegalArgumentException("Unknown grapheme cluster break ID: $icuValue")
-
-        fun ofCodePoint(codePoint: Int) = ofIcuValue(UCharacter.getIntPropertyValue(codePoint, UProperty.GRAPHEME_CLUSTER_BREAK))
-    }
+    companion object : UnicodeValueEnum.CompanionImpl<UnicodeGraphemeClusterBreak>(
+        enumType = UnicodeGraphemeClusterBreak::class,
+        icuPropertyId = UProperty.GRAPHEME_CLUSTER_BREAK,
+    )
 }

@@ -10,7 +10,7 @@ import com.ibm.icu.lang.UProperty
  */
 open class MinimalCodePointDescription(val codePoint: Int) {
     val uPlusForm = codePoint.toUPlusString()
-    val stringForm = String(codePoints = intArrayOf(codePoint), offset = 0, length = 1)
+    val stringForm = codePoint.codePointToString()
     val name = formatCodePointName(codePoint)
 
     /**
