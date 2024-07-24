@@ -11,13 +11,13 @@ class CodePointProperties private constructor(private val codePoint: Int) {
     /**
      * A map of all property values.
      */
-    val properties = UnicodeProperties.all()
+    val map = UnicodeProperties.all()
         .map { property ->
             property to property.getValue(codePoint) }
         .toMap()
 
     // We could provide convenience getters too, but it's going to get messy fast. Example:
-    // val isAlphabetic: Boolean get() = properties.get(UnicodeProperties.Booleans.IS_ALPHABETIC).value as Boolean
+    // val isAlphabetic: Boolean get() = properties.get(UnicodeProperties.Booleans.ALPHABETIC).value as Boolean
 
     companion object {
         fun of(codePoint: Int) = CodePointProperties(codePoint)

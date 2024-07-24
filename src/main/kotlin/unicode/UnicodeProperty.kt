@@ -2,6 +2,7 @@ package unicode
 
 import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UProperty
+import garden.ephemeral.glyphplay.prettyPrintName
 import garden.ephemeral.glyphplay.unicode.UnicodePropertyValue
 
 /**
@@ -19,10 +20,13 @@ class UnicodeProperty<T>(
     val propertyGetter: (codePoint: Int, icuValue: Int) -> T,
     val propertyValueDescriber: (value: T, icuValue: Int) -> String,
 ) {
+    val longName: String get() = UCharacter.getPropertyName(icuValue, UProperty.NameChoice.LONG).prettyPrintName()
+
     /**
      * Convenience method to get the value for a code point.
      *
      * @param codePoint the code point to get the property for.
+     * @return the value.
      */
     fun getValue(codePoint: Int): UnicodePropertyValue<T> {
         val value = propertyGetter(codePoint, icuValue)
@@ -30,8 +34,5 @@ class UnicodeProperty<T>(
         return UnicodePropertyValue(value, description)
     }
 
-    override fun toString(): String {
-        val name = UCharacter.getPropertyName(icuValue, UProperty.NameChoice.LONG)
-        return "UnicodeProperty(0x%x, %s)".format(icuValue, name)
-    }
+    override fun toString() = "UnicodeProperty(0x%x, %s)".format(icuValue, longName)
 }
