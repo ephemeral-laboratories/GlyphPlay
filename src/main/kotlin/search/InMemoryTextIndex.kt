@@ -10,12 +10,12 @@ internal class InMemoryTextIndex : SearchableIndex {
 
     fun index(codePoint: Int) {
         tokenize(UCharacter.getName(codePoint)).forEach { term ->
-            allIndex.computeIfAbsent(term) { mutableSetOf() }.add(codePoint)
-            nameIndex.computeIfAbsent(term) { mutableSetOf() }.add(codePoint)
+            addToIndex(term, codePoint, allIndex)
+            addToIndex(term, codePoint, nameIndex)
         }
         tokenize(UCharacter.getNameAlias(codePoint)).forEach { term ->
-            allIndex.computeIfAbsent(term) { mutableSetOf() }.add(codePoint)
-            nameAliasIndex.computeIfAbsent(term) { mutableSetOf() }.add(codePoint)
+            addToIndex(term, codePoint, allIndex)
+            addToIndex(term, codePoint, nameAliasIndex)
         }
     }
 
@@ -24,9 +24,12 @@ internal class InMemoryTextIndex : SearchableIndex {
 
         val searchTime = measureTime {
             for (term in tokenize(query)) {
-                // Special bypass if the user types in a U+ sequence directly
                 val matches = if (term.startsWith("u+")) {
+                    // Special bypass if the user types in a U+ sequence directly
                     setOf(term.substring("u+".length).toInt(16))
+                } else if (term.codePointCount(0, term.length) == 1) {
+                    // Special bypass if the term was exactly one character
+                    setOf(term.codePointAt(0))
                 } else {
                     allIndex[term] ?: emptySet()
                 }
@@ -42,5 +45,11 @@ internal class InMemoryTextIndex : SearchableIndex {
 
     private fun tokenize(string: String?): List<String> {
         return (string ?: "").lowercase().split(' ').dropWhile { it == "" }
+    }
+
+    companion object {
+        private fun addToIndex(term: String, codePoint: Int, index: MutableMap<String, MutableSet<Int>>) {
+            index.computeIfAbsent(term) { mutableSetOf() }.add(codePoint)
+        }
     }
 }
