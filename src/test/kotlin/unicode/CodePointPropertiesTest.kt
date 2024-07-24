@@ -101,25 +101,37 @@ class CodePointPropertiesTest : FreeSpec({
                         description = "Left To Right"
                     ),
                     UnicodeProperties.Ints.BLOCK to value(
-                        UnicodeBlock.HIRAGANA,
-                        "Hiragana"
+                        value = UnicodeBlock.HIRAGANA,
+                        description = "Hiragana",
                     ),
                     UnicodeProperties.Ints.CANONICAL_COMBINING_CLASS to value(
-                        0,
-                        "Not Reordered"
+                        value = 0,
+                        description = "Not Reordered",
                     ),
-                    UnicodeProperties.Ints.DECOMPOSITION_TYPE to value(1, "Canonical"),
+                    UnicodeProperties.Ints.DECOMPOSITION_TYPE to value(
+                        value = UnicodeDecompositionType.CANONICAL,
+                        description = "Canonical",
+                    ),
                     UnicodeProperties.Ints.EAST_ASIAN_WIDTH to value(UnicodeEastAsianWidth.WIDE, "Wide"),
                     UnicodeProperties.Ints.GENERAL_CATEGORY to value(
                         value = UnicodeCharacterCategory.OTHER_LETTER,
                         description = "Other Letter",
                     ),
-                    UnicodeProperties.Ints.JOINING_GROUP to value(0, "No Joining Group"),
-                    UnicodeProperties.Ints.JOINING_TYPE to value(0, "Non Joining"),
+                    UnicodeProperties.Ints.JOINING_GROUP to value(
+                        value = UnicodeJoiningGroup.NO_JOINING_GROUP,
+                        description = "No Joining Group",
+                    ),
+                    UnicodeProperties.Ints.JOINING_TYPE to value(
+                        value = UnicodeJoiningType.NON_JOINING,
+                        description = "Non Joining",
+                    ),
                     UnicodeProperties.Ints.LINE_BREAK to value(UnicodeLineBreak.IDEOGRAPHIC, "Ideographic"),
                     UnicodeProperties.Ints.NUMERIC_TYPE to value(UnicodeNumericType.NONE, "None"),
                     UnicodeProperties.Ints.SCRIPT to value(UnicodeScript.HIRAGANA, "Hiragana"),
-                    UnicodeProperties.Ints.HANGUL_SYLLABLE_TYPE to value(0, "Not Applicable"),
+                    UnicodeProperties.Ints.HANGUL_SYLLABLE_TYPE to value(
+                        value = UnicodeHangulSyllableType.NOT_APPLICABLE,
+                        description = "Not Applicable",
+                    ),
                     UnicodeProperties.Ints.NFD_QUICK_CHECK to value(0, "No"),
                     UnicodeProperties.Ints.NFKD_QUICK_CHECK to value(0, "No"),
                     UnicodeProperties.Ints.NFC_QUICK_CHECK to value(1, "Yes"),
@@ -149,7 +161,10 @@ class CodePointPropertiesTest : FreeSpec({
                         description = "Other Letter"
                     ),
                     // Doubles
-                    UnicodeProperties.Doubles.NUMERIC_VALUE to value(-1.23456789E8, "No Numeric Value"),
+                    UnicodeProperties.Doubles.NUMERIC_VALUE to value(
+                        value = -1.23456789E8,
+                        description = "No Numeric Value"
+                    ),
                     // Strings
                     UnicodeProperties.Strings.AGE to value(VersionInfo.UNICODE_1_1_0, "1.1"),
                     UnicodeProperties.Strings.BIDI_MIRRORING_GLYPH to value("ば"),
@@ -164,8 +179,13 @@ class CodePointPropertiesTest : FreeSpec({
                     UnicodeProperties.Strings.UPPERCASE_MAPPING to value("ば"),
                     UnicodeProperties.Strings.BIDI_PAIRED_BRACKET to value("ば"),
                     // Other
-                    UnicodeProperties.Other.SCRIPT_EXTENSIONS to value(setOf(UnicodeScript.HIRAGANA), "Hiragana"),
-                    UnicodeProperties.Other.IDENTIFIER_TYPE to value(setOf(IdentifierType.RECOMMENDED), "Recommended"),
+                    UnicodeProperties.Other.SCRIPT_EXTENSIONS to value(
+                        value = setOf(UnicodeScript.HIRAGANA),
+                        description = "Hiragana"),
+                    UnicodeProperties.Other.IDENTIFIER_TYPE to value(
+                        value = setOf(IdentifierType.RECOMMENDED),
+                        description = "Recommended"
+                    ),
                 )
             )
         }
