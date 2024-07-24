@@ -2,71 +2,15 @@ package garden.ephemeral.glyphplay.components
 
 //import androidx.compose.ui.layout.RootMeasurePolicy.measure
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import kotlin.math.max
-
-
-class GridLayoutScope2(columnCount: Int) {
-    var yOffset = 0
-
-    val rowContents = mutableListOf<@Composable () -> Unit>()
-
-    val alignmentLines = (0..<columnCount).map { _ -> VerticalAlignmentLine(merger = { old, new -> max(old, new) }) }
-
-    @Composable
-    fun row(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-        BoxWithConstraints(modifier = modifier) {
-            Layout(content = content) { measurables: List<Measurable>, constraints: Constraints ->
-                val rowPlaceables = measurables.map { measurable -> measurable.measure(constraints) }
-                val maxHeightInRow = rowPlaceables.maxOf(Placeable::height)
-                TODO("fuck")
-//                layout(
-//                    width = constraints.maxWidth,
-//                    height = maxHeightInRow,
-//                    alignmentLines = alignmentLines.associate { alignmentLine: VerticalAlignmentLine ->
-//                        Pair(alignmentLine, TODO("...some X offset..."))
-//                    },
-//                )
-            }
-            content()
-        }
-    }
-
-    @Composable
-    internal fun emitAllContent() {
-        Layout(
-            content = {
-                // TODO: How to record the row indices here?
-                rowContents.forEach { rowContent ->
-                    rowContent()
-                }
-            },
-        ) { measurables: List<Measurable>, constraints: Constraints ->
-
-            val rowPlaceables = measurables.map { measurable -> measurable.measure(constraints) }
-            val rowHeight = rowPlaceables.maxOf(Placeable::height)
-            layout(width = constraints.maxWidth, height = rowHeight) {
-//                rowPlaceables.forEachIndexed { columnIndex: Int, placeable: Placeable ->
-//                    placeable.placeRelative(x = xOffset, y =)
-//                }
-                TODO("Shit")
-            }
-        }
-
-//        yOffset += placeablesInColumns.map { column -> column[rowIndex] }.maxOf { cell -> cell.height } +
-////                    verticalArrangement.spacing.roundToPx()
-
-
-    }
-}
 
 class CustomRow(val content: @Composable () -> Unit) {
 
@@ -75,7 +19,6 @@ class CustomRow(val content: @Composable () -> Unit) {
 class GridLayoutScope {
     val rows = mutableListOf<CustomRow>()
 
-    @Composable
     fun row(content: @Composable () -> Unit) {
         rows.add(CustomRow(content = content))
     }
@@ -87,12 +30,17 @@ fun GridLayout(
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(8.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
-    content: @Composable GridLayoutScope.() -> Unit,
+    content: GridLayoutScope.() -> Unit,
 ) {
-    val scope = GridLayoutScope()
-    scope.content()
+    val rowContents by derivedStateOf {
+        val scope = GridLayoutScope()
+        scope.rows.map { r -> r.content }
+        scope.content()
+        scope.rows.map { r -> r.content }
+    }
+
     Layout(
-        contents = scope.rows.map { r -> r.content },
+        contents = rowContents,
         modifier = modifier
     ) { measurables: List<List<Measurable>>, constraints: Constraints ->
         val placeables = measurables.indices.map { _ -> mutableListOf<Placeable>() }
@@ -141,4 +89,5 @@ fun GridLayout(
             }
         }
     }
+
 }

@@ -79,9 +79,11 @@ fun CodePointDescriptionView(codePoint: Int) {
                     Text(text = description.name, style = MaterialTheme.typography.displayMedium)
 
                     GridLayout(columnCount = 2) {
-                        if (description.nameAlias != null) {
-                            Text(text = "Alias:", fontWeight = FontWeight.Bold)
-                            Text(text = description.nameAlias)
+                        description.nameAlias?.let { nameAlias ->
+                            row {
+                                Text(text = "Alias:", fontWeight = FontWeight.Bold)
+                                Text(text = nameAlias)
+                            }
                         }
 
                         val indent = Modifier.padding(start = 8.dp)

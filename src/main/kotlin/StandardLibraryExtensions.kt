@@ -11,8 +11,8 @@ internal fun Int.toUPlusString() = "U+%04X".format(this)
 
 internal fun String.prettyPrintName() = replace("_", " ").toTitleCase()
 
-internal fun String.toTitleCase() = UCharacter.toTitleCase(this, BreakIterator.getWordInstance())
+internal fun String.toTitleCase(): String = UCharacter.toTitleCase(this, BreakIterator.getWordInstance())
 
-internal fun String.normalize(normalizer: Normalizer2) = normalizer.normalize(this)
+internal fun String.normalize(normalizer: Normalizer2): String = normalizer.normalize(this)
 
-internal fun List<*>.formatToString() = ListFormatter.getInstance().format(this)
+internal fun List<*>.formatToString(): String = ListFormatter.getInstance().format(this)
