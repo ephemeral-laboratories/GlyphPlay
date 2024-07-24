@@ -9,6 +9,5 @@ class UnicodeHangulSyllableTypeTest : FreeSpec({
         expectedCount = 6, actualCountGetter = { UCharacter.HangulSyllableType.COUNT },
         expectedInvalidValue = -1,
         companion = UnicodeHangulSyllableType.Companion,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeHangulSyllableType.NOT_APPLICABLE,
     )
 })

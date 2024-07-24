@@ -14,6 +14,5 @@ enum class UnicodeEastAsianWidth(override val icuValue: Int) : UnicodeValueEnum<
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeEastAsianWidth>(
         enumType = UnicodeEastAsianWidth::class,
-        icuPropertyId = UProperty.EAST_ASIAN_WIDTH,
     )
 }

@@ -1,7 +1,6 @@
 package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacter
-import com.ibm.icu.lang.UProperty
 
 enum class UnicodeLineBreak(override val icuValue: Int, val typeString: String) : UnicodeValueEnum<UnicodeLineBreak> {
     UNKNOWN(UCharacter.LineBreak.UNKNOWN, "UNKNOWN"),
@@ -56,6 +55,5 @@ enum class UnicodeLineBreak(override val icuValue: Int, val typeString: String) 
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeLineBreak>(
         enumType = UnicodeLineBreak::class,
-        icuPropertyId = UProperty.LINE_BREAK,
     )
 }

@@ -1,7 +1,6 @@
 package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacter
-import com.ibm.icu.lang.UProperty
 
 enum class UnicodeBlock(override val icuValue: Int) : UnicodeValueEnum<UnicodeBlock> {
     NO_BLOCK(0),
@@ -340,6 +339,5 @@ enum class UnicodeBlock(override val icuValue: Int) : UnicodeValueEnum<UnicodeBl
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeBlock>(
         enumType = UnicodeBlock::class,
-        icuPropertyId = UProperty.BLOCK,
     )
 }

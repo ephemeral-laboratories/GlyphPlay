@@ -14,6 +14,5 @@ enum class UnicodeJoiningType(override val icuValue: Int) : UnicodeValueEnum<Uni
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeJoiningType>(
         enumType = UnicodeJoiningType::class,
-        icuPropertyId = UProperty.JOINING_GROUP,
     )
 }

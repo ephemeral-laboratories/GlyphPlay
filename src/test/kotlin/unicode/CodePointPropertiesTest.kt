@@ -1,6 +1,5 @@
 package garden.ephemeral.glyphplay.unicode
 
-import com.ibm.icu.lang.UCharacter.IdentifierType
 import com.ibm.icu.util.VersionInfo
 import garden.ephemeral.glyphplay.search2.CodePointProperties
 import io.kotest.core.spec.style.FreeSpec
@@ -105,7 +104,7 @@ class CodePointPropertiesTest : FreeSpec({
                         description = "Hiragana",
                     ),
                     UnicodeProperties.Ints.CANONICAL_COMBINING_CLASS to value(
-                        value = 0,
+                        value = UnicodeCanonicalCombiningClass.NOT_REORDERED,
                         description = "Not Reordered",
                     ),
                     UnicodeProperties.Ints.DECOMPOSITION_TYPE to value(
@@ -132,12 +131,30 @@ class CodePointPropertiesTest : FreeSpec({
                         value = UnicodeHangulSyllableType.NOT_APPLICABLE,
                         description = "Not Applicable",
                     ),
-                    UnicodeProperties.Ints.NFD_QUICK_CHECK to value(0, "No"),
-                    UnicodeProperties.Ints.NFKD_QUICK_CHECK to value(0, "No"),
-                    UnicodeProperties.Ints.NFC_QUICK_CHECK to value(1, "Yes"),
-                    UnicodeProperties.Ints.NFKC_QUICK_CHECK to value(1, "Yes"),
-                    UnicodeProperties.Ints.LEAD_CANONICAL_COMBINING_CLASS to value(0, "Not Reordered"),
-                    UnicodeProperties.Ints.TRAIL_CANONICAL_COMBINING_CLASS to value(8, "Kana Voicing"),
+                    UnicodeProperties.Ints.NFD_QUICK_CHECK to value(
+                        value = UnicodeQuickCheckResult.NO,
+                        description = "No"
+                    ),
+                    UnicodeProperties.Ints.NFKD_QUICK_CHECK to value(
+                        value = UnicodeQuickCheckResult.NO,
+                        description = "No"
+                    ),
+                    UnicodeProperties.Ints.NFC_QUICK_CHECK to value(
+                        value = UnicodeQuickCheckResult.YES,
+                        description = "Yes"
+                    ),
+                    UnicodeProperties.Ints.NFKC_QUICK_CHECK to value(
+                        value = UnicodeQuickCheckResult.YES,
+                        description = "Yes",
+                    ),
+                    UnicodeProperties.Ints.LEAD_CANONICAL_COMBINING_CLASS to value(
+                        value = UnicodeCanonicalCombiningClass.NOT_REORDERED,
+                        description = "Not Reordered",
+                    ),
+                    UnicodeProperties.Ints.TRAIL_CANONICAL_COMBINING_CLASS to value(
+                        value = UnicodeCanonicalCombiningClass.KANA_VOICING,
+                        description = "Kana Voicing",
+                    ),
                     UnicodeProperties.Ints.GRAPHEME_CLUSTER_BREAK to value(
                         value = UnicodeGraphemeClusterBreak.OTHER,
                         description = "Other"
@@ -150,11 +167,26 @@ class CodePointPropertiesTest : FreeSpec({
                         value = UnicodeWordBreak.OTHER,
                         description = "Other"
                     ),
-                    UnicodeProperties.Ints.BIDI_PAIRED_BRACKET_TYPE to value(0, "None"),
-                    UnicodeProperties.Ints.INDIC_POSITIONAL_CATEGORY to value(0, "Na"),
-                    UnicodeProperties.Ints.INDIC_SYLLABIC_CATEGORY to value(0, "Other"),
-                    UnicodeProperties.Ints.VERTICAL_ORIENTATION to value(3, "Upright"),
-                    UnicodeProperties.Ints.IDENTIFIER_STATUS to value(1, "Allowed"),
+                    UnicodeProperties.Ints.BIDI_PAIRED_BRACKET_TYPE to value(
+                        value = UnicodeBidiPairedBracketType.NONE,
+                        description = "None",
+                    ),
+                    UnicodeProperties.Ints.INDIC_POSITIONAL_CATEGORY to value(
+                        value = UnicodeIndicPositionalCategory.NA,
+                        description = "Na",
+                    ),
+                    UnicodeProperties.Ints.INDIC_SYLLABIC_CATEGORY to value(
+                        value = UnicodeIndicSyllabicCategory.OTHER,
+                        description = "Other",
+                    ),
+                    UnicodeProperties.Ints.VERTICAL_ORIENTATION to value(
+                        value = UnicodeVerticalOrientation.UPRIGHT,
+                        description = "Upright",
+                    ),
+                    UnicodeProperties.Ints.IDENTIFIER_STATUS to value(
+                        value = UnicodeIdentifierStatus.ALLOWED,
+                        description = "Allowed",
+                    ),
                     // Masks
                     UnicodeProperties.Masks.GENERAL_CATEGORY_MASK to value(
                         value = setOf(UnicodeCharacterCategory.OTHER_LETTER),
@@ -183,7 +215,7 @@ class CodePointPropertiesTest : FreeSpec({
                         value = setOf(UnicodeScript.HIRAGANA),
                         description = "Hiragana"),
                     UnicodeProperties.Other.IDENTIFIER_TYPE to value(
-                        value = setOf(IdentifierType.RECOMMENDED),
+                        value = setOf(UnicodeIdentifierType.RECOMMENDED),
                         description = "Recommended"
                     ),
                 )

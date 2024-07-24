@@ -9,6 +9,5 @@ class UnicodeLineBreakTest : FreeSpec({
         expectedCount = 48, actualCountGetter = { UCharacter.LineBreak.COUNT },
         expectedInvalidValue = -1,
         companion = UnicodeLineBreak.Companion,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeLineBreak.IDEOGRAPHIC,
     )
 })

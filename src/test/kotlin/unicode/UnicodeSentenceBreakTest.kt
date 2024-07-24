@@ -9,6 +9,5 @@ class UnicodeSentenceBreakTest : FreeSpec({
         expectedCount = 15, actualCountGetter = { UCharacter.SentenceBreak.COUNT },
         expectedInvalidValue = -1,
         companion = UnicodeSentenceBreak.Companion,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeSentenceBreak.OLETTER,
     )
 })

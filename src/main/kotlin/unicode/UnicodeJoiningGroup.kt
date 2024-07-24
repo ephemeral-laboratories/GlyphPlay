@@ -1,7 +1,6 @@
 package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacter
-import com.ibm.icu.lang.UProperty
 
 enum class UnicodeJoiningGroup(override val icuValue: Int) : UnicodeValueEnum<UnicodeJoiningGroup> {
     NO_JOINING_GROUP(UCharacter.JoiningGroup.NO_JOINING_GROUP),
@@ -112,6 +111,5 @@ enum class UnicodeJoiningGroup(override val icuValue: Int) : UnicodeValueEnum<Un
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeJoiningGroup>(
         enumType = UnicodeJoiningGroup::class,
-        icuPropertyId = UProperty.JOINING_GROUP,
     )
 }

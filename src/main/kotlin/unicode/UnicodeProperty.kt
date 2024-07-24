@@ -28,7 +28,7 @@ class UnicodeProperty<T>(
      * @param codePoint the code point to get the property for.
      * @return the value.
      */
-    fun getValue(codePoint: Int): UnicodePropertyValue<T> {
+    fun valueForCodePoint(codePoint: Int): UnicodePropertyValue<T> {
         val value = propertyGetter(codePoint, icuValue)
         val description = propertyValueDescriber(value, icuValue)
         return UnicodePropertyValue(value, description)

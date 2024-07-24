@@ -31,6 +31,5 @@ enum class UnicodeWordBreak(override val icuValue: Int, val typeString: String) 
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeWordBreak>(
         enumType = UnicodeWordBreak::class,
-        icuPropertyId = UProperty.WORD_BREAK,
     )
 }

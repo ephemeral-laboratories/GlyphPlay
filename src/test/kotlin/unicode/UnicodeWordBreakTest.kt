@@ -9,6 +9,5 @@ class UnicodeWordBreakTest : FreeSpec({
         expectedCount = 23, actualCountGetter = { UCharacter.WordBreak.COUNT },
         expectedInvalidValue = -1,
         companion = UnicodeWordBreak.Companion,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeWordBreak.OTHER,
     )
 })

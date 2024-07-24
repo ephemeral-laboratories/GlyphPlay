@@ -8,6 +8,5 @@ class UnicodeCharacterCategoryTest : FreeSpec({
         expectedCount = 30, actualCountGetter = { UCharacterCategory.CHAR_CATEGORY_COUNT.toInt() },
         expectedInvalidValue = -2,
         companion = UnicodeCharacterCategory.Companion,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeCharacterCategory.OTHER_LETTER,
     )
 })

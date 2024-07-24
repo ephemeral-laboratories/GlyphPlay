@@ -34,6 +34,5 @@ enum class UnicodeCharacterDirection(override val icuValue: Int, val typeString:
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeCharacterDirection>(
         enumType = UnicodeCharacterDirection::class,
-        icuPropertyId = UProperty.BIDI_CLASS,
     )
 }

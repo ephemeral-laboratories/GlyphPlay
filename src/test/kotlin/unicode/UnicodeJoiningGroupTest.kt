@@ -9,6 +9,5 @@ class UnicodeJoiningGroupTest : FreeSpec({
         expectedCount = 104, actualCountGetter = { UCharacter.JoiningGroup.COUNT },
         expectedInvalidValue = -1,
         companion = UnicodeJoiningGroup.Companion,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeJoiningGroup.NO_JOINING_GROUP,
     )
 })

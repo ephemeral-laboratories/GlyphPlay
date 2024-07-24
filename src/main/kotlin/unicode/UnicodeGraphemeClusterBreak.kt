@@ -28,6 +28,5 @@ enum class UnicodeGraphemeClusterBreak(override val icuValue: Int, val typeStrin
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeGraphemeClusterBreak>(
         enumType = UnicodeGraphemeClusterBreak::class,
-        icuPropertyId = UProperty.GRAPHEME_CLUSTER_BREAK,
     )
 }

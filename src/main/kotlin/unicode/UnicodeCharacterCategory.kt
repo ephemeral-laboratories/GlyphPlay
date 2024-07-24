@@ -1,7 +1,6 @@
 package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UCharacterCategory
-import com.ibm.icu.lang.UProperty
 
 enum class UnicodeCharacterCategory(override val icuValue: Int, val typeString: String) :
     UnicodeValueEnum<UnicodeCharacterCategory> {
@@ -40,7 +39,6 @@ enum class UnicodeCharacterCategory(override val icuValue: Int, val typeString: 
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeCharacterCategory>(
         enumType = UnicodeCharacterCategory::class,
-        icuPropertyId = UProperty.GENERAL_CATEGORY,
     ) {
         fun buildSetFromMask(mask: Int): Set<UnicodeCharacterCategory> {
             var temp = mask

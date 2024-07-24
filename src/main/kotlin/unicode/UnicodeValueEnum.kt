@@ -1,6 +1,5 @@
 package garden.ephemeral.glyphplay.unicode
 
-import com.ibm.icu.lang.UCharacter
 import garden.ephemeral.glyphplay.prettyPrintName
 import kotlin.reflect.KClass
 
@@ -45,20 +44,16 @@ interface UnicodeValueEnum<T : UnicodeValueEnum<T>> {
          * @return the enum value.
          */
         fun ofIcuValue(icuValue: Int): T
-
-        fun ofCodePoint(codePoint: Int): T
     }
 
     /**
      * Common interface for the companion object of ICU property value enums.
      *
      * @param enumType the type of the corresponding enum value.
-     * @param icuPropertyId the int value of the enum value according to ICU.
      * @param <T> the type of the corresponding enum value.
      */
     open class CompanionImpl<T : UnicodeValueEnum<T>>(
-        private val enumType: KClass<T>,
-        private val icuPropertyId: Int
+        private val enumType: KClass<T>
     ) : Companion<T> {
         // Can't use the nicer Kotlin API to get the enum values, so we're stuck with Java's one, I think.
         override val entries by lazy { enumType.java.enumConstants.toList() }
@@ -66,8 +61,5 @@ interface UnicodeValueEnum<T : UnicodeValueEnum<T>> {
         override fun ofIcuValue(icuValue: Int): T = entries
             .find { entry -> entry.icuValue == icuValue }
             ?: throw IllegalArgumentException("Unknown ICU value for enum ${enumType::class.simpleName}: $icuValue")
-
-        override fun ofCodePoint(codePoint: Int) =
-            ofIcuValue(UCharacter.getIntPropertyValue(codePoint, icuPropertyId))
     }
 }

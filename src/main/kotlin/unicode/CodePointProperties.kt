@@ -12,7 +12,7 @@ class CodePointProperties private constructor(private val codePoint: Int) {
      * A map of all property values.
      */
     val map = UnicodeProperties.all()
-        .map { property -> property to property.getValue(codePoint) }
+        .map { property -> property to property.valueForCodePoint(codePoint) }
         .toMap()
 
     // We could provide convenience getters too, but it's going to get messy fast. Example:
@@ -21,4 +21,9 @@ class CodePointProperties private constructor(private val codePoint: Int) {
     companion object {
         fun ofCodePoint(codePoint: Int) = CodePointProperties(codePoint)
     }
+}
+
+fun main() {
+    val map = CodePointProperties.ofCodePoint("ば".codePointAt(0)).map
+    println(map[UnicodeProperties.Ints.CANONICAL_COMBINING_CLASS]!!.description)
 }

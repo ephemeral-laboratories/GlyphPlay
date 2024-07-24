@@ -9,6 +9,5 @@ class UnicodeNumericTypeTest : FreeSpec({
         expectedCount = 4, actualCountGetter = { UCharacter.NumericType.COUNT },
         expectedInvalidValue = -1,
         companion = UnicodeNumericType.Companion,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeNumericType.NONE,
     )
 })

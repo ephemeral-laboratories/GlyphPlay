@@ -1,6 +1,5 @@
 package garden.ephemeral.glyphplay.unicode
 
-import com.ibm.icu.lang.UProperty
 import com.ibm.icu.lang.UScript
 import java.util.BitSet
 
@@ -222,7 +221,6 @@ enum class UnicodeScript(override val icuValue: Int, val code: String, val codeA
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeScript>(
         enumType = UnicodeScript::class,
-        icuPropertyId = UProperty.SCRIPT,
     ) {
         fun buildSetFromBitSet(bitSet: BitSet) = buildSet {
             var index = 0

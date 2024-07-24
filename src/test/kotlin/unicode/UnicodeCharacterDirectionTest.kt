@@ -9,6 +9,5 @@ class UnicodeCharacterDirectionTest : FreeSpec({
         expectedCount = 23, actualCountGetter = { UCharacterDirection.CHAR_DIRECTION_COUNT },
         companion = UnicodeCharacterDirection.Companion,
         expectedInvalidValue = -2,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeCharacterDirection.LEFT_TO_RIGHT,
     )
 })

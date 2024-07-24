@@ -26,6 +26,5 @@ enum class UnicodeDecompositionType(override val icuValue: Int) : UnicodeValueEn
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeDecompositionType>(
         enumType = UnicodeDecompositionType::class,
-        icuPropertyId = UProperty.DECOMPOSITION_TYPE,
     )
 }

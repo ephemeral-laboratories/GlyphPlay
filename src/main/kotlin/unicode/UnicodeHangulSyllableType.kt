@@ -16,6 +16,5 @@ enum class UnicodeHangulSyllableType(override val icuValue: Int, val typeString:
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeHangulSyllableType>(
         enumType = UnicodeHangulSyllableType::class,
-        icuPropertyId = UProperty.HANGUL_SYLLABLE_TYPE,
     )
 }

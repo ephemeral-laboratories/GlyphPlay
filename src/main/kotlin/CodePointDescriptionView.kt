@@ -105,7 +105,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         }
                         row {
                             Text(text = "Block:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.block.longName)
+                            Text(text = description.block.description)
                         }
                         row {
                             Text(text = "Plane:", fontWeight = FontWeight.Bold, modifier = indent)
@@ -113,11 +113,11 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         }
                         row {
                             Text(text = "Script:", fontWeight = FontWeight.Bold)
-                            Text(text = description.script.longName)
+                            Text(text = description.script.description)
                         }
                         row {
                             Text(text = "Category:", fontWeight = FontWeight.Bold)
-                            Text(text = description.characterCategory.longName)
+                            Text(text = description.characterCategory.description)
                         }
 
                         if (
@@ -193,7 +193,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
 
                         row {
                             Text(text = "East Asian Width:", fontWeight = FontWeight.Bold)
-                            Text(text = description.eastAsianWidth.longName)
+                            Text(text = description.eastAsianWidth.description)
                         }
 
                         row {
@@ -201,7 +201,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         }
                         row {
                             Text(text = "Direction:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.bidiDirection.longName)
+                            Text(text = description.bidiDirection.description)
                         }
                         row {
                             Text(text = "Mirrored:", fontWeight = FontWeight.Bold, modifier = indent)
@@ -213,19 +213,19 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         }
                         row {
                             Text(text = "Line Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.lineBreakType.longName)
+                            Text(text = description.lineBreakType.description)
                         }
                         row {
                             Text(text = "Sentence Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.sentenceBreakType.longName)
+                            Text(text = description.sentenceBreakType.description)
                         }
                         row {
                             Text(text = "Word Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.wordBreakType.longName)
+                            Text(text = description.wordBreakType.description)
                         }
                         row {
                             Text(text = "Grapheme Cluster Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.graphemeClusterBreakType.longName)
+                            Text(text = description.graphemeClusterBreakType.description)
                         }
                     }
                 }

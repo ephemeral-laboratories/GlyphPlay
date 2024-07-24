@@ -11,6 +11,5 @@ enum class UnicodeNumericType(override val icuValue: Int) : UnicodeValueEnum<Uni
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeNumericType>(
         enumType = UnicodeNumericType::class,
-        icuPropertyId = UProperty.NUMERIC_TYPE
     )
 }

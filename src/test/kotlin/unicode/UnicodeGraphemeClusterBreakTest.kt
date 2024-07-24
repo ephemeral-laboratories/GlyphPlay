@@ -9,6 +9,5 @@ class UnicodeGraphemeClusterBreakTest : FreeSpec({
         expectedCount = 18, actualCountGetter = { UCharacter.GraphemeClusterBreak.COUNT },
         expectedInvalidValue = -1,
         companion = UnicodeGraphemeClusterBreak.Companion,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeGraphemeClusterBreak.OTHER,
     )
 })

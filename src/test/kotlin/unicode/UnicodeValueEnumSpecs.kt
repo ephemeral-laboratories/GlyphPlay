@@ -12,8 +12,6 @@ inline fun <reified T : UnicodeValueEnum<T>> FreeSpecRootScope.commonUnicodeValu
     crossinline actualCountGetter: () -> Int,
     expectedInvalidValue: Int,
     companion: UnicodeValueEnum.Companion<T>,
-    exampleCodePoint: String,
-    expectedValueForExample: T,
 ) {
     "is up to date with ICU4J" {
         actualCountGetter.invoke().shouldBe(expectedCount)
@@ -32,13 +30,6 @@ inline fun <reified T : UnicodeValueEnum<T>> FreeSpecRootScope.commonUnicodeValu
             shouldThrow<IllegalArgumentException> {
                 companion.ofIcuValue(expectedInvalidValue)
             }
-        }
-    }
-
-    "ofCodePoint" - {
-        "can get the value for a code point" {
-            companion.ofCodePoint(exampleCodePoint.codePointAt(0))
-                .shouldBe(expectedValueForExample)
         }
     }
 

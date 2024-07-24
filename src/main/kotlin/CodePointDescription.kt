@@ -4,16 +4,9 @@ import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UProperty
 import com.ibm.icu.text.Normalizer2
 import garden.ephemeral.glyphplay.search2.CodePointProperties
-import garden.ephemeral.glyphplay.unicode.UnicodeBlock
-import garden.ephemeral.glyphplay.unicode.UnicodeCharacterCategory
-import garden.ephemeral.glyphplay.unicode.UnicodeCharacterDirection
-import garden.ephemeral.glyphplay.unicode.UnicodeEastAsianWidth
-import garden.ephemeral.glyphplay.unicode.UnicodeGraphemeClusterBreak
-import garden.ephemeral.glyphplay.unicode.UnicodeLineBreak
+import garden.ephemeral.glyphplay.unicode.UnicodeDecompositionType
 import garden.ephemeral.glyphplay.unicode.UnicodePlane
-import garden.ephemeral.glyphplay.unicode.UnicodeScript
-import garden.ephemeral.glyphplay.unicode.UnicodeSentenceBreak
-import garden.ephemeral.glyphplay.unicode.UnicodeWordBreak
+import garden.ephemeral.glyphplay.unicode.UnicodeProperties
 import kotlin.streams.asSequence
 
 class CodePointDescription private constructor(codePoint: Int) : MinimalCodePointDescription(codePoint) {
@@ -21,11 +14,11 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
 
     val versionInfoSummary = VersionInfoSummary.of(UCharacter.getAge(codePoint))
 
-    val block = UnicodeBlock.ofCodePoint(codePoint)
+    val block = UnicodeProperties.Ints.BLOCK.valueForCodePoint(codePoint)
     val plane = UnicodePlane.ofCodePoint(codePoint)
 
-    val characterCategory = UnicodeCharacterCategory.ofCodePoint(codePoint)
-    val script = UnicodeScript.ofCodePoint(codePoint)
+    val characterCategory = UnicodeProperties.Ints.GENERAL_CATEGORY.valueForCodePoint(codePoint)
+    val script = UnicodeProperties.Ints.SCRIPT.valueForCodePoint(codePoint)
 
     val lowerCaseCodePoint = UCharacter.toLowerCase(codePoint)
         .takeIf { it != codePoint }
@@ -37,9 +30,9 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
         .takeIf { it != codePoint }
         ?.let(MinimalCodePointDescription::ofCodePoint)
 
-    val decompositionType = getIntPropertyValueAsString(codePoint, UProperty.DECOMPOSITION_TYPE)
+    val decompositionType = UnicodeProperties.Ints.DECOMPOSITION_TYPE.valueForCodePoint(codePoint)
     val decompositionCodePoints =
-        if (UCharacter.getIntPropertyValue(codePoint, UProperty.DECOMPOSITION_TYPE) != UCharacter.DecompositionType.NONE) {
+        if (decompositionType.value != UnicodeDecompositionType.NONE) {
             stringForm
                 .normalize(Normalizer2.getNFDInstance())
                 .codePoints().asSequence()
@@ -55,24 +48,18 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
                 .toList()
         } else null
 
-    val eastAsianWidth = UnicodeEastAsianWidth.ofCodePoint(codePoint)
+    val eastAsianWidth = UnicodeProperties.Ints.EAST_ASIAN_WIDTH.valueForCodePoint(codePoint)
 
-    val bidiDirection = UnicodeCharacterDirection.ofCodePoint(codePoint)
-    val isMirrored = UCharacter.isMirrored(codePoint)
-    val lineBreakType = UnicodeLineBreak.ofCodePoint(codePoint)
-    val sentenceBreakType = UnicodeSentenceBreak.ofCodePoint(codePoint)
-    val wordBreakType = UnicodeWordBreak.ofCodePoint(codePoint)
-    val graphemeClusterBreakType = UnicodeGraphemeClusterBreak.ofCodePoint(codePoint)
+    val bidiDirection = UnicodeProperties.Ints.BIDI_CLASS.valueForCodePoint(codePoint)
+    val isMirrored = UnicodeProperties.Booleans.BIDI_MIRRORED.valueForCodePoint(codePoint).value
+    val lineBreakType = UnicodeProperties.Ints.LINE_BREAK.valueForCodePoint(codePoint)
+    val sentenceBreakType = UnicodeProperties.Ints.SENTENCE_BREAK.valueForCodePoint(codePoint)
+    val wordBreakType = UnicodeProperties.Ints.WORD_BREAK.valueForCodePoint(codePoint)
+    val graphemeClusterBreakType = UnicodeProperties.Ints.GRAPHEME_CLUSTER_BREAK.valueForCodePoint(codePoint)
 
     val advancedProperties = CodePointProperties.ofCodePoint(codePoint)
 
     companion object {
         fun ofCodePoint(codePoint: Int) = CodePointDescription(codePoint)
-
-        private fun getIntPropertyValueAsString(codePoint: Int, propertyId: Int): String {
-            val value = UCharacter.getIntPropertyValue(codePoint, propertyId)
-            return UCharacter.getPropertyValueName(propertyId, value, UProperty.NameChoice.LONG)
-                .prettyPrintName()
-        }
     }
 }

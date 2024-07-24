@@ -9,6 +9,5 @@ class UnicodeDecompositionTypeTest : FreeSpec({
         expectedCount = 18, actualCountGetter = { UCharacter.DecompositionType.COUNT },
         expectedInvalidValue = -2,
         companion = UnicodeDecompositionType.Companion,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeDecompositionType.CANONICAL,
     )
 })

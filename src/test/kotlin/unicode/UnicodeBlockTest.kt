@@ -9,6 +9,5 @@ class UnicodeBlockTest : FreeSpec({
         expectedCount = 329, actualCountGetter = { UCharacter.UnicodeBlock.COUNT },
         expectedInvalidValue = -2,
         companion = UnicodeBlock.Companion,
-        exampleCodePoint = "ば", expectedValueForExample = UnicodeBlock.HIRAGANA,
     )
 })

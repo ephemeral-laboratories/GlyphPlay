@@ -23,6 +23,5 @@ enum class UnicodeSentenceBreak(override val icuValue: Int, val typeString: Stri
 
     companion object : UnicodeValueEnum.CompanionImpl<UnicodeSentenceBreak>(
         enumType = UnicodeSentenceBreak::class,
-        icuPropertyId = UProperty.SENTENCE_BREAK,
     )
 }
