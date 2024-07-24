@@ -12,15 +12,17 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 
-class CustomRow(val content: @Composable () -> Unit) {
-
-}
-
 class GridLayoutScope {
-    val rows = mutableListOf<CustomRow>()
+    private class CustomRow(val content: @Composable () -> Unit)
+
+    private val rows = mutableListOf<CustomRow>()
 
     fun row(content: @Composable () -> Unit) {
         rows.add(CustomRow(content = content))
+    }
+
+    fun buildRowContents(): List<@Composable () -> Unit> {
+        return rows.map { r -> r.content }
     }
 }
 
@@ -34,9 +36,8 @@ fun GridLayout(
 ) {
     val rowContents by derivedStateOf {
         val scope = GridLayoutScope()
-        scope.rows.map { r -> r.content }
         scope.content()
-        scope.rows.map { r -> r.content }
+        scope.buildRowContents()
     }
 
     Layout(
