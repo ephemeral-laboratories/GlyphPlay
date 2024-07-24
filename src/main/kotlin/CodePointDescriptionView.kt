@@ -30,7 +30,7 @@ import garden.ephemeral.glyphplay.theme.AppTheme
 @Composable
 private fun ClickableCodePoint(description: MinimalCodePointDescription, onCodePointLinkClicked: (Int) -> Unit) {
     Text(
-        text = "${description.stringForm} (${description.name})",
+        text = "${description.stringFormForUI} (${description.name})",
         modifier = Modifier.clickable { onCodePointLinkClicked(description.codePoint) }
     )
 }

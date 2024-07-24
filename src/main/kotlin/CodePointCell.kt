@@ -53,7 +53,7 @@ fun CodePointCell(
                     // .firstBaselineToTop(firstBaselineToTop),
             ) {
                 Text(
-                    text = description.stringForm,
+                    text = description.stringFormForUI,
                     fontFamily = NotoSans,
                     fontSize = fontSize,
                     textAlign = TextAlign.Center,

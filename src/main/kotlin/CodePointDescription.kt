@@ -21,13 +21,13 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
 
     val lowerCaseCodePoint = UCharacter.toLowerCase(codePoint)
         .takeIf { it != codePoint }
-        ?.let(MinimalCodePointDescription::of)
+        ?.let(MinimalCodePointDescription::ofCodePoint)
     val upperCaseCodePoint = UCharacter.toUpperCase(codePoint)
         .takeIf { it != codePoint }
-        ?.let(MinimalCodePointDescription::of)
+        ?.let(MinimalCodePointDescription::ofCodePoint)
     val titleCaseCodePoint = UCharacter.toTitleCase(codePoint)
         .takeIf { it != codePoint }
-        ?.let(MinimalCodePointDescription::of)
+        ?.let(MinimalCodePointDescription::ofCodePoint)
 
     val decompositionType = getIntPropertyValueAsString(codePoint, UProperty.DECOMPOSITION_TYPE)
     val decompositionCodePoints =
@@ -35,7 +35,7 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
             stringForm
                 .normalize(Normalizer2.getNFDInstance())
                 .codePoints().asSequence()
-                .map(MinimalCodePointDescription::of)
+                .map(MinimalCodePointDescription::ofCodePoint)
                 .toList()
         } else null
     val compatibilityDecompositionCodePoints =
@@ -43,7 +43,7 @@ class CodePointDescription private constructor(codePoint: Int) : MinimalCodePoin
             stringForm
                 .normalize(Normalizer2.getNFKDInstance())
                 .codePoints().asSequence()
-                .map(MinimalCodePointDescription::of)
+                .map(MinimalCodePointDescription::ofCodePoint)
                 .toList()
         } else null
 
