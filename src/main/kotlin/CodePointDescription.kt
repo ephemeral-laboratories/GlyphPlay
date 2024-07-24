@@ -5,10 +5,7 @@ import com.ibm.icu.lang.UProperty
 import com.ibm.icu.text.Normalizer2
 import kotlin.streams.asSequence
 
-class CodePointDescription private constructor(val codePoint: Int) {
-    val uPlusForm = codePoint.toUPlusString()
-    val stringForm = String(codePoints = intArrayOf(codePoint), offset = 0, length = 1)
-    val name = formatCodePointName(codePoint)
+class CodePointDescription private constructor(codePoint: Int) : MinimalCodePointDescription(codePoint) {
     val nameAlias = UCharacter.getNameAlias(codePoint)?.prettyPrintName()
 
     val versionInfoSummary = VersionInfoSummary.of(UCharacter.getAge(codePoint))
@@ -20,23 +17,23 @@ class CodePointDescription private constructor(val codePoint: Int) {
     val scriptName = getIntPropertyValueAsString(codePoint, UProperty.SCRIPT)
 
     val lowerCaseCodePoint = UCharacter.toLowerCase(codePoint)
-    val hasLowerCaseMapping = lowerCaseCodePoint != codePoint
-    val lowerCaseCodePointName = formatCodePointName(lowerCaseCodePoint)
+        .takeIf { it != codePoint }
+        ?.let(MinimalCodePointDescription::of)
     val upperCaseCodePoint = UCharacter.toUpperCase(codePoint)
-    val hasUpperCaseMapping = upperCaseCodePoint != codePoint
-    val upperCaseCodePointName = formatCodePointName(upperCaseCodePoint)
+        .takeIf { it != codePoint }
+        ?.let(MinimalCodePointDescription::of)
     val titleCaseCodePoint = UCharacter.toTitleCase(codePoint)
-    val hasTitleCaseMapping = titleCaseCodePoint != codePoint
-    val titleCaseCodePointName = formatCodePointName(titleCaseCodePoint)
+        .takeIf { it != codePoint }
+        ?.let(MinimalCodePointDescription::of)
 
-    val hasDecomposition = UCharacter.getIntPropertyValue(codePoint, UProperty.DECOMPOSITION_TYPE) !=
-            UCharacter.DecompositionType.NONE
     val decompositionType = getIntPropertyValueAsString(codePoint, UProperty.DECOMPOSITION_TYPE)
-    val decompositionGlyphNames = stringForm
-        .normalize(Normalizer2.getNFDInstance())
-        .codePoints().asSequence()
-        .map { codePoint -> formatCodePointName(codePoint) }
-        .toList()
+    val decompositionCodePoints = if (UCharacter.getIntPropertyValue(codePoint, UProperty.DECOMPOSITION_TYPE) != UCharacter.DecompositionType.NONE) {
+        stringForm
+            .normalize(Normalizer2.getNFDInstance())
+            .codePoints().asSequence()
+            .map(MinimalCodePointDescription::of)
+            .toList()
+    } else null
 
     val eastAsianWidth = getIntPropertyValueAsString(codePoint, UProperty.EAST_ASIAN_WIDTH)
 
@@ -48,14 +45,7 @@ class CodePointDescription private constructor(val codePoint: Int) {
     val graphemeClusterBreakType = getIntPropertyValueAsString(codePoint, UProperty.GRAPHEME_CLUSTER_BREAK)
 
     companion object {
-        fun of(codePoint: Int): CodePointDescription {
-            return CodePointDescription(codePoint)
-        }
-
-        private fun formatCodePointName(codePoint: Int): String {
-            return UCharacter.getName(codePoint)?.prettyPrintName()
-                ?: "(Name Missing)"
-        }
+        fun of(codePoint: Int) = CodePointDescription(codePoint)
 
         private fun getIntPropertyValueAsString(codePoint: Int, propertyId: Int): String {
             val value = UCharacter.getIntPropertyValue(codePoint, propertyId)

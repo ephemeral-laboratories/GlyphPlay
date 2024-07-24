@@ -79,7 +79,10 @@ fun main() = application {
                     Box(Modifier.fillMaxWidth()) {
                         val scrollBarState = rememberScrollState()
                         Box(Modifier.verticalScroll(state = scrollBarState)) {
-                            CodePointDescriptionView(currentCodePoint)
+                            CodePointDescriptionView(
+                                codePoint = currentCodePoint,
+                                onCodePointLinkClicked = setCurrentCodePoint
+                            )
                         }
                         VerticalScrollbar(
                             adapter = rememberScrollbarAdapter(scrollBarState),

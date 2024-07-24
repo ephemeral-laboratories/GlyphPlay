@@ -1,6 +1,7 @@
 package garden.ephemeral.glyphplay
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +28,15 @@ import garden.ephemeral.glyphplay.components.rememberFlashBoxState
 import garden.ephemeral.glyphplay.theme.AppTheme
 
 @Composable
-fun CodePointDescriptionView(codePoint: Int) {
+private fun ClickableCodePoint(description: MinimalCodePointDescription, onCodePointLinkClicked: (Int) -> Unit) {
+    Text(
+        text = "${description.stringForm} (${description.name})",
+        modifier = Modifier.clickable { onCodePointLinkClicked(description.codePoint) }
+    )
+}
+
+@Composable
+fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Unit) {
     val description = CodePointDescription.of(codePoint)
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -111,31 +120,44 @@ fun CodePointDescriptionView(codePoint: Int) {
                             Text(text = description.codePointCategory)
                         }
 
-                        if (description.hasLowerCaseMapping || description.hasUpperCaseMapping || description.hasTitleCaseMapping) {
+                        if (
+                            description.lowerCaseCodePoint != null ||
+                            description.upperCaseCodePoint != null ||
+                            description.titleCaseCodePoint != null
+                        ) {
                             row {
                                 Text(text = "Variants:", fontWeight = FontWeight.Bold)
                             }
-                            if (description.hasLowerCaseMapping) {
+                            description.lowerCaseCodePoint?.let { lowerCaseCodePoint ->
                                 row {
                                     Text(text = "Lowercase:", fontWeight = FontWeight.Bold, modifier = indent)
-                                    Text(text = description.lowerCaseCodePointName)
+                                    ClickableCodePoint(
+                                        description = lowerCaseCodePoint,
+                                        onCodePointLinkClicked = onCodePointLinkClicked
+                                    )
                                 }
                             }
-                            if (description.hasUpperCaseMapping) {
+                            description.upperCaseCodePoint?.let { upperCaseCodePoint ->
                                 row {
                                     Text(text = "Uppercase:", fontWeight = FontWeight.Bold, modifier = indent)
-                                    Text(text = description.upperCaseCodePointName)
+                                    ClickableCodePoint(
+                                        description = upperCaseCodePoint,
+                                        onCodePointLinkClicked = onCodePointLinkClicked
+                                    )
                                 }
                             }
-                            if (description.hasTitleCaseMapping) {
+                            description.titleCaseCodePoint?.let { titleCaseCodePoint ->
                                 row {
                                     Text(text = "Titlecase:", fontWeight = FontWeight.Bold, modifier = indent)
-                                    Text(text = description.titleCaseCodePointName)
+                                    ClickableCodePoint(
+                                        description = titleCaseCodePoint,
+                                        onCodePointLinkClicked = onCodePointLinkClicked
+                                    )
                                 }
                             }
                         }
 
-                        if (description.hasDecomposition) {
+                        description.decompositionCodePoints?.let { decompositionCodePoints ->
                             row {
                                 Text("Decomposition:", fontWeight = FontWeight.Bold)
                             }
@@ -145,7 +167,14 @@ fun CodePointDescriptionView(codePoint: Int) {
                             }
                             row {
                                 Text(text = "Decomposed:", fontWeight = FontWeight.Bold, modifier = indent)
-                                Text(text = description.decompositionGlyphNames.formatToString())
+                                Column {
+                                    decompositionCodePoints.forEach { codePoint ->
+                                        ClickableCodePoint(
+                                            description = codePoint,
+                                            onCodePointLinkClicked = onCodePointLinkClicked
+                                        )
+                                    }
+                                }
                             }
                         }
 
@@ -196,11 +225,6 @@ fun CodePointDescriptionView(codePoint: Int) {
 @Preview
 fun CharacterViewPreview() {
     AppTheme {
-//    CharacterView(48)
-        CodePointDescriptionView(65)
-//    CharacterView(97)
-
-//    CharacterView(codePoint = 119136)
-//    CharacterView(codePoint = 0x1F574)
+        CodePointDescriptionView(codePoint = 65, onCodePointLinkClicked = {})
     }
 }
