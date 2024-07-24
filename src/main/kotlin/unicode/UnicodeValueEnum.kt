@@ -36,6 +36,8 @@ interface UnicodeValueEnum<T : UnicodeValueEnum<T>> {
      * @param <T> the type of the enum value.
      */
     interface Companion<T : UnicodeValueEnum<T>> {
+        val entries: List<T>
+
         /**
          * Looks up an enum value from its ICU value.
          *
@@ -59,9 +61,9 @@ interface UnicodeValueEnum<T : UnicodeValueEnum<T>> {
         private val icuPropertyId: Int
     ) : Companion<T> {
         // Can't use the nicer Kotlin API to get the enum values, so we're stuck with Java's one, I think.
-        private val enumValues by lazy { enumType.java.enumConstants.toList() }
+        override val entries by lazy { enumType.java.enumConstants.toList() }
 
-        override fun ofIcuValue(icuValue: Int): T = enumValues
+        override fun ofIcuValue(icuValue: Int): T = entries
             .find { entry -> entry.icuValue == icuValue }
             ?: throw IllegalArgumentException("Unknown ICU value for enum ${enumType::class.simpleName}: $icuValue")
 

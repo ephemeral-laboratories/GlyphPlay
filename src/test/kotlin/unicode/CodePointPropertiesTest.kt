@@ -100,8 +100,14 @@ class CodePointPropertiesTest : FreeSpec({
                         value = UnicodeCharacterDirection.LEFT_TO_RIGHT,
                         description = "Left To Right"
                     ),
-                    UnicodeProperties.Ints.BLOCK to value(UnicodeBlock.HIRAGANA, "Hiragana"),
-                    UnicodeProperties.Ints.CANONICAL_COMBINING_CLASS to value(0, "Not Reordered"),
+                    UnicodeProperties.Ints.BLOCK to value(
+                        UnicodeBlock.HIRAGANA,
+                        "Hiragana"
+                    ),
+                    UnicodeProperties.Ints.CANONICAL_COMBINING_CLASS to value(
+                        0,
+                        "Not Reordered"
+                    ),
                     UnicodeProperties.Ints.DECOMPOSITION_TYPE to value(1, "Canonical"),
                     UnicodeProperties.Ints.EAST_ASIAN_WIDTH to value(UnicodeEastAsianWidth.WIDE, "Wide"),
                     UnicodeProperties.Ints.GENERAL_CATEGORY to value(
