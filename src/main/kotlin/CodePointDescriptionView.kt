@@ -26,9 +26,8 @@ import garden.ephemeral.glyphplay.components.GridLayout
 import garden.ephemeral.glyphplay.components.GridLayoutScope
 import garden.ephemeral.glyphplay.components.rememberFlashBoxState
 import garden.ephemeral.glyphplay.theme.AppTheme
-import garden.ephemeral.glyphplay.unicode.UnicodeDecompositionType
-import garden.ephemeral.glyphplay.unicode.UnicodeNumericType
 import garden.ephemeral.glyphplay.unicode.UnicodeProperties
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeNumericType
 import unicode.UnicodeProperty
 import kotlin.streams.asSequence
 
@@ -120,56 +119,49 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         }
 
                         /**
-                         * Shortcut for adding a conventional property row.
-                         * Useful for the case where you don't have a standard Unicode property.
+                         * Shortcut for adding a conventional property row displaying the value of a
+                         * Unicode property.
                          */
-                        fun GridLayoutScope.propertyRow(name: String, valueDescription: String) {
-                            propertyRow(name) {
-                                Text(text = valueDescription)
-                            }
-                        }
-
-                        /**
-                         * Shortcut for adding a conventional property row.
-                         * Useful for the case where you don't have a standard Unicode property.
-                         */
-                        fun GridLayoutScope.propertyRow(name: String, codePointDescriptions: List<MinimalCodePointDescription>) {
-                            propertyRow(name) {
-                                Column {
-                                    codePointDescriptions.forEach { description ->
-                                        ClickableCodePoint(
-                                            description = description,
-                                            onCodePointLinkClicked = onCodePointLinkClicked,
-                                        )
-                                    }
-                                }
+                        fun <T> GridLayoutScope.propertyRow(property: UnicodeProperty<T>) {
+                            propertyRow(name = property.longName) {
+                                Text(text = description.allProperties[property].description)
                             }
                         }
 
                         /**
                          * Shortcut for adding a conventional property row displaying the value of a
-                         * Unicode property.
+                         * Unicode property whose values are code points or a string made up of potentially
+                         * multiple code points.
                          */
-                        fun <T> GridLayoutScope.propertyRow(property: UnicodeProperty<T>) {
-                            propertyRow(
-                                name = property.longName,
-                                valueDescription = description.allProperties[property].description,
-                            )
+                        fun GridLayoutScope.propertyRowForCodePoints(property: UnicodeProperty<String>) {
+                            propertyRow(name = property.longName) {
+                                Column {
+                                    description.allProperties[property].value
+                                        .codePoints().asSequence()
+                                        .map(MinimalCodePointDescription::ofCodePoint)
+                                        .toList()
+                                        .forEach { description ->
+                                            ClickableCodePoint(
+                                                description = description,
+                                                onCodePointLinkClicked = onCodePointLinkClicked,
+                                            )
+                                        }
+                                }
+                            }
                         }
 
-                        description.nameAlias?.let { nameAlias ->
-                            propertyRow(name = "Alias", valueDescription = nameAlias)
+                        if (description.allProperties[UnicodeProperties.Strings.NAME_ALIAS].value.isNotEmpty()) {
+                            propertyRow(property = UnicodeProperties.Strings.NAME_ALIAS)
+                        }
+                        if (description.allProperties[UnicodeProperties.Strings.EXTENDED_NAME].description != description.name) {
+                            propertyRow(property = UnicodeProperties.Strings.EXTENDED_NAME)
                         }
 
-                        propertyRow(
-                            name = "Added in",
-                            valueDescription = "${description.versionInfoSummary.versionString} " +
-                                    "(${description.versionInfoSummary.versionDateString})",
-                        )
+                        propertyRow(property = UnicodeProperties.Strings.AGE)
 
                         propertySection(name = "Location") {
+                            propertyRow(property = UnicodeProperties.Ints.PLANE)
                             propertyRow(property = UnicodeProperties.Ints.BLOCK)
-                            propertyRow(name = "Plane", valueDescription = description.plane.longName)
                         }
 
                         propertyRow(property = UnicodeProperties.Ints.SCRIPT)
@@ -179,7 +171,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                             propertyRow(property = UnicodeProperties.Doubles.NUMERIC_VALUE)
                         }
 
-                        val variantsMap = sequenceOf(
+                        val mappingProperties = sequenceOf(
                             UnicodeProperties.Strings.LOWERCASE_MAPPING,
                             UnicodeProperties.Strings.SIMPLE_LOWERCASE_MAPPING,
                             UnicodeProperties.Strings.UPPERCASE_MAPPING,
@@ -190,30 +182,24 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                             UnicodeProperties.Strings.SIMPLE_CASE_FOLDING,
                         ).map { property -> property to description.allProperties[property] }
                             .filter { (_, mapping) -> mapping.value != description.stringForm }
+                            .map { (k, _) -> k }
                             .toList()
-                        if (variantsMap.isNotEmpty()) {
+                        if (mappingProperties.isNotEmpty()) {
                             propertySection(name = "Mappings") {
-                                variantsMap.forEach { (property, mapping) ->
-                                    propertyRow(
-                                        name = property.longName,
-                                        codePointDescriptions = mapping.value
-                                            .codePoints().asSequence()
-                                            .map(MinimalCodePointDescription::ofCodePoint)
-                                            .toList()
-                                    )
-                                }
+                                mappingProperties.forEach { property -> propertyRowForCodePoints(property = property) }
                             }
                         }
 
-                        if (description.allProperties[UnicodeProperties.Ints.DECOMPOSITION_TYPE].value != UnicodeDecompositionType.NONE) {
+                        val decompositionProperties = sequenceOf(
+                            UnicodeProperties.Strings.CANONICAL_DECOMPOSITION,
+                            UnicodeProperties.Strings.COMPATIBILITY_DECOMPOSITION,
+                        ).map { property -> property to description.allProperties[property] }
+                            .filter { (_, mapping) -> mapping.value != description.stringForm }
+                            .map { (k, _) -> k }
+                            .toList()
+                        if (decompositionProperties.isNotEmpty()) {
                             propertySection(name = "Decomposition") {
-                                propertyRow(property = UnicodeProperties.Ints.DECOMPOSITION_TYPE)
-                                description.decompositionCodePoints?.let { descriptions ->
-                                    propertyRow(name = "Canonical", codePointDescriptions = descriptions)
-                                }
-                                description.compatibilityDecompositionCodePoints?.let { descriptions ->
-                                    propertyRow(name = "Compatibility", codePointDescriptions = descriptions)
-                                }
+                                decompositionProperties.forEach { property -> propertyRowForCodePoints(property = property) }
                             }
                         }
 
@@ -222,8 +208,19 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         propertySection(name = "Bidirectional") {
                             propertyRow(property = UnicodeProperties.Ints.BIDI_CLASS)
                             propertyRow(property = UnicodeProperties.Booleans.BIDI_MIRRORED)
-                            propertyRow(property = UnicodeProperties.Strings.BIDI_MIRRORING_GLYPH)
-                            propertyRow(property = UnicodeProperties.Strings.BIDI_PAIRED_BRACKET)
+
+                            val bidiMappingProperties = sequenceOf(
+                                UnicodeProperties.Strings.BIDI_MIRRORING_GLYPH,
+                                UnicodeProperties.Strings.BIDI_PAIRED_BRACKET,
+                            ).map { property -> property to description.allProperties[property] }
+                                .filter { (_, mapping) -> mapping.value != description.stringForm }
+                                .map { (k, _) -> k }
+                                .toList()
+                            if (bidiMappingProperties.isNotEmpty()) {
+                                propertySection(name = "Decomposition") {
+                                    bidiMappingProperties.forEach { property -> propertyRowForCodePoints(property = property) }
+                                }
+                            }
                         }
 
                         propertySection(name = "Breaking") {

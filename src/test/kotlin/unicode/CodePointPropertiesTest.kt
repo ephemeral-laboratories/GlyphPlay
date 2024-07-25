@@ -2,6 +2,29 @@ package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.util.VersionInfo
 import garden.ephemeral.glyphplay.search2.CodePointProperties
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeBidiPairedBracketType
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeBlock
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeCanonicalCombiningClass
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeCharacterCategory
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeCharacterDirection
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeDecompositionType
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeEastAsianWidth
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeGraphemeClusterBreak
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeHangulSyllableType
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeIdentifierStatus
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeIdentifierType
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeIndicPositionalCategory
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeIndicSyllabicCategory
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeJoiningGroup
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeJoiningType
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeLineBreak
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeNumericType
+import garden.ephemeral.glyphplay.unicode.enums.UnicodePlane
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeQuickCheckResult
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeScript
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeSentenceBreak
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeVerticalOrientation
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeWordBreak
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.maps.shouldHaveSize
@@ -14,7 +37,7 @@ class CodePointPropertiesTest : FreeSpec({
             UnicodePropertyValue(value = value, description = description)
 
         "should contain all expected properties" {
-            map.shouldHaveSize(117)
+            map.shouldHaveSize(122)
             map.shouldContainExactly(
                 mapOf(
                     // Booleans
@@ -187,22 +210,37 @@ class CodePointPropertiesTest : FreeSpec({
                         value = UnicodeIdentifierStatus.ALLOWED,
                         description = "Allowed",
                     ),
+                    UnicodeProperties.Ints.PLANE to value(
+                        value = UnicodePlane.BASIC_MULTILINGUAL_PLANE,
+                        description = "Basic Multilingual Plane",
+                    ),
                     // Masks
                     UnicodeProperties.Masks.GENERAL_CATEGORY_MASK to value(
                         value = setOf(UnicodeCharacterCategory.OTHER_LETTER),
-                        description = "Other Letter"
+                        description = "Other Letter",
                     ),
                     // Doubles
                     UnicodeProperties.Doubles.NUMERIC_VALUE to value(
                         value = -1.23456789E8,
-                        description = "No Numeric Value"
+                        description = "No Numeric Value",
                     ),
                     // Strings
-                    UnicodeProperties.Strings.AGE to value(VersionInfo.UNICODE_1_1_0, "1.1"),
+                    UnicodeProperties.Strings.AGE to value(
+                        value = VersionInfo.UNICODE_1_1_0,
+                        description = "1.1.0 (June 1993)",
+                    ),
                     UnicodeProperties.Strings.BIDI_MIRRORING_GLYPH to value("ば"),
                     UnicodeProperties.Strings.CASE_FOLDING to value("ば"),
                     UnicodeProperties.Strings.LOWERCASE_MAPPING to value("ば"),
-                    UnicodeProperties.Strings.NAME to value("HIRAGANA LETTER BA"),
+                    UnicodeProperties.Strings.NAME to value(
+                        value = "HIRAGANA LETTER BA",
+                        description = "Hiragana Letter Ba",
+                    ),
+                    UnicodeProperties.Strings.NAME_ALIAS to value(""),
+                    UnicodeProperties.Strings.EXTENDED_NAME to value(
+                        value = "HIRAGANA LETTER BA",
+                        description = "Hiragana Letter Ba",
+                    ),
                     UnicodeProperties.Strings.SIMPLE_CASE_FOLDING to value("ば"),
                     UnicodeProperties.Strings.SIMPLE_LOWERCASE_MAPPING to value("ば"),
                     UnicodeProperties.Strings.SIMPLE_TITLECASE_MAPPING to value("ば"),
@@ -210,13 +248,16 @@ class CodePointPropertiesTest : FreeSpec({
                     UnicodeProperties.Strings.TITLECASE_MAPPING to value("ば"),
                     UnicodeProperties.Strings.UPPERCASE_MAPPING to value("ば"),
                     UnicodeProperties.Strings.BIDI_PAIRED_BRACKET to value("ば"),
+                    UnicodeProperties.Strings.CANONICAL_DECOMPOSITION to value("は\u3099"),
+                    UnicodeProperties.Strings.COMPATIBILITY_DECOMPOSITION to value("は\u3099"),
                     // Other
                     UnicodeProperties.Other.SCRIPT_EXTENSIONS to value(
                         value = setOf(UnicodeScript.HIRAGANA),
-                        description = "Hiragana"),
+                        description = "Hiragana",
+                    ),
                     UnicodeProperties.Other.IDENTIFIER_TYPE to value(
                         value = setOf(UnicodeIdentifierType.RECOMMENDED),
-                        description = "Recommended"
+                        description = "Recommended",
                     ),
                 )
             )

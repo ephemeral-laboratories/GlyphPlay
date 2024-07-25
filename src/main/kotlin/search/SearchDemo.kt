@@ -10,11 +10,8 @@ fun main() {
     val indexTime = measureTime {
         (UCharacter.MIN_CODE_POINT..UCharacter.MAX_CODE_POINT)
             .asSequence()
-            .filter { UCharacter.isValidCodePoint(it) }
-            .filter { UCharacter.isDefined(it) }
-            .forEach { codePoint ->
-                index.index(codePoint)
-            }
+            .filter { codePoint -> UCharacter.isDefined(codePoint) }
+            .forEach { codePoint -> index.index(codePoint) }
     }
 
     println("Index time: $indexTime")

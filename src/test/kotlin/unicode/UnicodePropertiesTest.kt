@@ -1,7 +1,7 @@
 package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UProperty
-import garden.ephemeral.glyphplay.unicode.UnicodeProperties
+import garden.ephemeral.glyphplay.unicode.enums.IcuUnicodeValueEnum
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
 import io.kotest.inspectors.shouldForAll
@@ -9,6 +9,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.ints.shouldBeBetween
 import io.kotest.matchers.sequences.shouldContainExactly
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldNotBeEmpty
 import kotlin.reflect.KProperty
 
 class UnicodePropertiesTest : FreeSpec({
@@ -29,9 +30,15 @@ class UnicodePropertiesTest : FreeSpec({
             all.shouldHaveSize(expectedCount)
         }
 
-        "should contain properties where the values are within the expected bounds" {
-            all.shouldForAll { property ->
+        "should return properties where the ICU value matches the one passed in if present" {
+            all.filterIsInstance<IcuUnicodeValueEnum<*>>().shouldForAll { property ->
                 property.icuValue.shouldBeBetween(expectedStart, expectedLimit)
+            }
+        }
+
+        "should return properties where the long name is set" {
+            all.shouldForAll { property ->
+                property.longName.shouldNotBeEmpty()
             }
         }
     }
@@ -48,7 +55,7 @@ class UnicodePropertiesTest : FreeSpec({
     "Ints" - {
         @Suppress("DEPRECATION")
         propertyCollectionSpecs(
-            expectedStart = 0x1000, expectedCount = 26, expectedLimit = 0x101A,
+            expectedStart = 0x1000, expectedCount = 27, expectedLimit = 0x101A,
             icuStartVal = UProperty::INT_START, icuLimitVal = UProperty::INT_LIMIT,
             collection = UnicodeProperties.Ints
         )
@@ -75,7 +82,7 @@ class UnicodePropertiesTest : FreeSpec({
     "Strings" - {
         @Suppress("DEPRECATION")
         propertyCollectionSpecs(
-            expectedStart = 0x4000, expectedCount = 12, expectedLimit = 0x400E,
+            expectedStart = 0x4000, expectedCount = 16, expectedLimit = 0x400E,
             icuStartVal = UProperty::STRING_START, icuLimitVal = UProperty::STRING_LIMIT,
             collection = UnicodeProperties.Strings
         )

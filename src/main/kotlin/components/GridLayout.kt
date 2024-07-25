@@ -31,11 +31,8 @@ class GridLayoutScope(
             sectionIndent = sectionIndent,
             currentIndent = currentIndent + sectionIndent,
         )
-        println("Calling nestedScope.nestedContent()")
         nestedScope.nestedContent()
-        println(" Got back, nested content added rows: ${nestedScope.rows}")
         if (nestedScope.rows.isNotEmpty()) {
-            println("Calling row{} for header content")
             row {
                 headerContent()
             }

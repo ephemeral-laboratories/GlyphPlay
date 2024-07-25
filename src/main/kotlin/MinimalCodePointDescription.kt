@@ -3,6 +3,7 @@ package garden.ephemeral.glyphplay
 import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.lang.UCharacterCategory
 import com.ibm.icu.lang.UProperty
+import garden.ephemeral.glyphplay.unicode.UnicodeProperties
 
 /**
  * More cut down version of [CodePointDescription] for the times when you only need
@@ -11,6 +12,7 @@ import com.ibm.icu.lang.UProperty
 open class MinimalCodePointDescription(val codePoint: Int) {
     val uPlusForm = codePoint.toUPlusString()
     val stringForm = codePoint.codePointToString()
+
     val name = formatCodePointName(codePoint)
 
     /**
@@ -33,7 +35,8 @@ open class MinimalCodePointDescription(val codePoint: Int) {
         fun ofCodePoint(codePoint: Int) = MinimalCodePointDescription(codePoint)
 
         private fun formatCodePointName(codePoint: Int): String {
-            return UCharacter.getName(codePoint)?.prettyPrintName()
+            return UnicodeProperties.Strings.NAME.valueForCodePoint(codePoint).value
+                ?.prettyPrintName()
                 ?: "(Name Missing)"
         }
     }
