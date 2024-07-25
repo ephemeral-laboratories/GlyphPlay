@@ -7,8 +7,6 @@ import com.ibm.icu.text.Normalizer2
 
 internal fun Int.codePointToString() = String(intArrayOf(this), 0, 1)
 
-internal fun Int.toUPlusString() = "U+%04X".format(this)
-
 internal fun String.prettyPrintName() = replace("_", " ").toTitleCase()
 
 internal fun String.toTitleCase(): String = UCharacter.toTitleCase(this, BreakIterator.getWordInstance())
