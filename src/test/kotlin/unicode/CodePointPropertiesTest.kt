@@ -31,14 +31,14 @@ import io.kotest.matchers.maps.shouldHaveSize
 
 class CodePointPropertiesTest : FreeSpec({
     "CodePointProperties" - {
-        val map = CodePointProperties.ofCodePoint("ば".codePointAt(0)).map
+        val properties = CodePointProperties.ofCodePoint("ば".codePointAt(0)).storage
 
         fun value(value: Any, description: String = value.toString()) =
             UnicodePropertyValue(value = value, description = description)
 
         "should contain all expected properties" {
-            map.shouldHaveSize(122)
-            map.shouldContainExactly(
+            properties.shouldHaveSize(122)
+            properties.shouldContainExactly(
                 mapOf(
                     // Booleans
                     UnicodeProperties.Booleans.NON_CHARACTER_CODE_POINT to value(false, "No"),

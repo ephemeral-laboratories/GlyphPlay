@@ -6,17 +6,15 @@ import unicode.UnicodeProperty
 
 /**
  * Holder for properties for a single code point.
+ * When initially constructed, only the minimal properties are initialised.
+ * When the first property is fetched via [get], the map is lazily populated.
  *
  * @property codePoint the code point.
  */
-class CodePointProperties private constructor(private val codePoint: Int) {
-    /**
-     * A map of all property values.
-     */
-    val map = UnicodeProperties.all()
-        .map { property -> property to property.valueForCodePoint(codePoint) }
-        .toMap()
-
+class CodePointProperties private constructor(
+    private val codePoint: Int,
+    internal val storage: Map<UnicodeProperty<*>, UnicodePropertyValue<*>>,
+) {
     /**
      * Convenience method to treat this object itself as a map.
      *
@@ -25,7 +23,7 @@ class CodePointProperties private constructor(private val codePoint: Int) {
      */
     // Trusting the way we populated the map in the first place.
     @Suppress("UNCHECKED_CAST")
-    operator fun <T> get(property: UnicodeProperty<T>) = map[property] as UnicodePropertyValue<T>
+    operator fun <T> get(property: UnicodeProperty<T>) = storage[property] as UnicodePropertyValue<T>
 
     // We could provide convenience getters too, but it's going to get messy fast. Example:
     // val isAlphabetic: Boolean get() = properties.get(UnicodeProperties.Booleans.ALPHABETIC).value as Boolean
@@ -37,6 +35,11 @@ class CodePointProperties private constructor(private val codePoint: Int) {
          * @param codePoint the code point to look up.
          * @return the code point properties.
          */
-        fun ofCodePoint(codePoint: Int) = CodePointProperties(codePoint)
+        fun ofCodePoint(codePoint: Int): CodePointProperties {
+            val storage = UnicodeProperties.all()
+                .map { property -> property to property.valueForCodePoint(codePoint) }
+                .toMap()
+            return CodePointProperties(codePoint, storage)
+        }
     }
 }

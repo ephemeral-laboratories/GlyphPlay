@@ -1,7 +1,7 @@
 package garden.ephemeral.glyphplay.search
 
 import com.ibm.icu.lang.UCharacter
-import garden.ephemeral.glyphplay.MinimalCodePointDescription
+import garden.ephemeral.glyphplay.unicode.CodePointDescription
 import kotlin.time.measureTime
 
 fun main() {
@@ -19,7 +19,7 @@ fun main() {
     println("Results:")
     val searchTime = measureTime {
         index.search("smiling").forEach { result ->
-            val description = MinimalCodePointDescription.ofCodePoint(result)
+            val description = CodePointDescription.ofCodePoint(result)
             println("  ${description.stringForm} ${description.uPlusForm} ${description.name}")
         }
     }

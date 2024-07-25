@@ -26,13 +26,14 @@ import garden.ephemeral.glyphplay.components.GridLayout
 import garden.ephemeral.glyphplay.components.GridLayoutScope
 import garden.ephemeral.glyphplay.components.rememberFlashBoxState
 import garden.ephemeral.glyphplay.theme.AppTheme
+import garden.ephemeral.glyphplay.unicode.CodePointDescription
 import garden.ephemeral.glyphplay.unicode.UnicodeProperties
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeNumericType
 import unicode.UnicodeProperty
 import kotlin.streams.asSequence
 
 @Composable
-private fun ClickableCodePoint(description: MinimalCodePointDescription, onCodePointLinkClicked: (Int) -> Unit) {
+private fun ClickableCodePoint(description: CodePointDescription, onCodePointLinkClicked: (Int) -> Unit) {
     Text(
         text = "${description.stringFormForUI} (${description.name})",
         modifier = Modifier.clickable { onCodePointLinkClicked(description.codePoint) }
@@ -124,7 +125,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                          */
                         fun <T> GridLayoutScope.propertyRow(property: UnicodeProperty<T>) {
                             propertyRow(name = property.longName) {
-                                Text(text = description.allProperties[property].description)
+                                Text(text = description[property].description)
                             }
                         }
 
@@ -136,9 +137,9 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         fun GridLayoutScope.propertyRowForCodePoints(property: UnicodeProperty<String>) {
                             propertyRow(name = property.longName) {
                                 Column {
-                                    description.allProperties[property].value
+                                    description[property].value
                                         .codePoints().asSequence()
-                                        .map(MinimalCodePointDescription::ofCodePoint)
+                                        .map(CodePointDescription::ofCodePoint)
                                         .toList()
                                         .forEach { description ->
                                             ClickableCodePoint(
@@ -150,10 +151,10 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                             }
                         }
 
-                        if (description.allProperties[UnicodeProperties.Strings.NAME_ALIAS].value.isNotEmpty()) {
+                        if (description[UnicodeProperties.Strings.NAME_ALIAS].value.isNotEmpty()) {
                             propertyRow(property = UnicodeProperties.Strings.NAME_ALIAS)
                         }
-                        if (description.allProperties[UnicodeProperties.Strings.EXTENDED_NAME].description != description.name) {
+                        if (description[UnicodeProperties.Strings.EXTENDED_NAME].description != description.name) {
                             propertyRow(property = UnicodeProperties.Strings.EXTENDED_NAME)
                         }
 
@@ -167,7 +168,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         propertyRow(property = UnicodeProperties.Ints.SCRIPT)
                         propertyRow(property = UnicodeProperties.Ints.GENERAL_CATEGORY)
 
-                        if (description.allProperties[UnicodeProperties.Ints.NUMERIC_TYPE].value != UnicodeNumericType.NONE) {
+                        if (description[UnicodeProperties.Ints.NUMERIC_TYPE].value != UnicodeNumericType.NONE) {
                             propertyRow(property = UnicodeProperties.Doubles.NUMERIC_VALUE)
                         }
 
@@ -180,7 +181,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                             UnicodeProperties.Strings.SIMPLE_TITLECASE_MAPPING,
                             UnicodeProperties.Strings.CASE_FOLDING,
                             UnicodeProperties.Strings.SIMPLE_CASE_FOLDING,
-                        ).map { property -> property to description.allProperties[property] }
+                        ).map { property -> property to description[property] }
                             .filter { (_, mapping) -> mapping.value != description.stringForm }
                             .map { (k, _) -> k }
                             .toList()
@@ -193,7 +194,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         val decompositionProperties = sequenceOf(
                             UnicodeProperties.Strings.CANONICAL_DECOMPOSITION,
                             UnicodeProperties.Strings.COMPATIBILITY_DECOMPOSITION,
-                        ).map { property -> property to description.allProperties[property] }
+                        ).map { property -> property to description[property] }
                             .filter { (_, mapping) -> mapping.value != description.stringForm }
                             .map { (k, _) -> k }
                             .toList()
@@ -212,7 +213,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                             val bidiMappingProperties = sequenceOf(
                                 UnicodeProperties.Strings.BIDI_MIRRORING_GLYPH,
                                 UnicodeProperties.Strings.BIDI_PAIRED_BRACKET,
-                            ).map { property -> property to description.allProperties[property] }
+                            ).map { property -> property to description[property] }
                                 .filter { (_, mapping) -> mapping.value != description.stringForm }
                                 .map { (k, _) -> k }
                                 .toList()

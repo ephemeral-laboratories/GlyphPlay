@@ -1,17 +1,23 @@
-package garden.ephemeral.glyphplay
+package garden.ephemeral.glyphplay.unicode
 
-import garden.ephemeral.glyphplay.unicode.UnicodeProperties
+import garden.ephemeral.glyphplay.codePointToString
+import garden.ephemeral.glyphplay.search2.CodePointProperties
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeCharacterCategory
+import unicode.UnicodeProperty
 
-/**
- * More cut down version of [CodePointDescription] for the times when you only need
- * the minimal information.
- */
-open class MinimalCodePointDescription(val codePoint: Int) {
-    val uPlusForm = codePoint.toUPlusString()
-    val stringForm = codePoint.codePointToString()
+class CodePointDescription private constructor(val codePoint: Int) {
+    /**
+     * Map containing all property values. Or, at least, all the properties which are
+     * retrievable from ICU4J using property IDs.
+     */
+    private val allProperties by lazy { CodePointProperties.ofCodePoint(codePoint) }
+
+    operator fun <T> get(x: UnicodeProperty<T>) = allProperties[x]
 
     val name = UnicodeProperties.Strings.NAME.valueForCodePoint(codePoint).description
+
+    val uPlusForm = codePoint.toUPlusString()
+    val stringForm = codePoint.codePointToString()
 
     /**
      * Derived value of string form for presentation in UI.
@@ -35,6 +41,6 @@ open class MinimalCodePointDescription(val codePoint: Int) {
 
         private fun Int.toUPlusString() = "U+%04X".format(this)
 
-        fun ofCodePoint(codePoint: Int) = MinimalCodePointDescription(codePoint)
+        fun ofCodePoint(codePoint: Int) = CodePointDescription(codePoint)
     }
 }

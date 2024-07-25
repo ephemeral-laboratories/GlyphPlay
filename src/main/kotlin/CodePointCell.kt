@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import garden.ephemeral.glyphplay.fonts.NotoSans
+import garden.ephemeral.glyphplay.unicode.CodePointDescription
 
 @Composable
 fun CodePointCell(
