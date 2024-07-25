@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -24,8 +23,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import garden.ephemeral.glyphplay.components.FlashBox
 import garden.ephemeral.glyphplay.components.GridLayout
+import garden.ephemeral.glyphplay.components.GridLayoutScope
 import garden.ephemeral.glyphplay.components.rememberFlashBoxState
 import garden.ephemeral.glyphplay.theme.AppTheme
+import garden.ephemeral.glyphplay.unicode.UnicodeDecompositionType
 import garden.ephemeral.glyphplay.unicode.UnicodeNumericType
 import garden.ephemeral.glyphplay.unicode.UnicodeProperties
 import unicode.UnicodeProperty
@@ -92,36 +93,83 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                     Text(text = description.name, style = MaterialTheme.typography.displayMedium)
 
                     GridLayout(columnCount = 2) {
+                        @Composable
+                        fun PropertyLabel(name: String) {
+                            Text(text = "$name:", fontWeight = FontWeight.Bold)
+                        }
+
+                        /**
+                         * Shortcut for adding a section with a title
+                         */
+                        fun GridLayoutScope.propertySection(name: String, content: GridLayoutScope.() -> Unit) {
+                            section(headerContent = { PropertyLabel(name = name) }) {
+                                content()
+                            }
+                        }
+
+                        /**
+                         * Shortcut for adding a conventional property row.
+                         * Useful for the advanced case where you want to control what renders in the description
+                         * column.
+                         */
+                        fun GridLayoutScope.propertyRow(name: String, valueContent: @Composable () -> Unit) {
+                            row {
+                                PropertyLabel(name = name)
+                                valueContent()
+                            }
+                        }
+
+                        /**
+                         * Shortcut for adding a conventional property row.
+                         * Useful for the case where you don't have a standard Unicode property.
+                         */
+                        fun GridLayoutScope.propertyRow(name: String, valueDescription: String) {
+                            propertyRow(name) {
+                                Text(text = valueDescription)
+                            }
+                        }
+
+                        /**
+                         * Shortcut for adding a conventional property row.
+                         * Useful for the case where you don't have a standard Unicode property.
+                         */
+                        fun GridLayoutScope.propertyRow(name: String, codePointDescriptions: List<MinimalCodePointDescription>) {
+                            propertyRow(name) {
+                                Column {
+                                    codePointDescriptions.forEach { description ->
+                                        ClickableCodePoint(
+                                            description = description,
+                                            onCodePointLinkClicked = onCodePointLinkClicked,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        /**
+                         * Shortcut for adding a conventional property row displaying the value of a
+                         * Unicode property.
+                         */
+                        fun <T> GridLayoutScope.propertyRow(property: UnicodeProperty<T>) {
+                            propertyRow(
+                                name = property.longName,
+                                valueDescription = description.allProperties[property].description,
+                            )
+                        }
+
                         description.nameAlias?.let { nameAlias ->
-                            row {
-                                Text(text = "Alias:", fontWeight = FontWeight.Bold)
-                                Text(text = nameAlias)
-                            }
+                            propertyRow(name = "Alias", valueDescription = nameAlias)
                         }
 
-                        val indent = Modifier.padding(start = 8.dp)
+                        propertyRow(
+                            name = "Added in",
+                            valueDescription = "${description.versionInfoSummary.versionString} " +
+                                    "(${description.versionInfoSummary.versionDateString})",
+                        )
 
-                        fun <T> propertyRow(property: UnicodeProperty<T>, indent: Boolean = false) {
-                            val propertyValue = description.allProperties[property]
-                            row {
-                                val labelModifier: Modifier = if (indent) Modifier.padding(start = 8.dp) else Modifier
-                                Text(text = "${property.longName}:", fontWeight = FontWeight.Bold, modifier = labelModifier)
-                                Text(text = propertyValue.description)
-                            }
-                        }
-
-                        row {
-                            Text(text = "Added in:", fontWeight = FontWeight.Bold)
-                            Text(text = "${description.versionInfoSummary.versionString} (${description.versionInfoSummary.versionDateString})")
-                        }
-
-                        row {
-                            Text(text = "Location:", fontWeight = FontWeight.Bold)
-                        }
-                        propertyRow(property = UnicodeProperties.Ints.BLOCK, indent = true)
-                        row {
-                            Text(text = "Plane:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.plane.longName)
+                        propertySection(name = "Location") {
+                            propertyRow(property = UnicodeProperties.Ints.BLOCK)
+                            propertyRow(name = "Plane", valueDescription = description.plane.longName)
                         }
 
                         propertyRow(property = UnicodeProperties.Ints.SCRIPT)
@@ -144,79 +192,46 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                             .filter { (_, mapping) -> mapping.value != description.stringForm }
                             .toList()
                         if (variantsMap.isNotEmpty()) {
-                            row {
-                                Text(text = "Mappings:", fontWeight = FontWeight.Bold)
-                            }
-                            variantsMap.forEach { (property, mapping) ->
-                                row {
-                                    Text(
-                                        text = "${property.longName}:",
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = indent
-                                    )
-                                    Column {
-                                        mapping.value
+                            propertySection(name = "Mappings") {
+                                variantsMap.forEach { (property, mapping) ->
+                                    propertyRow(
+                                        name = property.longName,
+                                        codePointDescriptions = mapping.value
                                             .codePoints().asSequence()
                                             .map(MinimalCodePointDescription::ofCodePoint)
-                                            .toList().forEach { mappingDescription ->
-                                                ClickableCodePoint(
-                                                    description = mappingDescription,
-                                                    onCodePointLinkClicked = onCodePointLinkClicked,
-                                                )
-                                            }
-                                    }
+                                            .toList()
+                                    )
                                 }
                             }
                         }
 
-                        description.decompositionCodePoints?.let { decompositionCodePoints ->
-                            row {
-                                Text("Decomposition:", fontWeight = FontWeight.Bold)
-                            }
-                            propertyRow(property = UnicodeProperties.Ints.DECOMPOSITION_TYPE, indent = true)
-                            row {
-                                Text(text = "Canonical:", fontWeight = FontWeight.Bold, modifier = indent)
-                                Column {
-                                    decompositionCodePoints.forEach { codePoint ->
-                                        ClickableCodePoint(
-                                            description = codePoint,
-                                            onCodePointLinkClicked = onCodePointLinkClicked
-                                        )
-                                    }
+                        if (description.allProperties[UnicodeProperties.Ints.DECOMPOSITION_TYPE].value != UnicodeDecompositionType.NONE) {
+                            propertySection(name = "Decomposition") {
+                                propertyRow(property = UnicodeProperties.Ints.DECOMPOSITION_TYPE)
+                                description.decompositionCodePoints?.let { descriptions ->
+                                    propertyRow(name = "Canonical", codePointDescriptions = descriptions)
                                 }
-                            }
-                            description.compatibilityDecompositionCodePoints?.let { compatibilityDecompositionCodePoints ->
-                                row {
-                                    Text(text = "Compatibility:", fontWeight = FontWeight.Bold, modifier = indent)
-                                    Column {
-                                        compatibilityDecompositionCodePoints.forEach { codePoint ->
-                                            ClickableCodePoint(
-                                                description = codePoint,
-                                                onCodePointLinkClicked = onCodePointLinkClicked
-                                            )
-                                        }
-                                    }
+                                description.compatibilityDecompositionCodePoints?.let { descriptions ->
+                                    propertyRow(name = "Compatibility", codePointDescriptions = descriptions)
                                 }
                             }
                         }
 
                         propertyRow(property = UnicodeProperties.Ints.EAST_ASIAN_WIDTH)
 
-                        row {
-                            Text(text = "Bidirectional:", fontWeight = FontWeight.Bold)
+                        propertySection(name = "Bidirectional") {
+                            propertyRow(property = UnicodeProperties.Ints.BIDI_CLASS)
+                            propertyRow(property = UnicodeProperties.Booleans.BIDI_MIRRORED)
+                            propertyRow(property = UnicodeProperties.Strings.BIDI_MIRRORING_GLYPH)
+                            propertyRow(property = UnicodeProperties.Strings.BIDI_PAIRED_BRACKET)
                         }
-                        propertyRow(property = UnicodeProperties.Ints.BIDI_CLASS, indent = true)
-                        propertyRow(property = UnicodeProperties.Booleans.BIDI_MIRRORED, indent = true)
-                        propertyRow(property = UnicodeProperties.Strings.BIDI_MIRRORING_GLYPH, indent = true)
-                        propertyRow(property = UnicodeProperties.Strings.BIDI_PAIRED_BRACKET, indent = true)
 
-                        row {
-                            Text(text = "Breaking:", fontWeight = FontWeight.Bold)
+                        propertySection(name = "Breaking") {
+                            propertyRow(property = UnicodeProperties.Ints.LINE_BREAK)
+                            propertyRow(property = UnicodeProperties.Ints.SENTENCE_BREAK)
+                            propertyRow(property = UnicodeProperties.Ints.WORD_BREAK)
+                            propertyRow(property = UnicodeProperties.Ints.GRAPHEME_CLUSTER_BREAK)
                         }
-                        propertyRow(property = UnicodeProperties.Ints.LINE_BREAK, indent = true)
-                        propertyRow(property = UnicodeProperties.Ints.SENTENCE_BREAK, indent = true)
-                        propertyRow(property = UnicodeProperties.Ints.WORD_BREAK, indent = true)
-                        propertyRow(property = UnicodeProperties.Ints.GRAPHEME_CLUSTER_BREAK, indent = true)
                     }
                 }
             }
