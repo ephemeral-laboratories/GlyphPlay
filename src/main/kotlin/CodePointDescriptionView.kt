@@ -26,6 +26,10 @@ import garden.ephemeral.glyphplay.components.FlashBox
 import garden.ephemeral.glyphplay.components.GridLayout
 import garden.ephemeral.glyphplay.components.rememberFlashBoxState
 import garden.ephemeral.glyphplay.theme.AppTheme
+import garden.ephemeral.glyphplay.unicode.UnicodeNumericType
+import garden.ephemeral.glyphplay.unicode.UnicodeProperties
+import unicode.UnicodeProperty
+import kotlin.streams.asSequence
 
 @Composable
 private fun ClickableCodePoint(description: MinimalCodePointDescription, onCodePointLinkClicked: (Int) -> Unit) {
@@ -96,63 +100,71 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         }
 
                         val indent = Modifier.padding(start = 8.dp)
+
+                        fun <T> propertyRow(property: UnicodeProperty<T>, indent: Boolean = false) {
+                            val propertyValue = description.allProperties[property]
+                            row {
+                                val labelModifier: Modifier = if (indent) Modifier.padding(start = 8.dp) else Modifier
+                                Text(text = "${property.longName}:", fontWeight = FontWeight.Bold, modifier = labelModifier)
+                                Text(text = propertyValue.description)
+                            }
+                        }
+
                         row {
                             Text(text = "Added in:", fontWeight = FontWeight.Bold)
                             Text(text = "${description.versionInfoSummary.versionString} (${description.versionInfoSummary.versionDateString})")
                         }
+
                         row {
                             Text(text = "Location:", fontWeight = FontWeight.Bold)
                         }
-                        row {
-                            Text(text = "Block:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.block.description)
-                        }
+                        propertyRow(property = UnicodeProperties.Ints.BLOCK, indent = true)
                         row {
                             Text(text = "Plane:", fontWeight = FontWeight.Bold, modifier = indent)
                             Text(text = description.plane.longName)
                         }
-                        row {
-                            Text(text = "Script:", fontWeight = FontWeight.Bold)
-                            Text(text = description.script.description)
-                        }
-                        row {
-                            Text(text = "Category:", fontWeight = FontWeight.Bold)
-                            Text(text = description.characterCategory.description)
+
+                        propertyRow(property = UnicodeProperties.Ints.SCRIPT)
+                        propertyRow(property = UnicodeProperties.Ints.GENERAL_CATEGORY)
+
+                        if (description.allProperties[UnicodeProperties.Ints.NUMERIC_TYPE].value != UnicodeNumericType.NONE) {
+                            propertyRow(property = UnicodeProperties.Doubles.NUMERIC_VALUE)
                         }
 
-                        if (
-                            description.lowerCaseCodePoint != null ||
-                            description.upperCaseCodePoint != null ||
-                            description.titleCaseCodePoint != null
-                        ) {
+                        val variantsMap = sequenceOf(
+                            UnicodeProperties.Strings.LOWERCASE_MAPPING,
+                            UnicodeProperties.Strings.SIMPLE_LOWERCASE_MAPPING,
+                            UnicodeProperties.Strings.UPPERCASE_MAPPING,
+                            UnicodeProperties.Strings.SIMPLE_UPPERCASE_MAPPING,
+                            UnicodeProperties.Strings.TITLECASE_MAPPING,
+                            UnicodeProperties.Strings.SIMPLE_TITLECASE_MAPPING,
+                            UnicodeProperties.Strings.CASE_FOLDING,
+                            UnicodeProperties.Strings.SIMPLE_CASE_FOLDING,
+                        ).map { property -> property to description.allProperties[property] }
+                            .filter { (_, mapping) -> mapping.value != description.stringForm }
+                            .toList()
+                        if (variantsMap.isNotEmpty()) {
                             row {
-                                Text(text = "Variants:", fontWeight = FontWeight.Bold)
+                                Text(text = "Mappings:", fontWeight = FontWeight.Bold)
                             }
-                            description.lowerCaseCodePoint?.let { lowerCaseCodePoint ->
+                            variantsMap.forEach { (property, mapping) ->
                                 row {
-                                    Text(text = "Lowercase:", fontWeight = FontWeight.Bold, modifier = indent)
-                                    ClickableCodePoint(
-                                        description = lowerCaseCodePoint,
-                                        onCodePointLinkClicked = onCodePointLinkClicked
+                                    Text(
+                                        text = "${property.longName}:",
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = indent
                                     )
-                                }
-                            }
-                            description.upperCaseCodePoint?.let { upperCaseCodePoint ->
-                                row {
-                                    Text(text = "Uppercase:", fontWeight = FontWeight.Bold, modifier = indent)
-                                    ClickableCodePoint(
-                                        description = upperCaseCodePoint,
-                                        onCodePointLinkClicked = onCodePointLinkClicked
-                                    )
-                                }
-                            }
-                            description.titleCaseCodePoint?.let { titleCaseCodePoint ->
-                                row {
-                                    Text(text = "Titlecase:", fontWeight = FontWeight.Bold, modifier = indent)
-                                    ClickableCodePoint(
-                                        description = titleCaseCodePoint,
-                                        onCodePointLinkClicked = onCodePointLinkClicked
-                                    )
+                                    Column {
+                                        mapping.value
+                                            .codePoints().asSequence()
+                                            .map(MinimalCodePointDescription::ofCodePoint)
+                                            .toList().forEach { mappingDescription ->
+                                                ClickableCodePoint(
+                                                    description = mappingDescription,
+                                                    onCodePointLinkClicked = onCodePointLinkClicked,
+                                                )
+                                            }
+                                    }
                                 }
                             }
                         }
@@ -161,10 +173,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                             row {
                                 Text("Decomposition:", fontWeight = FontWeight.Bold)
                             }
-                            row {
-                                Text(text = "Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                                Text(text = description.decompositionType)
-                            }
+                            propertyRow(property = UnicodeProperties.Ints.DECOMPOSITION_TYPE, indent = true)
                             row {
                                 Text(text = "Canonical:", fontWeight = FontWeight.Bold, modifier = indent)
                                 Column {
@@ -191,42 +200,23 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                             }
                         }
 
-                        row {
-                            Text(text = "East Asian Width:", fontWeight = FontWeight.Bold)
-                            Text(text = description.eastAsianWidth.description)
-                        }
+                        propertyRow(property = UnicodeProperties.Ints.EAST_ASIAN_WIDTH)
 
                         row {
                             Text(text = "Bidirectional:", fontWeight = FontWeight.Bold)
                         }
-                        row {
-                            Text(text = "Direction:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.bidiDirection.description)
-                        }
-                        row {
-                            Text(text = "Mirrored:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = if (description.isMirrored) "Yes" else "No")
-                        }
+                        propertyRow(property = UnicodeProperties.Ints.BIDI_CLASS, indent = true)
+                        propertyRow(property = UnicodeProperties.Booleans.BIDI_MIRRORED, indent = true)
+                        propertyRow(property = UnicodeProperties.Strings.BIDI_MIRRORING_GLYPH, indent = true)
+                        propertyRow(property = UnicodeProperties.Strings.BIDI_PAIRED_BRACKET, indent = true)
 
                         row {
                             Text(text = "Breaking:", fontWeight = FontWeight.Bold)
                         }
-                        row {
-                            Text(text = "Line Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.lineBreakType.description)
-                        }
-                        row {
-                            Text(text = "Sentence Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.sentenceBreakType.description)
-                        }
-                        row {
-                            Text(text = "Word Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.wordBreakType.description)
-                        }
-                        row {
-                            Text(text = "Grapheme Cluster Break Type:", fontWeight = FontWeight.Bold, modifier = indent)
-                            Text(text = description.graphemeClusterBreakType.description)
-                        }
+                        propertyRow(property = UnicodeProperties.Ints.LINE_BREAK, indent = true)
+                        propertyRow(property = UnicodeProperties.Ints.SENTENCE_BREAK, indent = true)
+                        propertyRow(property = UnicodeProperties.Ints.WORD_BREAK, indent = true)
+                        propertyRow(property = UnicodeProperties.Ints.GRAPHEME_CLUSTER_BREAK, indent = true)
                     }
                 }
             }

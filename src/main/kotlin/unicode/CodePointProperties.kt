@@ -1,6 +1,8 @@
 package garden.ephemeral.glyphplay.search2
 
 import garden.ephemeral.glyphplay.unicode.UnicodeProperties
+import garden.ephemeral.glyphplay.unicode.UnicodePropertyValue
+import unicode.UnicodeProperty
 
 /**
  * Holder for properties for a single code point.
@@ -15,15 +17,26 @@ class CodePointProperties private constructor(private val codePoint: Int) {
         .map { property -> property to property.valueForCodePoint(codePoint) }
         .toMap()
 
+    /**
+     * Convenience method to treat this object itself as a map.
+     *
+     * @param property the property to get.
+     * @return the property value.
+     */
+    // Trusting the way we populated the map in the first place.
+    @Suppress("UNCHECKED_CAST")
+    operator fun <T> get(property: UnicodeProperty<T>) = map[property] as UnicodePropertyValue<T>
+
     // We could provide convenience getters too, but it's going to get messy fast. Example:
     // val isAlphabetic: Boolean get() = properties.get(UnicodeProperties.Booleans.ALPHABETIC).value as Boolean
 
     companion object {
+        /**
+         * Looks up properties for the given code point.
+         *
+         * @param codePoint the code point to look up.
+         * @return the code point properties.
+         */
         fun ofCodePoint(codePoint: Int) = CodePointProperties(codePoint)
     }
-}
-
-fun main() {
-    val map = CodePointProperties.ofCodePoint("ば".codePointAt(0)).map
-    println(map[UnicodeProperties.Ints.CANONICAL_COMBINING_CLASS]!!.description)
 }
