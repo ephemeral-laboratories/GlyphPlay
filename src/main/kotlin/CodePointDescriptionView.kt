@@ -32,6 +32,8 @@ import garden.ephemeral.glyphplay.unicode.enums.UnicodeNumericType
 import unicode.UnicodeProperty
 import kotlin.streams.asSequence
 
+val CodePointDescriptionViewTitleY = 115.dp
+
 @Composable
 private fun ClickableCodePoint(description: CodePointDescription, onCodePointLinkClicked: (Int) -> Unit) {
     Text(
@@ -51,7 +53,6 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            val titleY = 115.dp
             Column {
                 val flashBoxState = rememberFlashBoxState()
                 val clipboardManager = LocalClipboardManager.current
@@ -66,7 +67,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         // XXX: Not using a reference here because somehow using a reference causes the
                         //      incorrect code point to be passed when the view recomposes!
                         onClick = { copyToClipboard() },
-                        modifier = Modifier.debugLineAtY(titleY),
+                        modifier = Modifier.debugLineAtY(CodePointDescriptionViewTitleY),
                     )
                 }
                 ClickableText(
@@ -83,12 +84,12 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
             SelectionContainer {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.debugLineAtY(titleY)
+                    modifier = Modifier.debugLineAtY(CodePointDescriptionViewTitleY)
                 ) {
                     Text(
                         text = description.uPlusForm,
                         style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier.firstBaselineToTop(titleY).debugBorder(),
+                        modifier = Modifier.firstBaselineToTop(CodePointDescriptionViewTitleY).debugBorder(),
                     )
                     Text(text = description.name, style = MaterialTheme.typography.displayMedium)
 
