@@ -2,7 +2,7 @@ package garden.ephemeral.glyphplay
 
 import androidx.compose.foundation.border
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.AlignmentLine
@@ -33,10 +33,11 @@ const val isDebug = false
 internal fun Modifier.debugBorder() = if (isDebug) border(1.dp, Color.Red) else this
 
 internal fun Modifier.debugLineAtY(y: Dp) = if (isDebug) {
-    drawBehind {
+    drawWithContent {
+        drawContent()
+
         val strokeWidth = 1.dp.toPx()
         val yPixels = y.toPx()
-
         drawLine(
             color = Color.Magenta,
             start = Offset(0.0f, yPixels),

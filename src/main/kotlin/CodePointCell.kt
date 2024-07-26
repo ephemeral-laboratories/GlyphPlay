@@ -37,8 +37,6 @@ fun CodePointCell(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val firstBaselineToTop = size * (CodePointDescriptionViewTitleY / 150.dp)
-
     Surface {
         val fontHeight = size * (2.0f / 3.0f)
         val fontSize = with(LocalDensity.current) { fontHeight.toSp() }
@@ -60,7 +58,6 @@ fun CodePointCell(
                         // Yes, we need to force this here as well because some characters like musical notes try to
                         // force the cell to be taller.
                         .requiredSize(size)
-                        .firstBaselineToTop(firstBaselineToTop)
                         .debugBorder(),
                 )
             }

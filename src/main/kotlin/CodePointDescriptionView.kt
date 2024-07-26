@@ -53,7 +53,10 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.debugLineAtY(CodePointDescriptionViewTitleY)
+            ) {
                 val flashBoxState = rememberFlashBoxState()
                 val clipboardManager = LocalClipboardManager.current
                 fun copyToClipboard() {
@@ -67,7 +70,8 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                         // XXX: Not using a reference here because somehow using a reference causes the
                         //      incorrect code point to be passed when the view recomposes!
                         onClick = { copyToClipboard() },
-                        modifier = Modifier.debugLineAtY(CodePointDescriptionViewTitleY),
+                        modifier = Modifier
+                            .firstBaselineToTop(CodePointDescriptionViewTitleY),
                     )
                 }
                 ClickableText(
@@ -89,7 +93,9 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                     Text(
                         text = description.uPlusForm,
                         style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier.firstBaselineToTop(CodePointDescriptionViewTitleY).debugBorder(),
+                        modifier = Modifier
+                            .firstBaselineToTop(CodePointDescriptionViewTitleY)
+                            .debugBorder(),
                     )
                     Text(text = description.name, style = MaterialTheme.typography.displayMedium)
 
