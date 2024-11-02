@@ -49,6 +49,7 @@ object UnicodeProperties {
 
     private fun nameForIcuProperty(icuPropertyId: Int) =
         UCharacter.getPropertyName(icuPropertyId, UProperty.NameChoice.LONG)
+            .prettyPrintName()
 
     private val ENUM_SET_DESCRIBER = { value: Set<UnicodeValueEnum<*>> ->
         value
