@@ -19,7 +19,7 @@ class CodePointProperties private constructor(
      */
     // Trusting the way we populated the map in the first place.
     @Suppress("UNCHECKED_CAST")
-    operator fun <T> get(property: CodePointProperty<T>) = storage[property] as CodePointPropertyValue<T>
+    operator fun <T> get(property: CodePointProperty<T>) = storage[property] as CodePointPropertyValue<T>?
 
     // We could provide convenience getters too, but it's going to get messy fast. Example:
     // val isAlphabetic: Boolean get() = properties.get(UnicodeProperties.Booleans.ALPHABETIC).value as Boolean

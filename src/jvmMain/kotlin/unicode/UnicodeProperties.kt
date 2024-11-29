@@ -35,6 +35,7 @@ import garden.ephemeral.glyphplay.unicode.enums.UnicodeSentenceBreak
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeValueEnum
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeVerticalOrientation
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeWordBreak
+import garden.ephemeral.glyphplay.unicode.unihan.UnihanProperties
 import garden.ephemeral.glyphplay.util.formatToString
 import garden.ephemeral.glyphplay.util.normalize
 import garden.ephemeral.glyphplay.util.prettyPrintName
@@ -172,9 +173,7 @@ import java.util.EnumSet
 object UnicodeProperties {
 
     private val ENUM_SET_DESCRIBER = @Composable { value: Set<UnicodeValueEnum<*>> ->
-        value
-            .map(UnicodeValueEnum<*>::longName)
-            .formatToString()
+        value.map(UnicodeValueEnum<*>::longName).formatToString()
     }
 
     /**
@@ -186,19 +185,20 @@ object UnicodeProperties {
             propertyValueGetter = { codePoint -> UCharacter.getIntPropertyValue(codePoint.value, icuPropertyId) != 0 },
             propertyValueDescriber = @Composable { value: Boolean ->
                 stringResource(if (value) Res.string.value_boolean_yes else Res.string.value_boolean_no)
-            }
-        )
+            })
 
         val ALPHABETIC = icuBooleanProperty(Res.string.name_ALPHABETIC, UProperty.ALPHABETIC)
         val ASCII_HEX_DIGIT = icuBooleanProperty(Res.string.name_ASCII_HEX_DIGIT, UProperty.ASCII_HEX_DIGIT)
         val BIDI_CONTROL = icuBooleanProperty(Res.string.name_BIDI_CONTROL, UProperty.BIDI_CONTROL)
         val BIDI_MIRRORED = icuBooleanProperty(Res.string.name_BIDI_MIRRORED, UProperty.BIDI_MIRRORED)
         val DASH = icuBooleanProperty(Res.string.name_DASH, UProperty.DASH)
-        val DEFAULT_IGNORABLE_CODE_POINT = icuBooleanProperty(Res.string.name_DEFAULT_IGNORABLE_CODE_POINT, UProperty.DEFAULT_IGNORABLE_CODE_POINT)
+        val DEFAULT_IGNORABLE_CODE_POINT =
+            icuBooleanProperty(Res.string.name_DEFAULT_IGNORABLE_CODE_POINT, UProperty.DEFAULT_IGNORABLE_CODE_POINT)
         val DEPRECATED = icuBooleanProperty(Res.string.name_DEPRECATED, UProperty.DEPRECATED)
         val DIACRITIC = icuBooleanProperty(Res.string.name_DIACRITIC, UProperty.DIACRITIC)
         val EXTENDER = icuBooleanProperty(Res.string.name_EXTENDER, UProperty.EXTENDER)
-        val FULL_COMPOSITION_EXCLUSION = icuBooleanProperty(Res.string.name_FULL_COMPOSITION_EXCLUSION, UProperty.FULL_COMPOSITION_EXCLUSION)
+        val FULL_COMPOSITION_EXCLUSION =
+            icuBooleanProperty(Res.string.name_FULL_COMPOSITION_EXCLUSION, UProperty.FULL_COMPOSITION_EXCLUSION)
         val GRAPHEME_BASE = icuBooleanProperty(Res.string.name_GRAPHEME_BASE, UProperty.GRAPHEME_BASE)
         val GRAPHEME_EXTEND = icuBooleanProperty(Res.string.name_GRAPHEME_EXTEND, UProperty.GRAPHEME_EXTEND)
         val GRAPHEME_LINK = icuBooleanProperty(Res.string.name_GRAPHEME_LINK, UProperty.GRAPHEME_LINK)
@@ -208,16 +208,20 @@ object UnicodeProperties {
         val ID_START = icuBooleanProperty(Res.string.name_ID_START, UProperty.ID_START)
         val IDEOGRAPHIC = icuBooleanProperty(Res.string.name_IDEOGRAPHIC, UProperty.IDEOGRAPHIC)
         val IDS_BINARY_OPERATOR = icuBooleanProperty(Res.string.name_IDS_BINARY_OPERATOR, UProperty.IDS_BINARY_OPERATOR)
-        val IDS_TRINARY_OPERATOR = icuBooleanProperty(Res.string.name_IDS_TRINARY_OPERATOR, UProperty.IDS_TRINARY_OPERATOR)
+        val IDS_TRINARY_OPERATOR =
+            icuBooleanProperty(Res.string.name_IDS_TRINARY_OPERATOR, UProperty.IDS_TRINARY_OPERATOR)
         val JOIN_CONTROL = icuBooleanProperty(Res.string.name_JOIN_CONTROL, UProperty.JOIN_CONTROL)
-        val LOGICAL_ORDER_EXCEPTION = icuBooleanProperty(Res.string.name_LOGICAL_ORDER_EXCEPTION, UProperty.LOGICAL_ORDER_EXCEPTION)
+        val LOGICAL_ORDER_EXCEPTION =
+            icuBooleanProperty(Res.string.name_LOGICAL_ORDER_EXCEPTION, UProperty.LOGICAL_ORDER_EXCEPTION)
         val LOWERCASE = icuBooleanProperty(Res.string.name_LOWERCASE, UProperty.LOWERCASE)
         val MATH = icuBooleanProperty(Res.string.name_MATH, UProperty.MATH)
-        val NON_CHARACTER_CODE_POINT = icuBooleanProperty(Res.string.name_NONCHARACTER_CODE_POINT, UProperty.NONCHARACTER_CODE_POINT)
+        val NON_CHARACTER_CODE_POINT =
+            icuBooleanProperty(Res.string.name_NONCHARACTER_CODE_POINT, UProperty.NONCHARACTER_CODE_POINT)
         val QUOTATION_MARK = icuBooleanProperty(Res.string.name_QUOTATION_MARK, UProperty.QUOTATION_MARK)
         val RADICAL = icuBooleanProperty(Res.string.name_RADICAL, UProperty.RADICAL)
         val SOFT_DOTTED = icuBooleanProperty(Res.string.name_SOFT_DOTTED, UProperty.SOFT_DOTTED)
-        val TERMINAL_PUNCTUATION = icuBooleanProperty(Res.string.name_TERMINAL_PUNCTUATION, UProperty.TERMINAL_PUNCTUATION)
+        val TERMINAL_PUNCTUATION =
+            icuBooleanProperty(Res.string.name_TERMINAL_PUNCTUATION, UProperty.TERMINAL_PUNCTUATION)
         val UNIFIED_IDEOGRAPH = icuBooleanProperty(Res.string.name_UNIFIED_IDEOGRAPH, UProperty.UNIFIED_IDEOGRAPH)
         val UPPERCASE = icuBooleanProperty(Res.string.name_UPPERCASE, UProperty.UPPERCASE)
         val WHITE_SPACE = icuBooleanProperty(Res.string.name_WHITE_SPACE, UProperty.WHITE_SPACE)
@@ -240,30 +244,45 @@ object UnicodeProperties {
         val POSIX_XDIGIT = icuBooleanProperty(Res.string.name_POSIX_XDIGIT, UProperty.POSIX_XDIGIT)
         val CASED = icuBooleanProperty(Res.string.name_CASED, UProperty.CASED)
         val CASE_IGNORABLE = icuBooleanProperty(Res.string.name_CASE_IGNORABLE, UProperty.CASE_IGNORABLE)
-        val CHANGES_WHEN_LOWERCASED = icuBooleanProperty(Res.string.name_CHANGES_WHEN_LOWERCASED, UProperty.CHANGES_WHEN_LOWERCASED)
-        val CHANGES_WHEN_UPPERCASED = icuBooleanProperty(Res.string.name_CHANGES_WHEN_UPPERCASED, UProperty.CHANGES_WHEN_UPPERCASED)
-        val CHANGES_WHEN_TITLECASED = icuBooleanProperty(Res.string.name_CHANGES_WHEN_TITLECASED, UProperty.CHANGES_WHEN_TITLECASED)
-        val CHANGES_WHEN_CASEFOLDED = icuBooleanProperty(Res.string.name_CHANGES_WHEN_CASEFOLDED, UProperty.CHANGES_WHEN_CASEFOLDED)
-        val CHANGES_WHEN_CASEMAPPED = icuBooleanProperty(Res.string.name_CHANGES_WHEN_CASEMAPPED, UProperty.CHANGES_WHEN_CASEMAPPED)
-        val CHANGES_WHEN_NFKC_CASEFOLDED = icuBooleanProperty(Res.string.name_CHANGES_WHEN_NFKC_CASEFOLDED, UProperty.CHANGES_WHEN_NFKC_CASEFOLDED)
+        val CHANGES_WHEN_LOWERCASED =
+            icuBooleanProperty(Res.string.name_CHANGES_WHEN_LOWERCASED, UProperty.CHANGES_WHEN_LOWERCASED)
+        val CHANGES_WHEN_UPPERCASED =
+            icuBooleanProperty(Res.string.name_CHANGES_WHEN_UPPERCASED, UProperty.CHANGES_WHEN_UPPERCASED)
+        val CHANGES_WHEN_TITLECASED =
+            icuBooleanProperty(Res.string.name_CHANGES_WHEN_TITLECASED, UProperty.CHANGES_WHEN_TITLECASED)
+        val CHANGES_WHEN_CASEFOLDED =
+            icuBooleanProperty(Res.string.name_CHANGES_WHEN_CASEFOLDED, UProperty.CHANGES_WHEN_CASEFOLDED)
+        val CHANGES_WHEN_CASEMAPPED =
+            icuBooleanProperty(Res.string.name_CHANGES_WHEN_CASEMAPPED, UProperty.CHANGES_WHEN_CASEMAPPED)
+        val CHANGES_WHEN_NFKC_CASEFOLDED =
+            icuBooleanProperty(Res.string.name_CHANGES_WHEN_NFKC_CASEFOLDED, UProperty.CHANGES_WHEN_NFKC_CASEFOLDED)
         val EMOJI = icuBooleanProperty(Res.string.name_EMOJI, UProperty.EMOJI)
         val EMOJI_PRESENTATION = icuBooleanProperty(Res.string.name_EMOJI_PRESENTATION, UProperty.EMOJI_PRESENTATION)
         val EMOJI_MODIFIER = icuBooleanProperty(Res.string.name_EMOJI_MODIFIER, UProperty.EMOJI_MODIFIER)
         val EMOJI_MODIFIER_BASE = icuBooleanProperty(Res.string.name_EMOJI_MODIFIER_BASE, UProperty.EMOJI_MODIFIER_BASE)
         val EMOJI_COMPONENT = icuBooleanProperty(Res.string.name_EMOJI_COMPONENT, UProperty.EMOJI_COMPONENT)
         val REGIONAL_INDICATOR = icuBooleanProperty(Res.string.name_REGIONAL_INDICATOR, UProperty.REGIONAL_INDICATOR)
-        val PREPENDED_CONCATENATION_MARK = icuBooleanProperty(Res.string.name_PREPENDED_CONCATENATION_MARK, UProperty.PREPENDED_CONCATENATION_MARK)
-        val EXTENDED_PICTOGRAPHIC = icuBooleanProperty(Res.string.name_EXTENDED_PICTOGRAPHIC, UProperty.EXTENDED_PICTOGRAPHIC)
+        val PREPENDED_CONCATENATION_MARK =
+            icuBooleanProperty(Res.string.name_PREPENDED_CONCATENATION_MARK, UProperty.PREPENDED_CONCATENATION_MARK)
+        val EXTENDED_PICTOGRAPHIC =
+            icuBooleanProperty(Res.string.name_EXTENDED_PICTOGRAPHIC, UProperty.EXTENDED_PICTOGRAPHIC)
         val BASIC_EMOJI = icuBooleanProperty(Res.string.name_BASIC_EMOJI, UProperty.BASIC_EMOJI)
-        val EMOJI_KEYCAP_SEQUENCE = icuBooleanProperty(Res.string.name_EMOJI_KEYCAP_SEQUENCE, UProperty.EMOJI_KEYCAP_SEQUENCE)
-        val RGI_EMOJI_MODIFIER_SEQUENCE = icuBooleanProperty(Res.string.name_RGI_EMOJI_MODIFIER_SEQUENCE, UProperty.RGI_EMOJI_MODIFIER_SEQUENCE)
-        val RGI_EMOJI_FLAG_SEQUENCE = icuBooleanProperty(Res.string.name_RGI_EMOJI_FLAG_SEQUENCE, UProperty.RGI_EMOJI_FLAG_SEQUENCE)
-        val RGI_EMOJI_TAG_SEQUENCE = icuBooleanProperty(Res.string.name_RGI_EMOJI_TAG_SEQUENCE, UProperty.RGI_EMOJI_TAG_SEQUENCE)
-        val RGI_EMOJI_ZWJ_SEQUENCE = icuBooleanProperty(Res.string.name_RGI_EMOJI_ZWJ_SEQUENCE, UProperty.RGI_EMOJI_ZWJ_SEQUENCE)
+        val EMOJI_KEYCAP_SEQUENCE =
+            icuBooleanProperty(Res.string.name_EMOJI_KEYCAP_SEQUENCE, UProperty.EMOJI_KEYCAP_SEQUENCE)
+        val RGI_EMOJI_MODIFIER_SEQUENCE =
+            icuBooleanProperty(Res.string.name_RGI_EMOJI_MODIFIER_SEQUENCE, UProperty.RGI_EMOJI_MODIFIER_SEQUENCE)
+        val RGI_EMOJI_FLAG_SEQUENCE =
+            icuBooleanProperty(Res.string.name_RGI_EMOJI_FLAG_SEQUENCE, UProperty.RGI_EMOJI_FLAG_SEQUENCE)
+        val RGI_EMOJI_TAG_SEQUENCE =
+            icuBooleanProperty(Res.string.name_RGI_EMOJI_TAG_SEQUENCE, UProperty.RGI_EMOJI_TAG_SEQUENCE)
+        val RGI_EMOJI_ZWJ_SEQUENCE =
+            icuBooleanProperty(Res.string.name_RGI_EMOJI_ZWJ_SEQUENCE, UProperty.RGI_EMOJI_ZWJ_SEQUENCE)
         val RGI_EMOJI = icuBooleanProperty(Res.string.name_RGI_EMOJI, UProperty.RGI_EMOJI)
         val IDS_UNARY_OPERATOR = icuBooleanProperty(Res.string.name_IDS_UNARY_OPERATOR, UProperty.IDS_UNARY_OPERATOR)
-        val ID_COMPAT_MATH_START = icuBooleanProperty(Res.string.name_ID_COMPAT_MATH_START, UProperty.ID_COMPAT_MATH_START)
-        val ID_COMPAT_MATH_CONTINUE = icuBooleanProperty(Res.string.name_ID_COMPAT_MATH_CONTINUE, UProperty.ID_COMPAT_MATH_CONTINUE)
+        val ID_COMPAT_MATH_START =
+            icuBooleanProperty(Res.string.name_ID_COMPAT_MATH_START, UProperty.ID_COMPAT_MATH_START)
+        val ID_COMPAT_MATH_CONTINUE =
+            icuBooleanProperty(Res.string.name_ID_COMPAT_MATH_CONTINUE, UProperty.ID_COMPAT_MATH_CONTINUE)
 
         override fun all(): Sequence<CodePointProperty<Boolean>> = sequenceOf(
             ALPHABETIC,
@@ -364,32 +383,85 @@ object UnicodeProperties {
             propertyValueDescriber = { value -> value.longName },
         )
 
-        val BIDI_CLASS = icuEnumProperty(Res.string.name_BIDI_CLASS, UProperty.BIDI_CLASS, UnicodeCharacterDirection.Companion)
+        val BIDI_CLASS =
+            icuEnumProperty(Res.string.name_BIDI_CLASS, UProperty.BIDI_CLASS, UnicodeCharacterDirection.Companion)
         val BLOCK = icuEnumProperty(Res.string.name_BLOCK, UProperty.BLOCK, UnicodeBlock.Companion)
-        val CANONICAL_COMBINING_CLASS = icuEnumProperty(Res.string.name_CANONICAL_COMBINING_CLASS, UProperty.CANONICAL_COMBINING_CLASS, UnicodeCanonicalCombiningClass.Companion)
-        val DECOMPOSITION_TYPE = icuEnumProperty(Res.string.name_DECOMPOSITION_TYPE, UProperty.DECOMPOSITION_TYPE, UnicodeDecompositionType.Companion)
-        val EAST_ASIAN_WIDTH = icuEnumProperty(Res.string.name_EAST_ASIAN_WIDTH, UProperty.EAST_ASIAN_WIDTH, UnicodeEastAsianWidth.Companion)
-        val GENERAL_CATEGORY = icuEnumProperty(Res.string.name_GENERAL_CATEGORY, UProperty.GENERAL_CATEGORY, UnicodeCharacterCategory.Companion)
-        val JOINING_GROUP = icuEnumProperty(Res.string.name_JOINING_GROUP, UProperty.JOINING_GROUP, UnicodeJoiningGroup.Companion)
-        val JOINING_TYPE = icuEnumProperty(Res.string.name_JOINING_TYPE, UProperty.JOINING_TYPE, UnicodeJoiningType.Companion)
+        val CANONICAL_COMBINING_CLASS = icuEnumProperty(
+            Res.string.name_CANONICAL_COMBINING_CLASS,
+            UProperty.CANONICAL_COMBINING_CLASS,
+            UnicodeCanonicalCombiningClass.Companion
+        )
+        val DECOMPOSITION_TYPE = icuEnumProperty(
+            Res.string.name_DECOMPOSITION_TYPE, UProperty.DECOMPOSITION_TYPE, UnicodeDecompositionType.Companion
+        )
+        val EAST_ASIAN_WIDTH = icuEnumProperty(
+            Res.string.name_EAST_ASIAN_WIDTH, UProperty.EAST_ASIAN_WIDTH, UnicodeEastAsianWidth.Companion
+        )
+        val GENERAL_CATEGORY = icuEnumProperty(
+            Res.string.name_GENERAL_CATEGORY, UProperty.GENERAL_CATEGORY, UnicodeCharacterCategory.Companion
+        )
+        val JOINING_GROUP =
+            icuEnumProperty(Res.string.name_JOINING_GROUP, UProperty.JOINING_GROUP, UnicodeJoiningGroup.Companion)
+        val JOINING_TYPE =
+            icuEnumProperty(Res.string.name_JOINING_TYPE, UProperty.JOINING_TYPE, UnicodeJoiningType.Companion)
         val LINE_BREAK = icuEnumProperty(Res.string.name_LINE_BREAK, UProperty.LINE_BREAK, UnicodeLineBreak.Companion)
-        val NUMERIC_TYPE = icuEnumProperty(Res.string.name_NUMERIC_TYPE, UProperty.NUMERIC_TYPE, UnicodeNumericType.Companion)
+        val NUMERIC_TYPE =
+            icuEnumProperty(Res.string.name_NUMERIC_TYPE, UProperty.NUMERIC_TYPE, UnicodeNumericType.Companion)
         val SCRIPT = icuEnumProperty(Res.string.name_SCRIPT, UProperty.SCRIPT, UnicodeScript.Companion)
-        val HANGUL_SYLLABLE_TYPE = icuEnumProperty(Res.string.name_HANGUL_SYLLABLE_TYPE, UProperty.HANGUL_SYLLABLE_TYPE, UnicodeHangulSyllableType.Companion)
-        val NFD_QUICK_CHECK = icuEnumProperty(Res.string.name_NFD_QUICK_CHECK, UProperty.NFD_QUICK_CHECK, UnicodeQuickCheckResult.Companion)
-        val NFKD_QUICK_CHECK = icuEnumProperty(Res.string.name_NFKD_QUICK_CHECK, UProperty.NFKD_QUICK_CHECK, UnicodeQuickCheckResult.Companion)
-        val NFC_QUICK_CHECK = icuEnumProperty(Res.string.name_NFC_QUICK_CHECK, UProperty.NFC_QUICK_CHECK, UnicodeQuickCheckResult.Companion)
-        val NFKC_QUICK_CHECK = icuEnumProperty(Res.string.name_NFKC_QUICK_CHECK, UProperty.NFKC_QUICK_CHECK, UnicodeQuickCheckResult.Companion)
-        val LEAD_CANONICAL_COMBINING_CLASS = icuEnumProperty(Res.string.name_LEAD_CANONICAL_COMBINING_CLASS, UProperty.LEAD_CANONICAL_COMBINING_CLASS, UnicodeCanonicalCombiningClass.Companion)
-        val TRAIL_CANONICAL_COMBINING_CLASS = icuEnumProperty(Res.string.name_TRAIL_CANONICAL_COMBINING_CLASS, UProperty.TRAIL_CANONICAL_COMBINING_CLASS, UnicodeCanonicalCombiningClass.Companion)
-        val GRAPHEME_CLUSTER_BREAK = icuEnumProperty(Res.string.name_GRAPHEME_CLUSTER_BREAK, UProperty.GRAPHEME_CLUSTER_BREAK, UnicodeGraphemeClusterBreak.Companion)
-        val SENTENCE_BREAK = icuEnumProperty(Res.string.name_SENTENCE_BREAK, UProperty.SENTENCE_BREAK, UnicodeSentenceBreak.Companion)
+        val HANGUL_SYLLABLE_TYPE = icuEnumProperty(
+            Res.string.name_HANGUL_SYLLABLE_TYPE, UProperty.HANGUL_SYLLABLE_TYPE, UnicodeHangulSyllableType.Companion
+        )
+        val NFD_QUICK_CHECK = icuEnumProperty(
+            Res.string.name_NFD_QUICK_CHECK, UProperty.NFD_QUICK_CHECK, UnicodeQuickCheckResult.Companion
+        )
+        val NFKD_QUICK_CHECK = icuEnumProperty(
+            Res.string.name_NFKD_QUICK_CHECK, UProperty.NFKD_QUICK_CHECK, UnicodeQuickCheckResult.Companion
+        )
+        val NFC_QUICK_CHECK = icuEnumProperty(
+            Res.string.name_NFC_QUICK_CHECK, UProperty.NFC_QUICK_CHECK, UnicodeQuickCheckResult.Companion
+        )
+        val NFKC_QUICK_CHECK = icuEnumProperty(
+            Res.string.name_NFKC_QUICK_CHECK, UProperty.NFKC_QUICK_CHECK, UnicodeQuickCheckResult.Companion
+        )
+        val LEAD_CANONICAL_COMBINING_CLASS = icuEnumProperty(
+            Res.string.name_LEAD_CANONICAL_COMBINING_CLASS,
+            UProperty.LEAD_CANONICAL_COMBINING_CLASS,
+            UnicodeCanonicalCombiningClass.Companion
+        )
+        val TRAIL_CANONICAL_COMBINING_CLASS = icuEnumProperty(
+            Res.string.name_TRAIL_CANONICAL_COMBINING_CLASS,
+            UProperty.TRAIL_CANONICAL_COMBINING_CLASS,
+            UnicodeCanonicalCombiningClass.Companion
+        )
+        val GRAPHEME_CLUSTER_BREAK = icuEnumProperty(
+            Res.string.name_GRAPHEME_CLUSTER_BREAK,
+            UProperty.GRAPHEME_CLUSTER_BREAK,
+            UnicodeGraphemeClusterBreak.Companion
+        )
+        val SENTENCE_BREAK =
+            icuEnumProperty(Res.string.name_SENTENCE_BREAK, UProperty.SENTENCE_BREAK, UnicodeSentenceBreak.Companion)
         val WORD_BREAK = icuEnumProperty(Res.string.name_WORD_BREAK, UProperty.WORD_BREAK, UnicodeWordBreak.Companion)
-        val BIDI_PAIRED_BRACKET_TYPE = icuEnumProperty(Res.string.name_BIDI_PAIRED_BRACKET_TYPE, UProperty.BIDI_PAIRED_BRACKET_TYPE, UnicodeBidiPairedBracketType.Companion)
-        val INDIC_POSITIONAL_CATEGORY = icuEnumProperty(Res.string.name_INDIC_POSITIONAL_CATEGORY, UProperty.INDIC_POSITIONAL_CATEGORY, UnicodeIndicPositionalCategory.Companion)
-        val INDIC_SYLLABIC_CATEGORY = icuEnumProperty(Res.string.name_INDIC_SYLLABIC_CATEGORY, UProperty.INDIC_SYLLABIC_CATEGORY, UnicodeIndicSyllabicCategory.Companion)
-        val VERTICAL_ORIENTATION = icuEnumProperty(Res.string.name_VERTICAL_ORIENTATION, UProperty.VERTICAL_ORIENTATION, UnicodeVerticalOrientation.Companion)
-        val IDENTIFIER_STATUS = icuEnumProperty(Res.string.name_IDENTIFIER_STATUS, UProperty.IDENTIFIER_STATUS, UnicodeIdentifierStatus.Companion)
+        val BIDI_PAIRED_BRACKET_TYPE = icuEnumProperty(
+            Res.string.name_BIDI_PAIRED_BRACKET_TYPE,
+            UProperty.BIDI_PAIRED_BRACKET_TYPE,
+            UnicodeBidiPairedBracketType.Companion
+        )
+        val INDIC_POSITIONAL_CATEGORY = icuEnumProperty(
+            Res.string.name_INDIC_POSITIONAL_CATEGORY,
+            UProperty.INDIC_POSITIONAL_CATEGORY,
+            UnicodeIndicPositionalCategory.Companion
+        )
+        val INDIC_SYLLABIC_CATEGORY = icuEnumProperty(
+            Res.string.name_INDIC_SYLLABIC_CATEGORY,
+            UProperty.INDIC_SYLLABIC_CATEGORY,
+            UnicodeIndicSyllabicCategory.Companion
+        )
+        val VERTICAL_ORIENTATION = icuEnumProperty(
+            Res.string.name_VERTICAL_ORIENTATION, UProperty.VERTICAL_ORIENTATION, UnicodeVerticalOrientation.Companion
+        )
+        val IDENTIFIER_STATUS = icuEnumProperty(
+            Res.string.name_IDENTIFIER_STATUS, UProperty.IDENTIFIER_STATUS, UnicodeIdentifierStatus.Companion
+        )
 
         val PLANE = CodePointProperty(
             displayNameResource = Res.string.name_PLANE,
@@ -491,7 +563,7 @@ object UnicodeProperties {
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
-        val CASE_FOLDING = CodePointProperty<String>(
+        val CASE_FOLDING = CodePointProperty(
             displayNameResource = Res.string.name_CASE_FOLDING,
             propertyValueGetter = { cp -> UCharacter.foldCase(cp.toString(), true) },
             propertyValueDescriber = STRING_DESCRIBER,
@@ -514,14 +586,20 @@ object UnicodeProperties {
         // Not present in ICU4J as a property.
         val NAME_ALIAS = CodePointProperty(
             displayNameResource = Res.string.name_NAME_ALIAS,
-            propertyValueGetter = { cp -> UCharacter.getNameAlias(cp.value) ?: "" },
+            propertyValueGetter = { codePoint ->
+                UCharacter.getNameAlias(codePoint.value)
+                    ?.takeIf { n -> n != UCharacter.getName(codePoint.value) }
+            },
             propertyValueDescriber = NAME_DESCRIBER,
         )
 
         // Not present in ICU4J as a property.
         val EXTENDED_NAME = CodePointProperty(
-            displayNameResource =  Res.string.name_EXTENDED_NAME,
-            propertyValueGetter = { cp -> UCharacter.getExtendedName(cp.value) ?: "" },
+            displayNameResource = Res.string.name_EXTENDED_NAME,
+            propertyValueGetter = { codePoint ->
+                UCharacter.getExtendedName(codePoint.value)
+                    ?.takeIf { n -> n != UCharacter.getName(codePoint.value) }
+            },
             propertyValueDescriber = NAME_DESCRIBER,
         )
 
@@ -553,9 +631,7 @@ object UnicodeProperties {
             displayNameResource = Res.string.name_TITLECASE_MAPPING,
             propertyValueGetter = { codePoint ->
                 UCharacter.toTitleCase(
-                    ULocale.ROOT,
-                    codePoint.toString(),
-                    BreakIterator.getWordInstance(ULocale.ROOT)
+                    ULocale.ROOT, codePoint.toString(), BreakIterator.getWordInstance(ULocale.ROOT)
                 )
             },
             propertyValueDescriber = STRING_DESCRIBER,
@@ -617,11 +693,9 @@ object UnicodeProperties {
         val SCRIPT_EXTENSIONS = CodePointProperty(
             displayNameResource = Res.string.name_SCRIPT_EXTENSIONS,
             propertyValueGetter = { codePoint ->
-                UnicodeScript.buildSetFromBitSet(
-                    BitSet().apply {
-                        UScript.getScriptExtensions(codePoint.value, this)
-                    }
-                )
+                UnicodeScript.buildSetFromBitSet(BitSet().apply {
+                    UScript.getScriptExtensions(codePoint.value, this)
+                })
             },
             propertyValueDescriber = ENUM_SET_DESCRIBER,
         )
@@ -629,11 +703,9 @@ object UnicodeProperties {
         val IDENTIFIER_TYPE = CodePointProperty(
             displayNameResource = Res.string.name_IDENTIFIER_TYPE,
             propertyValueGetter = { codePoint ->
-                UnicodeIdentifierType.buildSet(
-                    EnumSet.noneOf(IdentifierType::class.java).apply {
-                        UCharacter.getIdentifierTypes(codePoint.value, this)
-                    }
-                )
+                UnicodeIdentifierType.buildSet(EnumSet.noneOf(IdentifierType::class.java).apply {
+                    UCharacter.getIdentifierTypes(codePoint.value, this)
+                })
             },
             propertyValueDescriber = ENUM_SET_DESCRIBER,
         )
@@ -645,14 +717,10 @@ object UnicodeProperties {
     }
 
     // XXX: Is there a way to automate getting the full list without using reflection?
-    fun all(): Sequence<CodePointProperty<*>> = sequenceOf(
-        Booleans::all,
-        Ints::all,
-        Masks::all,
-        Doubles::all,
-        Strings::all,
-        Other::all,
-    ).flatMap { prop -> prop.invoke() }
+    private fun allLocal() = sequenceOf(Booleans, Ints, Masks, Doubles, Strings, Other)
+
+    fun all(): Sequence<CodePointProperty<*>> = (allLocal() + UnihanProperties.allCollections())
+        .flatMap { collection -> collection.all() }
 
 }
 

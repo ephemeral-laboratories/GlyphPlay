@@ -18,7 +18,7 @@ import org.jetbrains.compose.resources.getString
  */
 class CodePointProperty<T>(
     val displayNameResource: StringResource,
-    val propertyValueGetter: (codePoint: CodePoint) -> T,
+    val propertyValueGetter: (codePoint: CodePoint) -> T?,
     val propertyValueDescriber: @Composable (value: T) -> String,
 ) {
     /**

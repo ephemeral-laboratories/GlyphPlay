@@ -11,7 +11,7 @@ class CodePointDescription private constructor(val codePoint: CodePoint) {
 
     operator fun <T> get(x: CodePointProperty<T>) = allProperties[x]
 
-    val name = UnicodeProperties.Strings.NAME.valueForCodePoint(codePoint)
+    val name = get(UnicodeProperties.Strings.NAME)?.value ?: ""
 
     val uPlusForm = codePoint.toUPlusString()
     val stringForm = codePoint.toString()

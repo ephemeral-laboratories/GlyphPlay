@@ -37,6 +37,8 @@ import garden.ephemeral.glyphplay.unicode.CodePointDescription
 import garden.ephemeral.glyphplay.unicode.CodePointProperty
 import garden.ephemeral.glyphplay.unicode.UnicodeProperties
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeNumericType
+import garden.ephemeral.glyphplay.unicode.unihan.UnihanData
+import garden.ephemeral.glyphplay.unicode.unihan.UnihanProperties
 import garden.ephemeral.glyphs.glyphplay.generated.resources.Res
 import garden.ephemeral.glyphs.glyphplay.generated.resources.action_copy_to_clipboard
 import garden.ephemeral.glyphs.glyphplay.generated.resources.action_result_copied
@@ -46,6 +48,8 @@ import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_ti
 import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_decomposition
 import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_location
 import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_mappings
+import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_unihan
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.streams.asSequence
 
@@ -130,14 +134,14 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                         /**
                          * Shortcut for adding a section with a title.
                          *
-                         * @param titleFunc a function to generate the title text.
+                         * @param titleResource the string resource for looking up the title.
                          * @param content the nested content for the section.
                          */
                         fun GridLayoutScope.propertySection(
-                            titleFunc: @Composable () -> String,
+                            titleResource: StringResource,
                             content: GridLayoutScope.() -> Unit,
                         ) {
-                            section(headerContent = { PropertyLabel(nameFunc = titleFunc) }) {
+                            section(headerContent = { PropertyLabel(nameFunc = { stringResource(titleResource) }) }) {
                                 content()
                             }
                         }
@@ -162,9 +166,10 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                          * Unicode property.
                          */
                         fun <T> GridLayoutScope.propertyRow(property: CodePointProperty<T>) {
-                            propertyRow(nameFunc = { stringResource(property.displayNameResource) }) {
-                                val valueHolder = description[property]
-                                Text(text = property.propertyValueDescriber(valueHolder.value))
+                            description[property]?.value?.let { value ->
+                                propertyRow(nameFunc = { stringResource(property.displayNameResource) }) {
+                                    Text(text = property.propertyValueDescriber(value))
+                                }
                             }
                         }
 
@@ -174,33 +179,31 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                          * multiple code points.
                          */
                         fun GridLayoutScope.propertyRowForCodePoints(property: CodePointProperty<String>) {
-                            propertyRow(nameFunc = { stringResource(property.displayNameResource) }) {
-                                Column {
-                                    description[property].value
-                                        .codePoints().asSequence()
-                                        .map(::CodePoint)
-                                        .map(CodePointDescription::ofCodePoint)
-                                        .toList()
-                                        .forEach { description ->
-                                            ClickableCodePoint(
-                                                description = description,
-                                                onCodePointLinkClicked = onCodePointLinkClicked,
-                                            )
-                                        }
+                            description[property]?.value?.let { value ->
+                                propertyRow(nameFunc = { stringResource(property.displayNameResource) }) {
+                                    Column {
+                                        value.codePoints()
+                                            .asSequence()
+                                            .map(::CodePoint)
+                                            .map(CodePointDescription::ofCodePoint)
+                                            .toList()
+                                            .forEach { description ->
+                                                ClickableCodePoint(
+                                                    description = description,
+                                                    onCodePointLinkClicked = onCodePointLinkClicked,
+                                                )
+                                            }
+                                    }
                                 }
                             }
                         }
 
-                        if (description[UnicodeProperties.Strings.NAME_ALIAS].value.isNotEmpty()) {
-                            propertyRow(property = UnicodeProperties.Strings.NAME_ALIAS)
-                        }
-                        if (description[UnicodeProperties.Strings.EXTENDED_NAME].value != description.name) {
-                            propertyRow(property = UnicodeProperties.Strings.EXTENDED_NAME)
-                        }
+                        propertyRow(property = UnicodeProperties.Strings.NAME_ALIAS)
+                        propertyRow(property = UnicodeProperties.Strings.EXTENDED_NAME)
 
                         propertyRow(property = UnicodeProperties.Strings.AGE)
 
-                        propertySection(titleFunc = { stringResource(Res.string.property_section_title_location) }) {
+                        propertySection(titleResource = Res.string.property_section_title_location) {
                             propertyRow(property = UnicodeProperties.Ints.PLANE)
                             propertyRow(property = UnicodeProperties.Ints.BLOCK)
                         }
@@ -208,7 +211,9 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                         propertyRow(property = UnicodeProperties.Ints.SCRIPT)
                         propertyRow(property = UnicodeProperties.Ints.GENERAL_CATEGORY)
 
-                        if (description[UnicodeProperties.Ints.NUMERIC_TYPE].value != UnicodeNumericType.NONE) {
+                        if ((description[UnicodeProperties.Ints.NUMERIC_TYPE]?.value
+                                ?: UnicodeNumericType.NONE) != UnicodeNumericType.NONE
+                        ) {
                             propertyRow(property = UnicodeProperties.Doubles.NUMERIC_VALUE)
                         }
 
@@ -222,11 +227,11 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             UnicodeProperties.Strings.CASE_FOLDING,
                             UnicodeProperties.Strings.SIMPLE_CASE_FOLDING,
                         ).map { property -> property to description[property] }
-                            .filter { (_, mapping) -> mapping.value != description.stringForm }
+                            .filter { (_, mapping) -> mapping != null && mapping.value != description.stringForm }
                             .map { (k, _) -> k }
                             .toList()
                         if (mappingProperties.isNotEmpty()) {
-                            propertySection(titleFunc = { stringResource(Res.string.property_section_title_mappings) }) {
+                            propertySection(titleResource = Res.string.property_section_title_mappings) {
                                 mappingProperties.forEach { property -> propertyRowForCodePoints(property = property) }
                             }
                         }
@@ -235,18 +240,18 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             UnicodeProperties.Strings.CANONICAL_DECOMPOSITION,
                             UnicodeProperties.Strings.COMPATIBILITY_DECOMPOSITION,
                         ).map { property -> property to description[property] }
-                            .filter { (_, mapping) -> mapping.value != description.stringForm }
+                            .filter { (_, decomposition) -> decomposition != null && decomposition.value != description.stringForm }
                             .map { (k, _) -> k }
                             .toList()
                         if (decompositionProperties.isNotEmpty()) {
-                            propertySection(titleFunc = { stringResource(Res.string.property_section_title_decomposition) }) {
+                            propertySection(titleResource = Res.string.property_section_title_decomposition) {
                                 decompositionProperties.forEach { property -> propertyRowForCodePoints(property = property) }
                             }
                         }
 
                         propertyRow(property = UnicodeProperties.Ints.EAST_ASIAN_WIDTH)
 
-                        propertySection(titleFunc = { stringResource(Res.string.property_section_title_bidirectional) }) {
+                        propertySection(titleResource = Res.string.property_section_title_bidirectional) {
                             propertyRow(property = UnicodeProperties.Ints.BIDI_CLASS)
                             propertyRow(property = UnicodeProperties.Booleans.BIDI_MIRRORED)
 
@@ -254,21 +259,36 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                                 UnicodeProperties.Strings.BIDI_MIRRORING_GLYPH,
                                 UnicodeProperties.Strings.BIDI_PAIRED_BRACKET,
                             ).map { property -> property to description[property] }
-                                .filter { (_, mapping) -> mapping.value != description.stringForm }
+                                .filter { (_, mapping) -> mapping != null && mapping.value != description.stringForm }
                                 .map { (k, _) -> k }
                                 .toList()
                             if (bidiMappingProperties.isNotEmpty()) {
-                                propertySection(titleFunc = { stringResource(Res.string.property_section_title_mappings) }) {
+                                propertySection(titleResource = Res.string.property_section_title_mappings) {
                                     bidiMappingProperties.forEach { property -> propertyRowForCodePoints(property = property) }
                                 }
                             }
                         }
 
-                        propertySection(titleFunc = { stringResource(Res.string.property_section_title_breaking) }) {
+                        propertySection(titleResource = Res.string.property_section_title_breaking) {
                             propertyRow(property = UnicodeProperties.Ints.LINE_BREAK)
                             propertyRow(property = UnicodeProperties.Ints.SENTENCE_BREAK)
                             propertyRow(property = UnicodeProperties.Ints.WORD_BREAK)
                             propertyRow(property = UnicodeProperties.Ints.GRAPHEME_CLUSTER_BREAK)
+                        }
+
+                        // TODO: Reduce the number of lookups on the Unihan db to one
+                        val unihanMap = UnihanData.lookup(description.codePoint)
+                        println("unihanMap = $unihanMap")
+                        if (unihanMap.isNotEmpty()) {
+                            propertySection(titleResource = Res.string.property_section_title_unihan) {
+                                UnihanProperties.allCollections().forEach { collection ->
+                                    propertySection(titleResource = collection.displayNameResource) {
+                                        collection.all().forEach { property ->
+                                            propertyRow(property = property)
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

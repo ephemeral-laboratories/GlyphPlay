@@ -1,7 +1,16 @@
 package garden.ephemeral.glyphplay.unicode.unihan
 
 import garden.ephemeral.glyphplay.unicode.CodePointProperty
-import garden.ephemeral.glyphplay.unicode.CodePointPropertyCollection
+import garden.ephemeral.glyphplay.unicode.NamedCodePointPropertyCollection
+import garden.ephemeral.glyphs.glyphplay.generated.resources.Res
+import garden.ephemeral.glyphs.glyphplay.generated.resources.collection_DictionaryIndices
+import garden.ephemeral.glyphs.glyphplay.generated.resources.collection_DictionaryLikeData
+import garden.ephemeral.glyphs.glyphplay.generated.resources.collection_IRGSources
+import garden.ephemeral.glyphs.glyphplay.generated.resources.collection_NumericValues
+import garden.ephemeral.glyphs.glyphplay.generated.resources.collection_OtherMappings
+import garden.ephemeral.glyphs.glyphplay.generated.resources.collection_RadicalStrokeCounts
+import garden.ephemeral.glyphs.glyphplay.generated.resources.collection_Readings
+import garden.ephemeral.glyphs.glyphplay.generated.resources.collection_Variants
 
 /**
  * Unihan properties, organised in a slightly more app-friendly fashion than the raw enum.
@@ -17,7 +26,9 @@ object UnihanProperties {
         )
     }
 
-    object IRGSources : CodePointPropertyCollection<String?> {
+    object IRGSources : NamedCodePointPropertyCollection<String?> {
+        override val displayNameResource = Res.string.collection_IRGSources
+
         val CompatibilityVariant = unihanProperty(UnihanDatabaseProperty.kCompatibilityVariant)
         val IICore = unihanProperty(UnihanDatabaseProperty.kIICore)
         val IRG_GSource = unihanProperty(UnihanDatabaseProperty.kIRG_GSource)
@@ -53,7 +64,9 @@ object UnihanProperties {
         )
     }
 
-    object OtherMappings : CodePointPropertyCollection<String?> {
+    object OtherMappings : NamedCodePointPropertyCollection<String?> {
+        override val displayNameResource = Res.string.collection_OtherMappings
+
         val BigFive = unihanProperty(UnihanDatabaseProperty.kBigFive)
         val CCCII = unihanProperty(UnihanDatabaseProperty.kCCCII)
         val CNS1986 = unihanProperty(UnihanDatabaseProperty.kCNS1986)
@@ -109,7 +122,9 @@ object UnihanProperties {
         )
     }
 
-    object DictionaryIndices : CodePointPropertyCollection<String?> {
+    object DictionaryIndices : NamedCodePointPropertyCollection<String?> {
+        override val displayNameResource = Res.string.collection_DictionaryIndices
+
         val CheungBauerIndex = unihanProperty(UnihanDatabaseProperty.kCheungBauerIndex)
         val CihaiT = unihanProperty(UnihanDatabaseProperty.kCihaiT)
         val Cowles = unihanProperty(UnihanDatabaseProperty.kCowles)
@@ -153,7 +168,9 @@ object UnihanProperties {
         )
     }
 
-    object Readings : CodePointPropertyCollection<String?> {
+    object Readings : NamedCodePointPropertyCollection<String?> {
+        override val displayNameResource = Res.string.collection_Readings
+
         val Cantonese = unihanProperty(UnihanDatabaseProperty.kCantonese)
         val Definition = unihanProperty(UnihanDatabaseProperty.kDefinition)
         val Fanqie = unihanProperty(UnihanDatabaseProperty.kFanqie)
@@ -193,7 +210,9 @@ object UnihanProperties {
         )
     }
 
-    object DictionaryLikeData : CodePointPropertyCollection<String?> {
+    object DictionaryLikeData : NamedCodePointPropertyCollection<String?> {
+        override val displayNameResource = Res.string.collection_DictionaryLikeData
+
         val AlternateTotalStrokes = unihanProperty(UnihanDatabaseProperty.kAlternateTotalStrokes)
         val Cangjie = unihanProperty(UnihanDatabaseProperty.kCangjie)
         val CheungBauer = unihanProperty(UnihanDatabaseProperty.kCheungBauer)
@@ -223,13 +242,17 @@ object UnihanProperties {
         )
     }
 
-    object RadicalStrokeCounts : CodePointPropertyCollection<String?> {
+    object RadicalStrokeCounts : NamedCodePointPropertyCollection<String?> {
+        override val displayNameResource = Res.string.collection_RadicalStrokeCounts
+
         val RSAdobe_Japan1_6 = unihanProperty(UnihanDatabaseProperty.kRSAdobe_Japan1_6)
 
         override fun all() = sequenceOf(RSAdobe_Japan1_6)
     }
 
-    object Variants : CodePointPropertyCollection<String?> {
+    object Variants : NamedCodePointPropertyCollection<String?> {
+        override val displayNameResource = Res.string.collection_Variants
+
         val SemanticVariant = unihanProperty(UnihanDatabaseProperty.kSemanticVariant)
         val SimplifiedVariant = unihanProperty(UnihanDatabaseProperty.kSimplifiedVariant)
         val SpecializedSemanticVariant = unihanProperty(UnihanDatabaseProperty.kSpecializedSemanticVariant)
@@ -247,7 +270,9 @@ object UnihanProperties {
         )
     }
 
-    object NumericValues : CodePointPropertyCollection<String?> {
+    object NumericValues : NamedCodePointPropertyCollection<String?> {
+        override val displayNameResource = Res.string.collection_NumericValues
+
         val AccountingNumeric = unihanProperty(UnihanDatabaseProperty.kAccountingNumeric)
         val OtherNumeric = unihanProperty(UnihanDatabaseProperty.kOtherNumeric)
         val PrimaryNumeric = unihanProperty(UnihanDatabaseProperty.kPrimaryNumeric)
@@ -263,7 +288,7 @@ object UnihanProperties {
         )
     }
 
-    fun allCollections(): List<CodePointPropertyCollection<String?>> = listOf(
+    fun allCollections(): Sequence<NamedCodePointPropertyCollection<String?>> = sequenceOf(
         IRGSources,
         OtherMappings,
         DictionaryIndices,

@@ -1,12 +1,15 @@
 package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.lang.UProperty
+import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.toCodePoint
 import garden.ephemeral.glyphplay.unicode.enums.IcuUnicodeValueEnum
+import garden.ephemeral.glyphplay.unicode.unihan.UnihanProperties
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
 import io.kotest.inspectors.shouldForAll
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.ints.shouldBeBetween
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.sequences.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -86,6 +89,22 @@ class UnicodePropertiesTest : FreeSpec({
             icuStartVal = UProperty::STRING_START, icuLimitVal = UProperty::STRING_LIMIT,
             collection = UnicodeProperties.Strings
         )
+
+        "name alias" {
+            UnicodeProperties.Strings.NAME_ALIAS.valueForCodePoint('Ƣ'.toCodePoint()) shouldBe
+                    "LATIN CAPITAL LETTER GHA"
+        }
+        "name alias omitted if blank" {
+            UnicodeProperties.Strings.NAME_ALIAS.valueForCodePoint('a'.toCodePoint()).shouldBeNull()
+        }
+
+        "extended name" {
+            UnicodeProperties.Strings.EXTENDED_NAME.valueForCodePoint(CodePoint(0xE000)) shouldBe
+                    "<private use area-E000>"
+        }
+        "extended name omitted if blank" {
+            UnicodeProperties.Strings.EXTENDED_NAME.valueForCodePoint('a'.toCodePoint()).shouldBeNull()
+        }
     }
 
     "Other" - {
@@ -105,7 +124,8 @@ class UnicodePropertiesTest : FreeSpec({
                         UnicodeProperties.Masks.all() +
                         UnicodeProperties.Doubles.all() +
                         UnicodeProperties.Strings.all() +
-                        UnicodeProperties.Other.all()
+                        UnicodeProperties.Other.all() +
+                        UnihanProperties.allCollections().flatMap { c -> c.all() }
             )
         }
     }

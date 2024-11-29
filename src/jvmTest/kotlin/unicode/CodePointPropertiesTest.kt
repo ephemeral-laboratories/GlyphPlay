@@ -25,6 +25,7 @@ import garden.ephemeral.glyphplay.unicode.enums.UnicodeScript
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeSentenceBreak
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeVerticalOrientation
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeWordBreak
+import garden.ephemeral.glyphplay.unicode.unihan.UnihanProperties
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.maps.shouldHaveSize
@@ -34,7 +35,7 @@ class CodePointPropertiesTest : FreeSpec({
         val properties = CodePointProperties.ofCodePoint("ば".firstToCodePoint()).storage
 
         "should contain all expected properties" {
-            properties.shouldHaveSize(122)
+            properties.shouldHaveSize(222)
             val unwrappedProperties = properties.map { (k, v) -> k to v.value }.toMap()
             unwrappedProperties.shouldContainExactly(
                 mapOf(
@@ -153,8 +154,8 @@ class CodePointPropertiesTest : FreeSpec({
                     UnicodeProperties.Strings.CASE_FOLDING to "ば",
                     UnicodeProperties.Strings.LOWERCASE_MAPPING to "ば",
                     UnicodeProperties.Strings.NAME to "HIRAGANA LETTER BA",
-                    UnicodeProperties.Strings.NAME_ALIAS to "",
-                    UnicodeProperties.Strings.EXTENDED_NAME to "HIRAGANA LETTER BA",
+                    UnicodeProperties.Strings.NAME_ALIAS to null,
+                    UnicodeProperties.Strings.EXTENDED_NAME to null,
                     UnicodeProperties.Strings.SIMPLE_CASE_FOLDING to "ば",
                     UnicodeProperties.Strings.SIMPLE_LOWERCASE_MAPPING to "ば",
                     UnicodeProperties.Strings.SIMPLE_TITLECASE_MAPPING to "ば",
@@ -168,6 +169,12 @@ class CodePointPropertiesTest : FreeSpec({
                     UnicodeProperties.Other.SCRIPT_EXTENSIONS to setOf(UnicodeScript.HIRAGANA),
                     UnicodeProperties.Other.IDENTIFIER_TYPE to setOf(UnicodeIdentifierType.RECOMMENDED),
                 )
+                        +
+                        // Unihan
+                        UnihanProperties.allCollections()
+                            .flatMap { c -> c.all() }
+                            .map { p -> p to null }
+                            .toMap()
             )
         }
     }
