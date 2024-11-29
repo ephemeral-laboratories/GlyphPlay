@@ -37,7 +37,6 @@ import garden.ephemeral.glyphplay.unicode.CodePointDescription
 import garden.ephemeral.glyphplay.unicode.CodePointProperty
 import garden.ephemeral.glyphplay.unicode.UnicodeProperties
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeNumericType
-import garden.ephemeral.glyphplay.unicode.unihan.UnihanData
 import garden.ephemeral.glyphplay.unicode.unihan.UnihanProperties
 import garden.ephemeral.glyphs.glyphplay.generated.resources.Res
 import garden.ephemeral.glyphs.glyphplay.generated.resources.action_copy_to_clipboard
@@ -276,16 +275,11 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             propertyRow(property = UnicodeProperties.Ints.GRAPHEME_CLUSTER_BREAK)
                         }
 
-                        // TODO: Reduce the number of lookups on the Unihan db to one
-                        val unihanMap = UnihanData.lookup(description.codePoint)
-                        println("unihanMap = $unihanMap")
-                        if (unihanMap.isNotEmpty()) {
-                            propertySection(titleResource = Res.string.property_section_title_unihan) {
-                                UnihanProperties.allCollections().forEach { collection ->
-                                    propertySection(titleResource = collection.displayNameResource) {
-                                        collection.all().forEach { property ->
-                                            propertyRow(property = property)
-                                        }
+                        propertySection(titleResource = Res.string.property_section_title_unihan) {
+                            UnihanProperties.allCollections().forEach { collection ->
+                                propertySection(titleResource = collection.displayNameResource) {
+                                    collection.all().forEach { property ->
+                                        propertyRow(property = property)
                                     }
                                 }
                             }
