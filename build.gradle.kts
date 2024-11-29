@@ -4,12 +4,13 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
-group = "garden.ephemeral.glyphs"
-version = "1.0-SNAPSHOT"
-
 kotlin {
     jvm()
     sourceSets {
+        commonMain.dependencies {
+            implementation(compose.desktop.common)
+            implementation(compose.components.resources)
+        }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(compose.material3)
