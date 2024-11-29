@@ -37,7 +37,6 @@ import garden.ephemeral.glyphplay.unicode.enums.UnicodeVerticalOrientation
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeWordBreak
 import garden.ephemeral.glyphplay.unicode.unihan.UnihanProperties
 import garden.ephemeral.glyphplay.util.formatToString
-import garden.ephemeral.glyphplay.util.normalize
 import garden.ephemeral.glyphplay.util.prettyPrintName
 import garden.ephemeral.glyphs.glyphplay.generated.resources.Res
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_AGE
@@ -653,12 +652,12 @@ object UnicodeProperties {
 
         val CANONICAL_DECOMPOSITION = CodePointProperty(
             displayNameResource = Res.string.name_CANONICAL_DECOMPOSITION,
-            propertyValueGetter = { cp -> cp.toString().normalize(Normalizer2.getNFDInstance()) },
+            propertyValueGetter = { cp -> Normalizer2.getNFDInstance().normalize(cp.toString()) },
             propertyValueDescriber = STRING_DESCRIBER,
         )
         val COMPATIBILITY_DECOMPOSITION = CodePointProperty(
             displayNameResource = Res.string.name_COMPATIBILITY_DECOMPOSITION,
-            propertyValueGetter = { cp -> cp.toString().normalize(Normalizer2.getNFKDInstance()) },
+            propertyValueGetter = { cp -> Normalizer2.getNFKDInstance().normalize(cp.toString()) },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
