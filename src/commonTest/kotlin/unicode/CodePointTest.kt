@@ -45,7 +45,7 @@ class CodePointTest : FreeSpec({
         }
 
         "toString" {
-            (a..b).toString() shouldBe "a..b"
+            (a..b).toString() shouldBe "U+0061..U+0062"
         }
     }
 

@@ -90,7 +90,7 @@ value class CodePoint(val value: Int) : Comparable<CodePoint> {
 
         override fun hashCode() = start.hashCode() * 31 + endInclusive.hashCode()
 
-        override fun toString() = "$start..$endInclusive"
+        override fun toString() = "${start.toUPlusString()}..${endInclusive.toUPlusString()}"
 
         private class IteratorImpl(start: CodePoint, private val endInclusive: CodePoint) :
             Iterator<CodePoint> {
