@@ -45,6 +45,12 @@ import garden.ephemeral.glyphplay.search.UnicodeIndices
 import garden.ephemeral.glyphplay.theme.AppTheme
 import garden.ephemeral.glyphplay.theme.Branding
 import garden.ephemeral.glyphplay.unicode.CodePoint
+import garden.ephemeral.glyphs.glyphplay.generated.resources.Res
+import garden.ephemeral.glyphs.glyphplay.generated.resources.icon_clear
+import garden.ephemeral.glyphs.glyphplay.generated.resources.icon_search
+import garden.ephemeral.glyphs.glyphplay.generated.resources.label_search_code_points
+import garden.ephemeral.glyphs.glyphplay.generated.resources.placeholder_no_code_points_found
+import org.jetbrains.compose.resources.stringResource
 
 fun main() = application {
     Window(
@@ -104,7 +110,7 @@ fun SearchTextField(onExecuteSearch: (query: String) -> Unit) {
     OutlinedTextField(
         value = textFieldValue,
         onValueChange = setTextFieldValue,
-        label = { Text("Search code points") },
+        label = { Text(stringResource(Res.string.label_search_code_points)) },
         singleLine = true,
         keyboardActions = KeyboardActions(onSearch = { onExecuteSearch(textFieldValue.text.trim()) }),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -118,14 +124,20 @@ fun SearchTextField(onExecuteSearch: (query: String) -> Unit) {
                         setTextFieldValue(TextFieldValue())
                         focusRequester.requestFocus()
                     }) {
-                        Icon(imageVector = Icons.Filled.Clear, contentDescription = "Clear icon")
+                        Icon(
+                            imageVector = Icons.Filled.Clear,
+                            contentDescription = stringResource(Res.string.icon_clear),
+                        )
                     }
                 }
                 IconButton(onClick = {
                     onExecuteSearch(textFieldValue.text.trim())
                     focusRequester.requestFocus()
                 }) {
-                    Icon(imageVector = Icons.Filled.Search, contentDescription = "Search icon")
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = stringResource(Res.string.icon_search),
+                    )
                 }
             }
         }
@@ -151,7 +163,7 @@ fun SearchResultsGrid(codePoints: List<CodePoint>, onCodePointClicked: (CodePoin
 @Composable
 fun NoSearchResultsPlaceholder() {
     Text(
-        text = "No code points found.",
+        text = stringResource(Res.string.placeholder_no_code_points_found),
         modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
     )
 }

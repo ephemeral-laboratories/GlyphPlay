@@ -7,17 +7,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,6 +37,16 @@ import garden.ephemeral.glyphplay.unicode.CodePointDescription
 import garden.ephemeral.glyphplay.unicode.CodePointProperty
 import garden.ephemeral.glyphplay.unicode.UnicodeProperties
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeNumericType
+import garden.ephemeral.glyphs.glyphplay.generated.resources.Res
+import garden.ephemeral.glyphs.glyphplay.generated.resources.action_copy_to_clipboard
+import garden.ephemeral.glyphs.glyphplay.generated.resources.action_result_copied
+import garden.ephemeral.glyphs.glyphplay.generated.resources.format_code_point_reference
+import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_bidirectional
+import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_breaking
+import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_decomposition
+import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_location
+import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_mappings
+import org.jetbrains.compose.resources.stringResource
 import kotlin.streams.asSequence
 
 val CodePointDescriptionViewTitleY = 115.dp
@@ -41,7 +54,7 @@ val CodePointDescriptionViewTitleY = 115.dp
 @Composable
 private fun ClickableCodePoint(description: CodePointDescription, onCodePointLinkClicked: (CodePoint) -> Unit) {
     Text(
-        text = "${description.stringFormForUI} (${description.name})",
+        text = stringResource(Res.string.format_code_point_reference, description.stringFormForUI, description.name),
         modifier = Modifier.clickable { onCodePointLinkClicked(description.codePoint) }
     )
 }
@@ -67,7 +80,7 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                     clipboardManager.setText(AnnotatedString(description.stringForm))
                     flashBoxState.flash()
                 }
-                FlashBox(state = flashBoxState) {
+                FlashBox(state = flashBoxState, message = stringResource(Res.string.action_result_copied)) {
                     CodePointCell(
                         description = description,
                         size = 150.dp,
@@ -78,15 +91,19 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             .firstBaselineToTop(CodePointDescriptionViewTitleY),
                     )
                 }
-                ClickableText(
-                    text = AnnotatedString(
-                        "Copy to Clipboard",
-                        spanStyle = SpanStyle(color = MaterialTheme.colorScheme.onSurface),
-                        paragraphStyle = ParagraphStyle(textAlign = TextAlign.Center)
-                    ),
+                Text(
+                    text = buildAnnotatedString {
+                        pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
+                        pushStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface))
+                        pushLink(link = LinkAnnotation.Clickable(tag = "CopyToClipboard") {
+                            copyToClipboard()
+                        })
+                        append(stringResource(Res.string.action_copy_to_clipboard))
+                    },
                     style = MaterialTheme.typography.labelLarge,
-                    onClick = { copyToClipboard() },
-                    modifier = Modifier.width(150.dp),
+                    modifier = Modifier
+                        .pointerHoverIcon(icon = PointerIcon.Hand, overrideDescendants = true)
+                        .width(150.dp),
                 )
             }
             SelectionContainer {
@@ -105,18 +122,22 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
 
                     GridLayout(columnCount = 2) {
                         @Composable
-                        fun PropertyLabel(name: String) {
+                        fun PropertyLabel(nameFunc: @Composable () -> String) {
+                            val name = nameFunc()
                             Text(text = "$name:", fontWeight = FontWeight.Bold)
                         }
 
                         /**
-                         * Shortcut for adding a section with a title
+                         * Shortcut for adding a section with a title.
+                         *
+                         * @param titleFunc a function to generate the title text.
+                         * @param content the nested content for the section.
                          */
-                        /**
-                         * Shortcut for adding a section with a title
-                         */
-                        fun GridLayoutScope.propertySection(name: String, content: GridLayoutScope.() -> Unit) {
-                            section(headerContent = { PropertyLabel(name = name) }) {
+                        fun GridLayoutScope.propertySection(
+                            titleFunc: @Composable () -> String,
+                            content: GridLayoutScope.() -> Unit,
+                        ) {
+                            section(headerContent = { PropertyLabel(nameFunc = titleFunc) }) {
                                 content()
                             }
                         }
@@ -126,14 +147,12 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                          * Useful for the advanced case where you want to control what renders in the description
                          * column.
                          */
-                        /**
-                         * Shortcut for adding a conventional property row.
-                         * Useful for the advanced case where you want to control what renders in the description
-                         * column.
-                         */
-                        fun GridLayoutScope.propertyRow(name: String, valueContent: @Composable () -> Unit) {
+                        fun GridLayoutScope.propertyRow(
+                            nameFunc: @Composable () -> String,
+                            valueContent: @Composable () -> Unit,
+                        ) {
                             row {
-                                PropertyLabel(name = name)
+                                PropertyLabel(nameFunc = nameFunc)
                                 valueContent()
                             }
                         }
@@ -142,13 +161,10 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                          * Shortcut for adding a conventional property row displaying the value of a
                          * Unicode property.
                          */
-                        /**
-                         * Shortcut for adding a conventional property row displaying the value of a
-                         * Unicode property.
-                         */
                         fun <T> GridLayoutScope.propertyRow(property: CodePointProperty<T>) {
-                            propertyRow(name = property.longName) {
-                                Text(text = description[property].description)
+                            propertyRow(nameFunc = { stringResource(property.displayNameResource) }) {
+                                val propertyDescription = description[property]
+                                Text(text = propertyDescription.valueDescriber(propertyDescription.value))
                             }
                         }
 
@@ -157,13 +173,8 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                          * Unicode property whose values are code points or a string made up of potentially
                          * multiple code points.
                          */
-                        /**
-                         * Shortcut for adding a conventional property row displaying the value of a
-                         * Unicode property whose values are code points or a string made up of potentially
-                         * multiple code points.
-                         */
                         fun GridLayoutScope.propertyRowForCodePoints(property: CodePointProperty<String>) {
-                            propertyRow(name = property.longName) {
+                            propertyRow(nameFunc = { stringResource(property.displayNameResource) }) {
                                 Column {
                                     description[property].value
                                         .codePoints().asSequence()
@@ -183,13 +194,13 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                         if (description[UnicodeProperties.Strings.NAME_ALIAS].value.isNotEmpty()) {
                             propertyRow(property = UnicodeProperties.Strings.NAME_ALIAS)
                         }
-                        if (description[UnicodeProperties.Strings.EXTENDED_NAME].description != description.name) {
+                        if (description[UnicodeProperties.Strings.EXTENDED_NAME].value != description.name) {
                             propertyRow(property = UnicodeProperties.Strings.EXTENDED_NAME)
                         }
 
                         propertyRow(property = UnicodeProperties.Strings.AGE)
 
-                        propertySection(name = "Location") {
+                        propertySection(titleFunc = { stringResource(Res.string.property_section_title_location) }) {
                             propertyRow(property = UnicodeProperties.Ints.PLANE)
                             propertyRow(property = UnicodeProperties.Ints.BLOCK)
                         }
@@ -215,7 +226,7 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             .map { (k, _) -> k }
                             .toList()
                         if (mappingProperties.isNotEmpty()) {
-                            propertySection(name = "Mappings") {
+                            propertySection(titleFunc = { stringResource(Res.string.property_section_title_mappings) }) {
                                 mappingProperties.forEach { property -> propertyRowForCodePoints(property = property) }
                             }
                         }
@@ -228,14 +239,14 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             .map { (k, _) -> k }
                             .toList()
                         if (decompositionProperties.isNotEmpty()) {
-                            propertySection(name = "Decomposition") {
+                            propertySection(titleFunc = { stringResource(Res.string.property_section_title_decomposition) }) {
                                 decompositionProperties.forEach { property -> propertyRowForCodePoints(property = property) }
                             }
                         }
 
                         propertyRow(property = UnicodeProperties.Ints.EAST_ASIAN_WIDTH)
 
-                        propertySection(name = "Bidirectional") {
+                        propertySection(titleFunc = { stringResource(Res.string.property_section_title_bidirectional) }) {
                             propertyRow(property = UnicodeProperties.Ints.BIDI_CLASS)
                             propertyRow(property = UnicodeProperties.Booleans.BIDI_MIRRORED)
 
@@ -247,13 +258,13 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                                 .map { (k, _) -> k }
                                 .toList()
                             if (bidiMappingProperties.isNotEmpty()) {
-                                propertySection(name = "Decomposition") {
+                                propertySection(titleFunc = { stringResource(Res.string.property_section_title_mappings) }) {
                                     bidiMappingProperties.forEach { property -> propertyRowForCodePoints(property = property) }
                                 }
                             }
                         }
 
-                        propertySection(name = "Breaking") {
+                        propertySection(titleFunc = { stringResource(Res.string.property_section_title_breaking) }) {
                             propertyRow(property = UnicodeProperties.Ints.LINE_BREAK)
                             propertyRow(property = UnicodeProperties.Ints.SENTENCE_BREAK)
                             propertyRow(property = UnicodeProperties.Ints.WORD_BREAK)

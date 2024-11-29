@@ -86,7 +86,7 @@ class CodePointPropertiesTest : FreeSpec({
                     UnicodeProperties.Booleans.SEGMENT_STARTER to value(true, "Yes"),
                     UnicodeProperties.Booleans.PATTERN_SYNTAX to value(false, "No"),
                     UnicodeProperties.Booleans.PATTERN_WHITE_SPACE to value(false, "No"),
-                    UnicodeProperties.Booleans.POSIX_ALPHANUM to value(true, "Yes"),
+                    UnicodeProperties.Booleans.POSIX_ALNUM to value(true, "Yes"),
                     UnicodeProperties.Booleans.POSIX_BLANK to value(false, "No"),
                     UnicodeProperties.Booleans.POSIX_GRAPH to value(true, "Yes"),
                     UnicodeProperties.Booleans.POSIX_PRINT to value(true, "Yes"),

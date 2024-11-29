@@ -11,7 +11,7 @@ object UnihanProperties {
         dbProperty: UnihanDatabaseProperty,
     ): CodePointProperty<String?> {
         return CodePointProperty(
-            propertyNameGetter = { dbProperty.displayName },
+            displayNameResource = dbProperty.displayNameResource,
             propertyValueGetter = { codePoint -> UnihanData.lookup(codePoint, dbProperty) },
             propertyValueDescriber = { value: String? -> value ?: "" },
         )

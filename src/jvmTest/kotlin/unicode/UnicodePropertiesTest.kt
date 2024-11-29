@@ -7,9 +7,9 @@ import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
 import io.kotest.inspectors.shouldForAll
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.ints.shouldBeBetween
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.sequences.shouldContainExactly
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldNotBeEmpty
 import kotlin.reflect.KProperty
 
 class UnicodePropertiesTest : FreeSpec({
@@ -38,7 +38,7 @@ class UnicodePropertiesTest : FreeSpec({
 
         "should return properties where the long name is set" {
             all.shouldForAll { property ->
-                property.longName.shouldNotBeEmpty()
+                property.displayNameResource.shouldNotBeNull()
             }
         }
     }

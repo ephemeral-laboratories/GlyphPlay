@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_search_code_points">Search code points</string>
+    <string name="icon_search">Search icon</string>
+    <string name="icon_clear">Clear icon</string>
+    <string name="placeholder_no_code_points_found">No code points found.</string>
+
+    <string name="action_copy_to_clipboard">Copy to Clipboard</string>
+    <string name="action_result_copied">Copied!</string>
+
+    <string name="property_section_title_location">Location</string>
+    <string name="property_section_title_mappings">Mappings</string>
+    <string name="property_section_title_decomposition">Decomposition</string>
+    <string name="property_section_title_bidirectional">Bidirectional</string>
+    <string name="property_section_title_breaking">Breaking</string>
+
+    <!--
+    Param 1 = code point presented as a plain string
+    Param 2 = description of the code point
+    -->
+    <string name="format_code_point_reference">%1$s (%2$s)</string>
+</resources>
