@@ -163,8 +163,8 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                          */
                         fun <T> GridLayoutScope.propertyRow(property: CodePointProperty<T>) {
                             propertyRow(nameFunc = { stringResource(property.displayNameResource) }) {
-                                val propertyDescription = description[property]
-                                Text(text = propertyDescription.valueDescriber(propertyDescription.value))
+                                val valueHolder = description[property]
+                                Text(text = property.propertyValueDescriber(valueHolder.value))
                             }
                         }
 

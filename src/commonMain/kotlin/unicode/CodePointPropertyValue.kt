@@ -1,14 +1,15 @@
 package garden.ephemeral.glyphplay.unicode
 
-import androidx.compose.runtime.Composable
-
 /**
  * Container class holding the value of a Unicode property for a code point.
  *
+ * TODO: Do we even need this container class anymore?
+ *
  * @property value the raw value.
- * @property valueDescriber a function which can be called to describe the value.
+ * @property property the property which was used to get this value. Can be used to get a
+ *           description of the value.
  */
 data class CodePointPropertyValue<T>(
     val value: T,
-    val valueDescriber: @Composable (value: T) -> String,
+    val property: CodePointProperty<T>,
 )

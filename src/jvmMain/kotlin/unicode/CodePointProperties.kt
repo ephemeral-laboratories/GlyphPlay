@@ -33,7 +33,7 @@ class CodePointProperties private constructor(
          */
         fun ofCodePoint(codePoint: CodePoint): CodePointProperties {
             val storage = UnicodeProperties.all()
-                .map { property -> property to property.valueForCodePoint(codePoint) }
+                .map { property -> property to property.wrappedValueForCodePoint(codePoint) }
                 .toMap()
             return CodePointProperties(codePoint, storage)
         }

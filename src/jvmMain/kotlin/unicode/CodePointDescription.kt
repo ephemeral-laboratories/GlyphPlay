@@ -11,7 +11,7 @@ class CodePointDescription private constructor(val codePoint: CodePoint) {
 
     operator fun <T> get(x: CodePointProperty<T>) = allProperties[x]
 
-    val name = UnicodeProperties.Strings.NAME.valueForCodePoint(codePoint).value
+    val name = UnicodeProperties.Strings.NAME.valueForCodePoint(codePoint)
 
     val uPlusForm = codePoint.toUPlusString()
     val stringForm = codePoint.toString()
@@ -23,7 +23,7 @@ class CodePointDescription private constructor(val codePoint: CodePoint) {
      */
     val stringFormForUI
         get() =
-            when (UnicodeProperties.Ints.GENERAL_CATEGORY.valueForCodePoint(codePoint).value) {
+            when (UnicodeProperties.Ints.GENERAL_CATEGORY.valueForCodePoint(codePoint)) {
                 UnicodeCharacterCategory.NON_SPACING_MARK,
                 UnicodeCharacterCategory.ENCLOSING_MARK,
                 UnicodeCharacterCategory.COMBINING_SPACING_MARK,

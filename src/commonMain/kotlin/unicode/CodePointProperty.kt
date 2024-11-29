@@ -21,16 +21,25 @@ class CodePointProperty<T>(
     val propertyValueGetter: (codePoint: CodePoint) -> T,
     val propertyValueDescriber: @Composable (value: T) -> String,
 ) {
-
     /**
-     * Convenience method to get the value for a code point.
+     * Gets the value for a code point.
      *
      * @param codePoint the code point to get the property for.
      * @return the value.
      */
-    fun valueForCodePoint(codePoint: CodePoint) = CodePointPropertyValue(
-        value = propertyValueGetter(codePoint),
-        valueDescriber = propertyValueDescriber,
+    fun valueForCodePoint(codePoint: CodePoint) = propertyValueGetter(codePoint)
+
+    /**
+     * Get the value for a code point, wrapped up in a structure which hopefully retains
+     * the generics information, which should allow the caller to get a description of the
+     * property value without jumping through hoops to work around generics issues.
+     *
+     * @param codePoint the code point to get the property for.
+     * @return the wrapped value.
+     */
+    fun wrappedValueForCodePoint(codePoint: CodePoint) = CodePointPropertyValue(
+        value = valueForCodePoint(codePoint),
+        property = this,
     )
 
     @NonNls
