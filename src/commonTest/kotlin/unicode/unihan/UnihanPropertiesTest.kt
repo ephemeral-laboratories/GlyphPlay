@@ -1,13 +1,13 @@
 package garden.ephemeral.glyphplay.unicode.unihan
 
-import garden.ephemeral.glyphplay.unicode.CodePoint
+import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.firstToCodePoint
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 
 class UnihanPropertiesTest : FreeSpec({
 
-    //val codePoint = CodePoint("猫".codePointAt(0))
-    val codePoint = CodePoint("十".codePointAt(0))
+    val codePoint = "猫".firstToCodePoint()
+//    val codePoint = "十".firstToCodePoint()
 
     UnihanProperties.allCollections().forEach { collection ->
         collection.javaClass.simpleName {

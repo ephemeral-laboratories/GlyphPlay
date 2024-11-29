@@ -2,6 +2,7 @@ package garden.ephemeral.glyphplay.search
 
 import com.ibm.icu.lang.UCharacter
 import garden.ephemeral.glyphplay.unicode.CodePoint
+import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.firstToCodePoint
 import garden.ephemeral.glyphplay.unicode.unihan.UnihanData
 import garden.ephemeral.glyphplay.unicode.unihan.UnihanDatabaseCategory
 import garden.ephemeral.glyphplay.unicode.unihan.UnihanDatabaseProperty
@@ -41,7 +42,7 @@ internal class InMemoryTextIndex : SearchableIndex {
                     setOf(CodePoint(term.substring("u+".length).toInt(16)))
                 } else if (term.codePointCount(0, term.length) == 1) {
                     // Special bypass if the term was exactly one character
-                    setOf(CodePoint(term.codePointAt(0)))
+                    setOf(term.firstToCodePoint())
                 } else {
                     allIndex[term] ?: emptySet()
                 }

@@ -26,11 +26,43 @@ value class CodePoint(val value: Int) : Comparable<CodePoint> {
 
     operator fun dec(): CodePoint = CodePoint(this.value - 1)
 
+    /**
+     * Converts the code point to a string containing the single code point.
+     *
+     * @return the string.
+     */
     override fun toString() = String(intArrayOf(value), 0, 1)
 
+    /**
+     * Converts to the standard U+ form used in Unicode documentation.
+     * Fewer than 3 digits are padded with zeroes.
+     *
+     * @return the U+ form of the code point.
+     */
     fun toUPlusString() = "U+%04X".format(value)
 
     companion object {
+
+        /**
+         * Convenience extension method for converting a char to a code point.
+         *
+         * @receiver the char to convert.
+         * @return the code point.
+         */
+        fun Char.toCodePoint() = CodePoint(this.code)
+
+        /**
+         * Convenience extension method for converting a string to a code point.
+         * Only the first character is included, of course.
+         *
+         * @receiver the string to convert.
+         * @return the code point.
+         */
+        fun String.firstToCodePoint() = CodePoint(this.codePointAt(0))
+
+        /**
+         * Gets a sequence of all valid code points.
+         */
         val allValidCodePoints: Sequence<CodePoint>
             get() = (CodePoint(UCharacter.MIN_CODE_POINT)..CodePoint(UCharacter.MAX_CODE_POINT))
                 .asSequence()
@@ -39,6 +71,12 @@ value class CodePoint(val value: Int) : Comparable<CodePoint> {
 
     }
 
+    /**
+     * A range of code points.
+     *
+     * @property start the start of the range.
+     * @property endInclusive the end of the range.
+     */
     class CodePointRange(override val start: CodePoint, override val endInclusive: CodePoint) :
         ClosedRange<CodePoint>, Iterable<CodePoint> {
 

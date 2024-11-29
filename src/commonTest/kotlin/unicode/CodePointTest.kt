@@ -1,5 +1,7 @@
 package garden.ephemeral.glyphplay.unicode
 
+import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.firstToCodePoint
+import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.toCodePoint
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContainInOrder
@@ -14,9 +16,9 @@ import io.kotest.matchers.equals.shouldNotBeEqual
 import io.kotest.matchers.shouldBe
 
 class CodePointTest : FreeSpec({
-    val a = CodePoint('a'.code)
-    val b = CodePoint('b'.code)
-    val z = CodePoint('z'.code)
+    val a = 'a'.toCodePoint()
+    val b = 'b'.toCodePoint()
+    val z = 'z'.toCodePoint()
 
     "compareTo" {
         assertSoftly {
@@ -60,7 +62,7 @@ class CodePointTest : FreeSpec({
         }
 
         "for surrogate pair" {
-            val joy = CodePoint("😂".codePointAt(0))
+            val joy = "😂".firstToCodePoint()
             joy.toString() shouldBe "😂"
         }
     }
@@ -71,7 +73,7 @@ class CodePointTest : FreeSpec({
         }
 
         "for high valued code point" {
-            val joy = CodePoint("😂".codePointAt(0))
+            val joy = "😂".firstToCodePoint()
             joy.toUPlusString() shouldBe "U+1F602"
         }
     }
