@@ -6,7 +6,8 @@ import io.kotest.core.spec.style.FreeSpec
 class UnicodeCharacterCategoryTest : FreeSpec({
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeCharacterCategory.Companion,
-        expectedCount = 30, actualCountGetter = { UCharacterCategory.CHAR_CATEGORY_COUNT.toInt() },
+        expectedMin = 0, actualMinGetter = { 0 },
+        expectedMax = 29, actualMaxGetter = { UCharacterCategory.CHAR_CATEGORY_COUNT.toInt() - 1 },
         expectedInvalidValue = -2,
     )
 })

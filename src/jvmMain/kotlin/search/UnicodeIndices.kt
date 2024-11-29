@@ -1,6 +1,6 @@
 package garden.ephemeral.glyphplay.search
 
-import com.ibm.icu.lang.UCharacter
+import garden.ephemeral.glyphplay.unicode.CodePoint
 import kotlin.time.measureTime
 
 object UnicodeIndices {
@@ -8,13 +8,7 @@ object UnicodeIndices {
         val index = InMemoryTextIndex()
 
         val indexTime = measureTime {
-            (UCharacter.MIN_CODE_POINT..UCharacter.MAX_CODE_POINT)
-                .asSequence()
-                .filter { UCharacter.isValidCodePoint(it) }
-                .filter { UCharacter.isDefined(it) }
-                .forEach { codePoint ->
-                    index.index(codePoint)
-                }
+            CodePoint.allValidCodePoints.forEach(index::index)
         }
 
         logger.info("Index time: $indexTime")

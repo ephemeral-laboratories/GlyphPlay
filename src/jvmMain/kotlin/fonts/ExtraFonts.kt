@@ -7,12 +7,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.text.platform.FontLoadResult
-import garden.ephemeral.glyphplay.unicode.UnicodeProperties
+import garden.ephemeral.glyphplay.unicode.CodePoint
 import org.jetbrains.skia.Typeface
-
-val LastResort = FontFamily(
-    Font(resource = "/fonts/LastResort/LastResort-Regular.ttf")
-)
+import org.jetbrains.skia.shaper.Shaper
 
 val NotoSans = FontFamily(
     Font(resource = "/fonts/NotoSans/NotoSans-Thin.ttf", weight = FontWeight.Thin, style = FontStyle.Normal),
@@ -35,29 +32,19 @@ val NotoSans = FontFamily(
     Font(resource = "/fonts/NotoSans/NotoSans-BlackItalic.ttf", weight = FontWeight.Black, style = FontStyle.Italic),
 )
 
-val NotoSansSymbols = FontFamily(
-    Font(resource = "/fonts/NotoSansSymbols/NotoSansSymbols-Thin.ttf", weight = FontWeight.Thin, style = FontStyle.Normal),
-    Font(resource = "/fonts/NotoSansSymbols/NotoSansSymbols-ExtraLight.ttf", weight = FontWeight.ExtraLight, style = FontStyle.Normal),
-    Font(resource = "/fonts/NotoSansSymbols/NotoSansSymbols-Light.ttf", weight = FontWeight.Light, style = FontStyle.Normal),
-    Font(resource = "/fonts/NotoSansSymbols/NotoSansSymbols-Regular.ttf", weight = FontWeight.Normal, style = FontStyle.Normal),
-    Font(resource = "/fonts/NotoSansSymbols/NotoSansSymbols-Medium.ttf", weight = FontWeight.Medium, style = FontStyle.Normal),
-    Font(resource = "/fonts/NotoSansSymbols/NotoSansSymbols-SemiBold.ttf", weight = FontWeight.SemiBold, style = FontStyle.Normal),
-    Font(resource = "/fonts/NotoSansSymbols/NotoSansSymbols-Bold.ttf", weight = FontWeight.Bold, style = FontStyle.Normal),
-    Font(resource = "/fonts/NotoSansSymbols/NotoSansSymbols-ExtraBold.ttf", weight = FontWeight.ExtraBold, style = FontStyle.Normal),
-    Font(resource = "/fonts/NotoSansSymbols/NotoSansSymbols-Black.ttf", weight = FontWeight.Black, style = FontStyle.Normal),
+val LastResort = FontFamily(
+    Font(resource = "/fonts/LastResort/LastResort-Regular.ttf")
 )
 
-val NotoSansSymbols2 = FontFamily(
-    Font(resource = "/fonts/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf"),
-)
+private val AllFontFamilies = sequenceOf(NotoSans, LastResort)
 
-private val AllFontFamilies = sequenceOf(NotoSans, NotoSansSymbols, NotoSansSymbols2, LastResort)
-
-private fun typefaceSupportsCodePoint(typeface: Typeface, codePoint: Int): Boolean {
-    return typeface.getUTF32Glyph(codePoint) != 0.toShort()
+private fun typefaceSupportsCodePoint(typeface: Typeface, codePoint: CodePoint): Boolean {
+    val font = org.jetbrains.skia.Font(typeface = typeface)
+    val textLine = Shaper.make().shapeLine(text = codePoint.toString(), font = font)
+    return textLine.glyphs.isNotEmpty() && textLine.glyphs.none { it == 0.toShort() }
 }
 
-private fun familySupportsCodePoint(fontFamilyResolver: FontFamily.Resolver, fontFamily: FontFamily, codePoint: Int): Boolean {
+private fun familySupportsCodePoint(fontFamilyResolver: FontFamily.Resolver, fontFamily: FontFamily, codePoint: CodePoint): Boolean {
     return when (val result = fontFamilyResolver.resolve(fontFamily).value) {
         is FontLoadResult -> {
             val skiaTypeface = checkNotNull(result.typeface)
@@ -67,18 +54,11 @@ private fun familySupportsCodePoint(fontFamilyResolver: FontFamily.Resolver, fon
     }
 }
 
-fun determineBestFontFamilyForCodePoint(fontFamilyResolver: FontFamily.Resolver, codePoint: Int): FontFamily {
-    // Workaround - emoji render totally fine in NotoSans, but the font itself reports that it doesn't contain
-    // the glyph when you ask for it.
-    if (UnicodeProperties.Booleans.EMOJI.valueForCodePoint(codePoint).value) {
-        return AllFontFamilies.first()
-    }
-
-    return AllFontFamilies.first { fontFamily -> familySupportsCodePoint(fontFamilyResolver, fontFamily, codePoint) }
-}
+fun determineBestFontFamilyForCodePoint(fontFamilyResolver: FontFamily.Resolver, codePoint: CodePoint) =
+    AllFontFamilies.first { fontFamily -> familySupportsCodePoint(fontFamilyResolver, fontFamily, codePoint) }
 
 @Composable
-fun determineBestFontFamilyForCodePoint(codePoint: Int): FontFamily {
+fun determineBestFontFamilyForCodePoint(codePoint: CodePoint): FontFamily {
     return determineBestFontFamilyForCodePoint(
         fontFamilyResolver = LocalFontFamilyResolver.current,
         codePoint = codePoint,

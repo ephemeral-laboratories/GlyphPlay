@@ -1,13 +1,13 @@
 package garden.ephemeral.glyphplay.unicode.enums
 
 import com.ibm.icu.lang.UCharacter
+import com.ibm.icu.lang.UProperty
 import io.kotest.core.spec.style.FreeSpec
 
 class UnicodeEastAsianWidthTest : FreeSpec({
-    @Suppress("DEPRECATION")
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeEastAsianWidth.Companion,
-        expectedCount = 6, actualCountGetter = { UCharacter.EastAsianWidth.COUNT },
-        expectedInvalidValue = -1,
+        expectedMin = 0, actualMinGetter = { UCharacter.getIntPropertyMinValue(UProperty.EAST_ASIAN_WIDTH) },
+        expectedMax = 5, actualMaxGetter = { UCharacter.getIntPropertyMaxValue(UProperty.EAST_ASIAN_WIDTH) },
     )
 })

@@ -19,19 +19,22 @@ inline fun <reified T : UnicodeValueEnum<T>> FreeSpecRootScope.commonUnicodeValu
 
 inline fun <reified T : IcuUnicodeValueEnum<T>> FreeSpecRootScope.commonIcuUnicodeValueEnumSpecs(
     companion: IcuUnicodeValueEnum.Companion<T>,
-    expectedCount: Int,
-    crossinline actualCountGetter: () -> Int,
-    expectedInvalidValue: Int,
+    expectedMin: Int,
+    crossinline actualMinGetter: () -> Int,
+    expectedMax: Int,
+    crossinline actualMaxGetter: () -> Int,
+    expectedInvalidValue: Int = expectedMin - 1,
 ) {
     commonUnicodeValueEnumSpecs(companion)
 
     "is up to date with ICU4J" {
-        actualCountGetter.invoke().shouldBe(expectedCount)
+        actualMinGetter.invoke().shouldBe(expectedMin)
+        actualMaxGetter.invoke().shouldBe(expectedMax)
     }
 
     "ofIcuValue" - {
         "can fetch all known values" {
-            (0..<expectedCount).forEach { icuValue ->
+            (expectedMin..expectedMax).forEach { icuValue ->
                 companion.ofIcuValue(icuValue)
                     .shouldNotBeNull()
                     .icuValue.shouldBe(icuValue)

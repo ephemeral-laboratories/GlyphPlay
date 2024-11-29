@@ -7,7 +7,7 @@ import kotlin.reflect.full.staticProperties
 class UnicodeIndicSyllabicCategoryTest : FreeSpec({
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeIndicSyllabicCategory,
-        expectedCount = 36, actualCountGetter = { UCharacter.IndicSyllabicCategory::class.staticProperties.size },
-        expectedInvalidValue = -1,
+        expectedMin = 0, actualMinGetter = { 0 },
+        expectedMax = 35, actualMaxGetter = { UCharacter.IndicSyllabicCategory::class.staticProperties.size - 1 },
     )
 })

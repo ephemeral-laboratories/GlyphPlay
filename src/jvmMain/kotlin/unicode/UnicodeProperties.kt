@@ -9,7 +9,6 @@ import com.ibm.icu.text.Normalizer2
 import com.ibm.icu.util.ULocale
 import com.ibm.icu.util.VersionInfo
 import garden.ephemeral.glyphplay.VersionInfoSummary
-import garden.ephemeral.glyphplay.codePointToString
 import garden.ephemeral.glyphplay.formatToString
 import garden.ephemeral.glyphplay.normalize
 import garden.ephemeral.glyphplay.prettyPrintName
@@ -38,14 +37,10 @@ import garden.ephemeral.glyphplay.unicode.enums.UnicodeSentenceBreak
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeValueEnum
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeVerticalOrientation
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeWordBreak
-import unicode.UnicodeProperty
 import java.util.BitSet
 import java.util.EnumSet
 
 object UnicodeProperties {
-    interface PropertyCollection<T> {
-        fun all(): Sequence<UnicodeProperty<out T>>
-    }
 
     private fun nameForIcuProperty(icuPropertyId: Int) =
         UCharacter.getPropertyName(icuPropertyId, UProperty.NameChoice.LONG)
@@ -60,10 +55,10 @@ object UnicodeProperties {
     /**
      * Boolean properties.
      */
-    object Booleans : PropertyCollection<Boolean> {
-        private fun icuBooleanProperty(icuPropertyId: Int) = UnicodeProperty(
+    object Booleans : CodePointPropertyCollection<Boolean> {
+        private fun icuBooleanProperty(icuPropertyId: Int) = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(icuPropertyId) },
-            propertyValueGetter = { codePoint -> UCharacter.getIntPropertyValue(codePoint, icuPropertyId) != 0 },
+            propertyValueGetter = { codePoint -> UCharacter.getIntPropertyValue(codePoint.value, icuPropertyId) != 0 },
             propertyValueDescriber = { value: Boolean -> if (value) "Yes" else "No" }
         )
 
@@ -143,7 +138,7 @@ object UnicodeProperties {
         val ID_COMPAT_MATH_START = icuBooleanProperty(UProperty.ID_COMPAT_MATH_START)
         val ID_COMPAT_MATH_CONTINUE = icuBooleanProperty(UProperty.ID_COMPAT_MATH_CONTINUE)
 
-        override fun all(): Sequence<UnicodeProperty<Boolean>> = sequenceOf(
+        override fun all(): Sequence<CodePointProperty<Boolean>> = sequenceOf(
             ALPHABETIC,
             ASCII_HEX_DIGIT,
             BIDI_CONTROL,
@@ -228,14 +223,14 @@ object UnicodeProperties {
      * Although all the properties are treated by ICU as ints, the actual types we
      * return are almost always enums, the improved type-safety.
      */
-    object Ints : PropertyCollection<UnicodeValueEnum<*>> {
+    object Ints : CodePointPropertyCollection<UnicodeValueEnum<*>> {
         private fun <T : IcuUnicodeValueEnum<T>> icuEnumProperty(
             icuPropertyId: Int,
             enumValueCompanion: IcuUnicodeValueEnum.Companion<T>
-        ) = UnicodeProperty(
+        ) = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(icuPropertyId) },
             propertyValueGetter = { codePoint ->
-                val icuPropertyValue = UCharacter.getIntPropertyValue(codePoint, icuPropertyId)
+                val icuPropertyValue = UCharacter.getIntPropertyValue(codePoint.value, icuPropertyId)
                 enumValueCompanion.ofIcuValue(icuPropertyValue)
             },
             propertyValueDescriber = { value -> value.longName },
@@ -268,13 +263,13 @@ object UnicodeProperties {
         val VERTICAL_ORIENTATION = icuEnumProperty(UProperty.VERTICAL_ORIENTATION, UnicodeVerticalOrientation.Companion)
         val IDENTIFIER_STATUS = icuEnumProperty(UProperty.IDENTIFIER_STATUS, UnicodeIdentifierStatus.Companion)
 
-        val PLANE = UnicodeProperty(
+        val PLANE = CodePointProperty(
             propertyNameGetter = { "Plane" },
             propertyValueGetter = { cp -> UnicodePlane.ofCodePoint(cp) },
             propertyValueDescriber = { value -> value.longName },
         )
 
-        override fun all(): Sequence<UnicodeProperty<out UnicodeValueEnum<*>>> = sequenceOf(
+        override fun all(): Sequence<CodePointProperty<out UnicodeValueEnum<*>>> = sequenceOf(
             BIDI_CLASS,
             BLOCK,
             CANONICAL_COMBINING_CLASS,
@@ -310,17 +305,17 @@ object UnicodeProperties {
      *
      * Although masks are returned by ICU as ints, we generally convert them to sets.
      */
-    object Masks : PropertyCollection<Set<UnicodeValueEnum<*>>> {
-        val GENERAL_CATEGORY_MASK = UnicodeProperty(
+    object Masks : CodePointPropertyCollection<Set<UnicodeValueEnum<*>>> {
+        val GENERAL_CATEGORY_MASK = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.GENERAL_CATEGORY_MASK) },
             propertyValueGetter = { codePoint ->
-                val mask = UCharacter.getIntPropertyValue(codePoint, UProperty.GENERAL_CATEGORY_MASK)
+                val mask = UCharacter.getIntPropertyValue(codePoint.value, UProperty.GENERAL_CATEGORY_MASK)
                 UnicodeCharacterCategory.buildSetFromMask(mask)
             },
             propertyValueDescriber = ENUM_SET_DESCRIBER,
         )
 
-        override fun all(): Sequence<UnicodeProperty<out Set<UnicodeValueEnum<*>>>> = sequenceOf(
+        override fun all(): Sequence<CodePointProperty<out Set<UnicodeValueEnum<*>>>> = sequenceOf(
             GENERAL_CATEGORY_MASK
         )
     }
@@ -328,7 +323,7 @@ object UnicodeProperties {
     /**
      * Double properties.
      */
-    object Doubles : PropertyCollection<Double> {
+    object Doubles : CodePointPropertyCollection<Double> {
         private val DOUBLE_DESCRIBER = { value: Double ->
             if (value == UCharacter.NO_NUMERIC_VALUE) {
                 "No Numeric Value"
@@ -337,13 +332,13 @@ object UnicodeProperties {
             }
         }
 
-        val NUMERIC_VALUE = UnicodeProperty(
+        val NUMERIC_VALUE = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.NUMERIC_VALUE) },
-            propertyValueGetter = { cp -> UCharacter.getUnicodeNumericValue(cp) },
+            propertyValueGetter = { cp -> UCharacter.getUnicodeNumericValue(cp.value) },
             propertyValueDescriber = DOUBLE_DESCRIBER
         )
 
-        override fun all(): Sequence<UnicodeProperty<Double>> = sequenceOf(
+        override fun all(): Sequence<CodePointProperty<Double>> = sequenceOf(
             NUMERIC_VALUE
         )
     }
@@ -351,86 +346,86 @@ object UnicodeProperties {
     /**
      * String properties.
      */
-    object Strings : PropertyCollection<Any> {
+    object Strings : CodePointPropertyCollection<Any> {
         private val STRING_DESCRIBER = { value: String -> value }
         private val NAME_DESCRIBER = { value: String -> value.prettyPrintName() }
 
-        val AGE = UnicodeProperty<VersionInfo>(
+        val AGE = CodePointProperty<VersionInfo>(
             propertyNameGetter = { nameForIcuProperty(UProperty.AGE) },
-            propertyValueGetter = { cp -> UCharacter.getAge(cp) },
+            propertyValueGetter = { cp -> UCharacter.getAge(cp.value) },
             propertyValueDescriber = { versionInfo -> VersionInfoSummary.of(versionInfo).fullDescription },
         )
 
-        val BIDI_MIRRORING_GLYPH = UnicodeProperty(
+        val BIDI_MIRRORING_GLYPH = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.BIDI_MIRRORING_GLYPH) },
-            propertyValueGetter = { cp -> UCharacter.getMirror(cp).codePointToString() },
+            propertyValueGetter = { cp -> CodePoint(UCharacter.getMirror(cp.value)).toString() },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
-        val CASE_FOLDING = UnicodeProperty<String>(
+        val CASE_FOLDING = CodePointProperty<String>(
             propertyNameGetter = { nameForIcuProperty(UProperty.CASE_FOLDING) },
-            propertyValueGetter = { cp -> UCharacter.foldCase(cp.codePointToString(), true) },
+            propertyValueGetter = { cp -> UCharacter.foldCase(cp.toString(), true) },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
         // ISO_COMMENT omitted as ICU4J deprecated it
 
-        val LOWERCASE_MAPPING = UnicodeProperty(
+        val LOWERCASE_MAPPING = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.LOWERCASE_MAPPING) },
-            propertyValueGetter = { cp -> UCharacter.toLowerCase(ULocale.ROOT, cp.codePointToString()) },
+            propertyValueGetter = { cp -> UCharacter.toLowerCase(ULocale.ROOT, cp.toString()) },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
-        val NAME = UnicodeProperty(
+        val NAME = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.NAME) },
-            propertyValueGetter = { cp -> UCharacter.getName(cp) ?: "" },
+            propertyValueGetter = { cp -> UCharacter.getName(cp.value) ?: "" },
             propertyValueDescriber = NAME_DESCRIBER,
         )
 
         // Not present in ICU4J as a property.
-        val NAME_ALIAS = UnicodeProperty(
+        val NAME_ALIAS = CodePointProperty(
             propertyNameGetter = { "Name Alias" },
-            propertyValueGetter = { cp -> UCharacter.getNameAlias(cp) ?: "" },
+            propertyValueGetter = { cp -> UCharacter.getNameAlias(cp.value) ?: "" },
             propertyValueDescriber = NAME_DESCRIBER,
         )
 
         // Not present in ICU4J as a property.
-        val EXTENDED_NAME = UnicodeProperty(
+        val EXTENDED_NAME = CodePointProperty(
             propertyNameGetter = { "Extended Name" },
-            propertyValueGetter = { cp -> UCharacter.getExtendedName(cp) ?: "" },
+            propertyValueGetter = { cp -> UCharacter.getExtendedName(cp.value) ?: "" },
             propertyValueDescriber = NAME_DESCRIBER,
         )
 
-        val SIMPLE_CASE_FOLDING = UnicodeProperty(
+        val SIMPLE_CASE_FOLDING = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.SIMPLE_CASE_FOLDING) },
-            propertyValueGetter = { cp -> UCharacter.foldCase(cp, true).codePointToString() },
+            propertyValueGetter = { cp -> CodePoint(UCharacter.foldCase(cp.value, true)).toString() },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
-        val SIMPLE_LOWERCASE_MAPPING = UnicodeProperty(
+        val SIMPLE_LOWERCASE_MAPPING = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.SIMPLE_LOWERCASE_MAPPING) },
-            propertyValueGetter = { cp -> UCharacter.toLowerCase(cp).codePointToString() },
+            propertyValueGetter = { cp -> CodePoint(UCharacter.toLowerCase(cp.value)).toString() },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
-        val SIMPLE_TITLECASE_MAPPING = UnicodeProperty(
+        val SIMPLE_TITLECASE_MAPPING = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.SIMPLE_TITLECASE_MAPPING) },
-            propertyValueGetter = { cp -> UCharacter.toTitleCase(cp).codePointToString() },
+            propertyValueGetter = { cp -> CodePoint(UCharacter.toTitleCase(cp.value)).toString() },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
-        val SIMPLE_UPPERCASE_MAPPING = UnicodeProperty(
+        val SIMPLE_UPPERCASE_MAPPING = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.SIMPLE_UPPERCASE_MAPPING) },
-            propertyValueGetter = { cp -> UCharacter.toUpperCase(cp).codePointToString() },
+            propertyValueGetter = { cp -> CodePoint(UCharacter.toUpperCase(cp.value)).toString() },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
-        val TITLECASE_MAPPING = UnicodeProperty(
+        val TITLECASE_MAPPING = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.TITLECASE_MAPPING) },
             propertyValueGetter = { codePoint ->
                 UCharacter.toTitleCase(
                     ULocale.ROOT,
-                    codePoint.codePointToString(),
+                    codePoint.toString(),
                     BreakIterator.getWordInstance(ULocale.ROOT)
                 )
             },
@@ -439,26 +434,26 @@ object UnicodeProperties {
 
         // UNICODE_1_NAME omitted as ICU4J deprecated it
 
-        val UPPERCASE_MAPPING = UnicodeProperty(
+        val UPPERCASE_MAPPING = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.UPPERCASE_MAPPING) },
-            propertyValueGetter = { cp -> UCharacter.toUpperCase(ULocale.ROOT, cp.codePointToString()) },
+            propertyValueGetter = { cp -> UCharacter.toUpperCase(ULocale.ROOT, cp.toString()) },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
-        val BIDI_PAIRED_BRACKET = UnicodeProperty(
+        val BIDI_PAIRED_BRACKET = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.BIDI_PAIRED_BRACKET) },
-            propertyValueGetter = { cp -> UCharacter.getBidiPairedBracket(cp).codePointToString() },
+            propertyValueGetter = { cp -> CodePoint(UCharacter.getBidiPairedBracket(cp.value)).toString() },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
-        val CANONICAL_DECOMPOSITION = UnicodeProperty(
+        val CANONICAL_DECOMPOSITION = CodePointProperty(
             propertyNameGetter = { "Canonical Decomposition" },
-            propertyValueGetter = { cp -> cp.codePointToString().normalize(Normalizer2.getNFDInstance()) },
+            propertyValueGetter = { cp -> cp.toString().normalize(Normalizer2.getNFDInstance()) },
             propertyValueDescriber = STRING_DESCRIBER,
         )
-        val COMPATIBILITY_DECOMPOSITION = UnicodeProperty(
+        val COMPATIBILITY_DECOMPOSITION = CodePointProperty(
             propertyNameGetter = { "Compatibility Decomposition" },
-            propertyValueGetter = { cp -> cp.codePointToString().normalize(Normalizer2.getNFKDInstance()) },
+            propertyValueGetter = { cp -> cp.toString().normalize(Normalizer2.getNFKDInstance()) },
             propertyValueDescriber = STRING_DESCRIBER,
         )
 
@@ -466,7 +461,7 @@ object UnicodeProperties {
          * Although all the properties are treated by ICU as strings, the actual types we
          * return are sometimes more specific because we have interpreted the string.
          */
-        override fun all(): Sequence<UnicodeProperty<out Any>> = sequenceOf(
+        override fun all(): Sequence<CodePointProperty<out Any>> = sequenceOf(
             AGE,
             BIDI_MIRRORING_GLYPH,
             CASE_FOLDING,
@@ -489,39 +484,39 @@ object UnicodeProperties {
     /**
      * Other properties.
      */
-    object Other : PropertyCollection<Any> {
-        val SCRIPT_EXTENSIONS = UnicodeProperty(
+    object Other : CodePointPropertyCollection<Any> {
+        val SCRIPT_EXTENSIONS = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.SCRIPT_EXTENSIONS) },
             propertyValueGetter = { codePoint ->
                 UnicodeScript.buildSetFromBitSet(
                     BitSet().apply {
-                        UScript.getScriptExtensions(codePoint, this)
+                        UScript.getScriptExtensions(codePoint.value, this)
                     }
                 )
             },
             propertyValueDescriber = ENUM_SET_DESCRIBER,
         )
 
-        val IDENTIFIER_TYPE = UnicodeProperty(
+        val IDENTIFIER_TYPE = CodePointProperty(
             propertyNameGetter = { nameForIcuProperty(UProperty.IDENTIFIER_TYPE) },
             propertyValueGetter = { codePoint ->
                 UnicodeIdentifierType.buildSet(
                     EnumSet.noneOf(IdentifierType::class.java).apply {
-                        UCharacter.getIdentifierTypes(codePoint, this)
+                        UCharacter.getIdentifierTypes(codePoint.value, this)
                     }
                 )
             },
             propertyValueDescriber = ENUM_SET_DESCRIBER,
         )
 
-        override fun all(): Sequence<UnicodeProperty<out Any>> = sequenceOf(
+        override fun all(): Sequence<CodePointProperty<out Any>> = sequenceOf(
             SCRIPT_EXTENSIONS,
             IDENTIFIER_TYPE,
         )
     }
 
     // XXX: Is there a way to automate getting the full list without using reflection?
-    fun all(): Sequence<UnicodeProperty<*>> = sequenceOf(
+    fun all(): Sequence<CodePointProperty<*>> = sequenceOf(
         Booleans::all,
         Ints::all,
         Masks::all,

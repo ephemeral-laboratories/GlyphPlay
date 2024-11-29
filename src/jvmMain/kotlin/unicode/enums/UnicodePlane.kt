@@ -1,5 +1,7 @@
 package garden.ephemeral.glyphplay.unicode.enums
 
+import garden.ephemeral.glyphplay.unicode.CodePoint
+
 enum class UnicodePlane(val range: IntRange) : UnicodeValueEnum<UnicodePlane> {
     BASIC_MULTILINGUAL_PLANE(0x0000..0xFFFF),
     SUPPLEMENTARY_MULTILINGUAL_PLANE(0x1_0000..0x1_FFFF),
@@ -14,8 +16,8 @@ enum class UnicodePlane(val range: IntRange) : UnicodeValueEnum<UnicodePlane> {
     companion object : UnicodeValueEnum.CompanionImpl<UnicodePlane>(
         enumType = UnicodePlane::class,
     ) {
-        fun ofCodePoint(codePoint: Int) = this.entries
-            .find { p -> codePoint in p.range }
+        fun ofCodePoint(codePoint: CodePoint) = this.entries
+            .find { p -> codePoint.value in p.range }
             ?: throw IllegalArgumentException("Invalid code point: $codePoint")
     }
 }

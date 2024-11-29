@@ -7,7 +7,7 @@ import kotlin.reflect.full.memberProperties
 class UnicodeIdentifierStatusTest : FreeSpec({
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeIdentifierStatus.Companion,
-        expectedCount = 2, actualCountGetter = { UCharacter.IdentifierStatus::class.memberProperties.size },
-        expectedInvalidValue = -1,
+        expectedMin = 0, actualMinGetter = { 0 },
+        expectedMax = 1, actualMaxGetter = { UCharacter.IdentifierStatus::class.memberProperties.size - 1 },
     )
 })

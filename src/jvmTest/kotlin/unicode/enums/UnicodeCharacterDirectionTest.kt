@@ -1,13 +1,14 @@
 package garden.ephemeral.glyphplay.unicode.enums
 
-import com.ibm.icu.lang.UCharacterDirection
+import com.ibm.icu.lang.UCharacter
+import com.ibm.icu.lang.UProperty
 import io.kotest.core.spec.style.FreeSpec
 
 class UnicodeCharacterDirectionTest : FreeSpec({
-    @Suppress("DEPRECATION")
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeCharacterDirection.Companion,
-        expectedCount = 23, actualCountGetter = { UCharacterDirection.CHAR_DIRECTION_COUNT },
-        expectedInvalidValue = -2,
+        expectedMin = 0, actualMinGetter = { UCharacter.getIntPropertyMinValue(UProperty.BIDI_CLASS) },
+        expectedMax = 22, actualMaxGetter = { UCharacter.getIntPropertyMaxValue(UProperty.BIDI_CLASS) },
+        expectedInvalidValue = -2
     )
 })

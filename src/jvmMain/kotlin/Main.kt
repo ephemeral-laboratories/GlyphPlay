@@ -44,10 +44,11 @@ import androidx.compose.ui.window.rememberWindowState
 import garden.ephemeral.glyphplay.search.UnicodeIndices
 import garden.ephemeral.glyphplay.theme.AppTheme
 import garden.ephemeral.glyphplay.theme.Branding
+import garden.ephemeral.glyphplay.unicode.CodePoint
 
 fun main() = application {
     Window(
-        state = rememberWindowState(size = DpSize(1200.dp, 600.dp)),
+        state = rememberWindowState(size = DpSize(1200.dp, 800.dp)),
         title = Branding.APPLICATION_NAME,
         onCloseRequest = ::exitApplication
     ) {
@@ -58,8 +59,8 @@ fun main() = application {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     // App state
-                    val (currentCodePoint, setCurrentCodePoint) = remember { mutableStateOf(0x1F574) }
-                    val searchResults = remember { mutableStateListOf<Int>() }
+                    val (currentCodePoint, setCurrentCodePoint) = remember { mutableStateOf(CodePoint(0x1F574)) }
+                    val searchResults = remember { mutableStateListOf<CodePoint>() }
 
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         SearchTextField { query ->
@@ -132,7 +133,7 @@ fun SearchTextField(onExecuteSearch: (query: String) -> Unit) {
 }
 
 @Composable
-fun SearchResultsGrid(codePoints: List<Int>, onCodePointClicked: (Int) -> Unit) {
+fun SearchResultsGrid(codePoints: List<CodePoint>, onCodePointClicked: (CodePoint) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.FixedSize(48.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),

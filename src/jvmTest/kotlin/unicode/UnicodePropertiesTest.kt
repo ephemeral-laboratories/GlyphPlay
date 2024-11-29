@@ -17,7 +17,7 @@ class UnicodePropertiesTest : FreeSpec({
     suspend fun FreeSpecContainerScope.propertyCollectionSpecs(
         expectedStart: Int, expectedCount: Int, expectedLimit: Int,
         icuStartVal: KProperty<Int>, icuLimitVal: KProperty<Int>,
-        collection: UnicodeProperties.PropertyCollection<*>
+        collection: CodePointPropertyCollection<*>
     ) {
         "should be up to date with ICU itself" {
             icuStartVal.call().shouldBe(expectedStart)

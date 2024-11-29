@@ -7,7 +7,7 @@ import kotlin.reflect.full.staticProperties
 class UnicodeVerticalOrientationTest : FreeSpec({
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeVerticalOrientation.Companion,
-        expectedCount = 4, actualCountGetter = { UCharacter.VerticalOrientation::class.staticProperties.size },
-        expectedInvalidValue = -1,
+        expectedMin = 0, actualMinGetter = { 0 },
+        expectedMax = 3, actualMaxGetter = { UCharacter.VerticalOrientation::class.staticProperties.size - 1 },
     )
 })

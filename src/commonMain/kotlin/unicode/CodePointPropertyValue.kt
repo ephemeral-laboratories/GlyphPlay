@@ -6,7 +6,7 @@ package garden.ephemeral.glyphplay.unicode
  * @property value the raw value.
  * @property description a formatted description of the value.
  */
-data class UnicodePropertyValue<T>(
+data class CodePointPropertyValue<T>(
     val value: T,
     val description: String,
 )

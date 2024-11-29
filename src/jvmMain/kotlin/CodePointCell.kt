@@ -15,11 +15,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import garden.ephemeral.glyphplay.fonts.determineBestFontFamilyForCodePoint
+import garden.ephemeral.glyphplay.unicode.CodePoint
 import garden.ephemeral.glyphplay.unicode.CodePointDescription
 
 @Composable
 fun CodePointCell(
-    codePoint: Int,
+    codePoint: CodePoint,
     size: Dp,
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier

@@ -1,7 +1,6 @@
 package garden.ephemeral.glyphplay.unicode
 
 import com.ibm.icu.util.VersionInfo
-import garden.ephemeral.glyphplay.search2.CodePointProperties
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeBidiPairedBracketType
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeBlock
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeCanonicalCombiningClass
@@ -31,10 +30,10 @@ import io.kotest.matchers.maps.shouldHaveSize
 
 class CodePointPropertiesTest : FreeSpec({
     "CodePointProperties" - {
-        val properties = CodePointProperties.ofCodePoint("ば".codePointAt(0)).storage
+        val properties = CodePointProperties.ofCodePoint(CodePoint("ば".codePointAt(0))).storage
 
         fun value(value: Any, description: String = value.toString()) =
-            UnicodePropertyValue(value = value, description = description)
+            CodePointPropertyValue(value = value, description = description)
 
         "should contain all expected properties" {
             properties.shouldHaveSize(122)

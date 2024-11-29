@@ -26,16 +26,17 @@ import garden.ephemeral.glyphplay.components.GridLayout
 import garden.ephemeral.glyphplay.components.GridLayoutScope
 import garden.ephemeral.glyphplay.components.rememberFlashBoxState
 import garden.ephemeral.glyphplay.theme.AppTheme
+import garden.ephemeral.glyphplay.unicode.CodePoint
 import garden.ephemeral.glyphplay.unicode.CodePointDescription
+import garden.ephemeral.glyphplay.unicode.CodePointProperty
 import garden.ephemeral.glyphplay.unicode.UnicodeProperties
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeNumericType
-import unicode.UnicodeProperty
 import kotlin.streams.asSequence
 
 val CodePointDescriptionViewTitleY = 115.dp
 
 @Composable
-private fun ClickableCodePoint(description: CodePointDescription, onCodePointLinkClicked: (Int) -> Unit) {
+private fun ClickableCodePoint(description: CodePointDescription, onCodePointLinkClicked: (CodePoint) -> Unit) {
     Text(
         text = "${description.stringFormForUI} (${description.name})",
         modifier = Modifier.clickable { onCodePointLinkClicked(description.codePoint) }
@@ -43,7 +44,7 @@ private fun ClickableCodePoint(description: CodePointDescription, onCodePointLin
 }
 
 @Composable
-fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Unit) {
+fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (CodePoint) -> Unit) {
     val description = CodePointDescription.ofCodePoint(codePoint)
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -130,7 +131,7 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                          * Shortcut for adding a conventional property row displaying the value of a
                          * Unicode property.
                          */
-                        fun <T> GridLayoutScope.propertyRow(property: UnicodeProperty<T>) {
+                        fun <T> GridLayoutScope.propertyRow(property: CodePointProperty<T>) {
                             propertyRow(name = property.longName) {
                                 Text(text = description[property].description)
                             }
@@ -141,11 +142,12 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
                          * Unicode property whose values are code points or a string made up of potentially
                          * multiple code points.
                          */
-                        fun GridLayoutScope.propertyRowForCodePoints(property: UnicodeProperty<String>) {
+                        fun GridLayoutScope.propertyRowForCodePoints(property: CodePointProperty<String>) {
                             propertyRow(name = property.longName) {
                                 Column {
                                     description[property].value
                                         .codePoints().asSequence()
+                                        .map(::CodePoint)
                                         .map(CodePointDescription::ofCodePoint)
                                         .toList()
                                         .forEach { description ->
@@ -248,6 +250,6 @@ fun CodePointDescriptionView(codePoint: Int, onCodePointLinkClicked: (Int) -> Un
 @Preview
 fun CharacterViewPreview() {
     AppTheme {
-        CodePointDescriptionView(codePoint = 65, onCodePointLinkClicked = {})
+        CodePointDescriptionView(codePoint = CodePoint(65), onCodePointLinkClicked = {})
     }
 }

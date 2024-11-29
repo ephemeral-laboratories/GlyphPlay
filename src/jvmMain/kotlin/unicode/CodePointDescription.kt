@@ -1,23 +1,20 @@
 package garden.ephemeral.glyphplay.unicode
 
-import garden.ephemeral.glyphplay.codePointToString
-import garden.ephemeral.glyphplay.search2.CodePointProperties
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeCharacterCategory
-import unicode.UnicodeProperty
 
-class CodePointDescription private constructor(val codePoint: Int) {
+class CodePointDescription private constructor(val codePoint: CodePoint) {
     /**
      * Map containing all property values. Or, at least, all the properties which are
      * retrievable from ICU4J using property IDs.
      */
     private val allProperties by lazy { CodePointProperties.ofCodePoint(codePoint) }
 
-    operator fun <T> get(x: UnicodeProperty<T>) = allProperties[x]
+    operator fun <T> get(x: CodePointProperty<T>) = allProperties[x]
 
     val name = UnicodeProperties.Strings.NAME.valueForCodePoint(codePoint).description
 
     val uPlusForm = codePoint.toUPlusString()
-    val stringForm = codePoint.codePointToString()
+    val stringForm = codePoint.toString()
 
     /**
      * Derived value of string form for presentation in UI.
@@ -39,8 +36,6 @@ class CodePointDescription private constructor(val codePoint: Int) {
         // https://en.wikipedia.org/wiki/Dotted_circle
         private const val DOTTED_CIRCLE = "◌"
 
-        private fun Int.toUPlusString() = "U+%04X".format(this)
-
-        fun ofCodePoint(codePoint: Int) = CodePointDescription(codePoint)
+        fun ofCodePoint(codePoint: CodePoint) = CodePointDescription(codePoint)
     }
 }

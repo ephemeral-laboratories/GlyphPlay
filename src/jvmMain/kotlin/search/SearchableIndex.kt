@@ -1,5 +1,7 @@
 package garden.ephemeral.glyphplay.search
 
+import garden.ephemeral.glyphplay.unicode.CodePoint
+
 interface SearchableIndex {
-    fun search(query: String): Sequence<Int>
+    fun search(query: String): Sequence<CodePoint>
 }

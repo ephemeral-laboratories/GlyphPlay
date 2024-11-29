@@ -5,8 +5,6 @@ import com.ibm.icu.text.BreakIterator
 import com.ibm.icu.text.ListFormatter
 import com.ibm.icu.text.Normalizer2
 
-internal fun Int.codePointToString() = String(intArrayOf(this), 0, 1)
-
 internal fun String.prettyPrintName() = replace("_", " ").toTitleCase()
 
 internal fun String.toTitleCase(): String = UCharacter.toTitleCase(this, BreakIterator.getWordInstance())

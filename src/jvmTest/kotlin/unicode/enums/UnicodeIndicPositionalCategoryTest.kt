@@ -7,7 +7,7 @@ import kotlin.reflect.full.staticProperties
 class UnicodeIndicPositionalCategoryTest : FreeSpec({
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeIndicPositionalCategory.Companion,
-        expectedCount = 16, actualCountGetter = { UCharacter.IndicPositionalCategory::class.staticProperties.size },
-        expectedInvalidValue = -1,
+        expectedMin = 0, actualMinGetter = { 0 },
+        expectedMax = 15, actualMaxGetter = { UCharacter.IndicPositionalCategory::class.staticProperties.size - 1 },
     )
 })

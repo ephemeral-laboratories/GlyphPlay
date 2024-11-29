@@ -7,8 +7,7 @@ import io.kotest.core.spec.style.FreeSpec
 class UnicodeCanonicalCombiningClassTest : FreeSpec({
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeCanonicalCombiningClass.Companion,
-        expectedCount = 256,
-        actualCountGetter = { UCharacter.getIntPropertyMaxValue(UProperty.CANONICAL_COMBINING_CLASS) + 1 },
-        expectedInvalidValue = -1,
+        expectedMin = 0, actualMinGetter = { UCharacter.getIntPropertyMinValue(UProperty.CANONICAL_COMBINING_CLASS) },
+        expectedMax = 255, actualMaxGetter = { UCharacter.getIntPropertyMaxValue(UProperty.CANONICAL_COMBINING_CLASS) },
     )
 })
