@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.dp
 import garden.ephemeral.glyphplay.components.FlashBox
 import garden.ephemeral.glyphplay.components.GridLayout
 import garden.ephemeral.glyphplay.components.GridLayoutScope
+import garden.ephemeral.glyphplay.components.debugBorder
+import garden.ephemeral.glyphplay.components.debugLineAtY
+import garden.ephemeral.glyphplay.components.firstBaselineToTop
 import garden.ephemeral.glyphplay.components.rememberFlashBoxState
 import garden.ephemeral.glyphplay.theme.AppTheme
 import garden.ephemeral.glyphplay.unicode.CodePoint
@@ -109,12 +112,20 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                         /**
                          * Shortcut for adding a section with a title
                          */
+                        /**
+                         * Shortcut for adding a section with a title
+                         */
                         fun GridLayoutScope.propertySection(name: String, content: GridLayoutScope.() -> Unit) {
                             section(headerContent = { PropertyLabel(name = name) }) {
                                 content()
                             }
                         }
 
+                        /**
+                         * Shortcut for adding a conventional property row.
+                         * Useful for the advanced case where you want to control what renders in the description
+                         * column.
+                         */
                         /**
                          * Shortcut for adding a conventional property row.
                          * Useful for the advanced case where you want to control what renders in the description
@@ -131,12 +142,21 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                          * Shortcut for adding a conventional property row displaying the value of a
                          * Unicode property.
                          */
+                        /**
+                         * Shortcut for adding a conventional property row displaying the value of a
+                         * Unicode property.
+                         */
                         fun <T> GridLayoutScope.propertyRow(property: CodePointProperty<T>) {
                             propertyRow(name = property.longName) {
                                 Text(text = description[property].description)
                             }
                         }
 
+                        /**
+                         * Shortcut for adding a conventional property row displaying the value of a
+                         * Unicode property whose values are code points or a string made up of potentially
+                         * multiple code points.
+                         */
                         /**
                          * Shortcut for adding a conventional property row displaying the value of a
                          * Unicode property whose values are code points or a string made up of potentially

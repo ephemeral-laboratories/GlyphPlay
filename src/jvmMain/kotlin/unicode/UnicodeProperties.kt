@@ -9,9 +9,6 @@ import com.ibm.icu.text.Normalizer2
 import com.ibm.icu.util.ULocale
 import com.ibm.icu.util.VersionInfo
 import garden.ephemeral.glyphplay.VersionInfoSummary
-import garden.ephemeral.glyphplay.formatToString
-import garden.ephemeral.glyphplay.normalize
-import garden.ephemeral.glyphplay.prettyPrintName
 import garden.ephemeral.glyphplay.unicode.enums.IcuUnicodeValueEnum
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeBidiPairedBracketType
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeBlock
@@ -37,6 +34,9 @@ import garden.ephemeral.glyphplay.unicode.enums.UnicodeSentenceBreak
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeValueEnum
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeVerticalOrientation
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeWordBreak
+import garden.ephemeral.glyphplay.util.formatToString
+import garden.ephemeral.glyphplay.util.normalize
+import garden.ephemeral.glyphplay.util.prettyPrintName
 import java.util.BitSet
 import java.util.EnumSet
 

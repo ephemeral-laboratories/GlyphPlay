@@ -1,4 +1,4 @@
-package garden.ephemeral.glyphplay
+package garden.ephemeral.glyphplay.components
 
 import androidx.compose.foundation.border
 import androidx.compose.ui.Modifier

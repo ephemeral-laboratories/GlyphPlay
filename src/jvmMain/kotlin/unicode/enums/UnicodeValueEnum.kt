@@ -1,6 +1,6 @@
 package garden.ephemeral.glyphplay.unicode.enums
 
-import garden.ephemeral.glyphplay.prettyPrintName
+import garden.ephemeral.glyphplay.util.prettyPrintName
 import kotlin.reflect.KClass
 
 /**

@@ -1,4 +1,4 @@
-package garden.ephemeral.glyphplay
+package garden.ephemeral.glyphplay.util
 
 import com.ibm.icu.lang.UCharacter
 import com.ibm.icu.text.BreakIterator
