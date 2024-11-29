@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -39,30 +38,28 @@ fun CodePointCell(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    Surface {
-        val fontHeight = size * (2.0f / 3.0f)
-        val fontSize = with(LocalDensity.current) { fontHeight.toSp() }
-        Box(modifier = modifier) {
-            OutlinedButton(
-                shape = RectangleShape,
-                onClick = onClick,
-                contentPadding = PaddingValues(0.dp),
+    val fontHeight = size * (2.0f / 3.0f)
+    val fontSize = with(LocalDensity.current) { fontHeight.toSp() }
+    Box(modifier = modifier) {
+        OutlinedButton(
+            shape = RectangleShape,
+            onClick = onClick,
+            contentPadding = PaddingValues(0.dp),
+            modifier = Modifier
+                .wrapContentSize()
+        ) {
+            Text(
+                text = description.stringFormForUI,
+                fontFamily = determineBestFontFamilyForCodePoint(description.codePoint),
+                fontSize = fontSize,
+                textAlign = TextAlign.Center,
+                lineHeight = fontSize,
                 modifier = Modifier
-                    .wrapContentSize()
-            ) {
-                Text(
-                    text = description.stringFormForUI,
-                    fontFamily = determineBestFontFamilyForCodePoint(description.codePoint),
-                    fontSize = fontSize,
-                    textAlign = TextAlign.Center,
-                    lineHeight = fontSize,
-                    modifier = Modifier
-                        // Yes, we need to force this here as well because some characters like musical notes try to
-                        // force the cell to be taller.
-                        .requiredSize(size)
-                        .debugBorder(),
-                )
-            }
+                    // Yes, we need to force this here as well because some characters like musical notes try to
+                    // force the cell to be taller.
+                    .requiredSize(size)
+                    .debugBorder(),
+            )
         }
     }
 }

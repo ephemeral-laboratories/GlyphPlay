@@ -154,8 +154,13 @@ fun SearchResultsGrid(codePoints: List<CodePoint>, onCodePointClicked: (CodePoin
             .requiredWidth(48.dp * 7 + 8.dp * 6)
             .fillMaxHeight()
     ) {
-        items(codePoints) { codePoint ->
-            CodePointCell(codePoint, 48.dp, onClick = { onCodePointClicked(codePoint) })
+        items(items = codePoints, key = { it }) { codePoint ->
+            CodePointCell(
+                codePoint = codePoint,
+                size = 48.dp,
+                onClick = { onCodePointClicked(codePoint) },
+                modifier = Modifier.animateItem(),
+            )
         }
     }
 }
