@@ -15,17 +15,17 @@ internal class InMemoryTextIndex : SearchableIndex {
     private val readingIndex = mutableMapOf<String, MutableSet<CodePoint>>()
 
     fun index(codePoint: CodePoint) {
-        tokenize(UCharacter.getName(codePoint.value)).forEach { term ->
+        tokenizeForIndex(UCharacter.getName(codePoint.value)).forEach { term ->
             addToIndex(term, codePoint, allIndex)
             addToIndex(term, codePoint, nameIndex)
         }
-        tokenize(UCharacter.getNameAlias(codePoint.value)).forEach { term ->
+        tokenizeForIndex(UCharacter.getNameAlias(codePoint.value)).forEach { term ->
             addToIndex(term, codePoint, allIndex)
             addToIndex(term, codePoint, nameAliasIndex)
         }
         UnihanDatabaseProperty.entries
             .filter { it.category == UnihanDatabaseCategory.Readings }
-            .flatMap { tokenize(UnihanData.lookup(codePoint, it)) }
+            .flatMap { tokenizeForIndex(UnihanData.lookup(codePoint, it)) }
             .forEach { term ->
                 addToIndex(term, codePoint, allIndex)
                 addToIndex(term, codePoint, readingIndex)
@@ -36,7 +36,7 @@ internal class InMemoryTextIndex : SearchableIndex {
         var viableResults: Set<CodePoint>? = null
 
         val searchTime = measureTime {
-            for (term in tokenize(query)) {
+            for (term in tokenizeQuery(query)) {
                 val matches = if (term.startsWith("u+")) {
                     // Special bypass if the user types in a U+ sequence directly
                     setOf(CodePoint(term.substring("u+".length).toInt(16)))
@@ -56,8 +56,22 @@ internal class InMemoryTextIndex : SearchableIndex {
         return viableResults?.asSequence() ?: emptySequence()
     }
 
-    private fun tokenize(string: String?): List<String> {
-        return (string ?: "").lowercase().split(Regex("""\s+""")).dropWhile { it == "" }
+    // Basic normalisation of the text has to match between indexing and search, otherwise
+    // nothing will be found.
+    private fun normalise(string: String?) = (string ?: "").lowercase()
+
+    private fun List<String>.removeEmptyStrings() = this.filter(String::isNotEmpty)
+
+    private fun tokenizeForIndex(string: String?): List<String> {
+        // Indexing must remove punctuation from the indexed data, because otherwise it will
+        // never match with user queries, where we don't want to remove it
+        return normalise(string).split(Regex("""\W+""")).removeEmptyStrings()
+    }
+
+    private fun tokenizeQuery(string: String?): List<String> {
+        // We explicitly keep the punctuation for the user query so that they can type in
+        // punctuation characters to search for those directly.
+        return normalise(string).split(Regex("""\s+""")).removeEmptyStrings()
     }
 
     companion object {

@@ -11,11 +11,8 @@ class UnihanPropertiesTest : FreeSpec({
 
     UnihanProperties.allCollections().forEach { collection ->
         collection.javaClass.simpleName {
-            println("-- ${collection.javaClass.simpleName} --")
             collection.all().forEach { property ->
                 val value = property.valueForCodePoint(codePoint = codePoint)
-
-                println("$property -> $value")
 
                 // Even if the value is null, the description should not be null.
                 // This is about all we can assert unless we go and track down some very
