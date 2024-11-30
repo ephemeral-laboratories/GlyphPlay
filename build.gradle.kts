@@ -5,6 +5,7 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(21)
     jvm()
     sourceSets {
         commonMain.dependencies {
@@ -15,6 +16,9 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(compose.material3)
             implementation(libs.icu4j)
+            implementation(libs.lucene.analysis.common)
+            implementation(libs.lucene.core)
+            implementation(libs.lucene.queryparser)
         }
         jvmTest.dependencies {
             implementation(libs.kotlin.test)
@@ -30,6 +34,7 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "garden.ephemeral.glyphplay.MainKt"
+        jvmArgs("--add-modules", "jdk.incubator.vector")
     }
 }
 

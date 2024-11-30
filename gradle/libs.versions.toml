@@ -3,6 +3,7 @@ kotlin = "2.0.21"
 compose = "1.7.0"
 icu = "75.1"
 kotest = "5.9.1"
+lucene = "10.0.0"
 
 [libraries]
 icu4j = {module = "com.ibm.icu:icu4j", version.ref = "icu"}
@@ -11,6 +12,9 @@ kotest-runner-junit5 = {module = "io.kotest:kotest-runner-junit5", version.ref =
 kotest-assertions-core = {module = "io.kotest:kotest-assertions-core", version.ref = "kotest"}
 kotest-framework-datatest = {module = "io.kotest:kotest-framework-datatest", version.ref = "kotest"}
 kotest-property = {module = "io.kotest:kotest-property", version.ref = "kotest"}
+lucene-analysis-common = {module = "org.apache.lucene:lucene-analysis-common", version.ref = "lucene"}
+lucene-core = {module = "org.apache.lucene:lucene-core", version.ref = "lucene"}
+lucene-queryparser = {module = "org.apache.lucene:lucene-queryparser", version.ref = "lucene"}
 
 [plugins]
 kotlin-multiplatform = {id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin"}

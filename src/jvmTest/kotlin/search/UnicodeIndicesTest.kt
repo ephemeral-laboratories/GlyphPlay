@@ -22,4 +22,9 @@ class UnicodeIndicesTest : FreeSpec({
         val results = UnicodeIndices.instance.search("flowery").toList()
         results shouldContain "华".firstToCodePoint()
     }
+
+    "searching for terms which require stemming to get the expected hits" {
+        val results = UnicodeIndices.instance.search("vomit").toList()
+        results shouldContain "🤮".firstToCodePoint()
+    }
 })
