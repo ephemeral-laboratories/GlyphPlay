@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
@@ -53,6 +54,7 @@ import org.jetbrains.compose.resources.stringResource
 import kotlin.streams.asSequence
 
 val CodePointDescriptionViewTitleY = 115.dp
+val CodePointDescriptionViewBoxSize = 150.dp
 
 @Composable
 private fun ClickableCodePoint(description: CodePointDescription, onCodePointLinkClicked: (CodePoint) -> Unit) {
@@ -67,11 +69,12 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
     val description = CodePointDescription.ofCodePoint(codePoint)
 
     Surface(modifier = Modifier.fillMaxSize()) {
-        // 12.dp is a magic number here, to align the top of the large code point box
-        // with the top of the search field in the other panel. I can't find a way to
-        // get the top margin for the search field, but I guess it's 1.dp?
+        // 8.dp top padding is to align the top of the large code point box with the top of the search field
+        // in the other panel, which would be too hard to do automatically without redesigning the entire
+        // screen and writing a custom layout.
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(top = 8.dp),
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -86,12 +89,10 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                 FlashBox(state = flashBoxState, message = stringResource(Res.string.action_result_copied)) {
                     CodePointCell(
                         description = description,
-                        size = 150.dp,
+                        size = CodePointDescriptionViewBoxSize,
                         // XXX: Not using a reference here because somehow using a reference causes the
                         //      incorrect code point to be passed when the view recomposes!
                         onClick = { copyToClipboard() },
-                        modifier = Modifier
-                            .firstBaselineToTop(CodePointDescriptionViewTitleY),
                     )
                 }
                 Text(
@@ -106,7 +107,7 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier
                         .pointerHoverIcon(icon = PointerIcon.Hand, overrideDescendants = true)
-                        .width(150.dp),
+                        .width(CodePointDescriptionViewBoxSize),
                 )
             }
             SelectionContainer {

@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import garden.ephemeral.glyphplay.components.debugBorder
+import garden.ephemeral.glyphplay.components.firstBaselineToTop
 import garden.ephemeral.glyphplay.fonts.determineBestFontFamilyForCodePoint
 import garden.ephemeral.glyphplay.unicode.CodePoint
 import garden.ephemeral.glyphplay.unicode.CodePointDescription
@@ -39,6 +40,7 @@ fun CodePointCell(
 ) {
     val fontHeight = size * (2.0f / 3.0f)
     val fontSize = with(LocalDensity.current) { fontHeight.toSp() }
+    val baselineToTop = size * (CodePointDescriptionViewTitleY / CodePointDescriptionViewBoxSize)
 
     OutlinedButton(
         shape = RectangleShape,
@@ -56,6 +58,7 @@ fun CodePointCell(
                 // Yes, we need to force this here as well because some characters like musical notes try to
                 // force the cell to be taller.
                 .requiredSize(size)
+                .firstBaselineToTop(baselineToTop)
                 .debugBorder(),
         )
     }
