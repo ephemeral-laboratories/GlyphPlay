@@ -10,6 +10,6 @@ class UnicodeJoiningGroupTest : FreeSpec({
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeJoiningGroup,
         expectedMin = 0, actualMinGetter = { UCharacter.getIntPropertyMinValue(UProperty.JOINING_GROUP) },
-        expectedMax = 103, actualMaxGetter = { UCharacter.getIntPropertyMaxValue(UProperty.JOINING_GROUP) },
+        expectedMax = 104, actualMaxGetter = { UCharacter.getIntPropertyMaxValue(UProperty.JOINING_GROUP) },
     )
 })

@@ -75,6 +75,7 @@
     <string name="name_IDS_UNARY_OPERATOR">IDS unary operator</string>
     <string name="name_ID_COMPAT_MATH_START">ID compat math start</string>
     <string name="name_ID_COMPAT_MATH_CONTINUE">ID compat math continue</string>
+    <string name="name_MODIFIER_COMBINING_MARK">Modifier combining mark</string>
 
     <string name="name_BIDI_CLASS">Bidi class</string>
     <string name="name_BLOCK">Block</string>
@@ -102,11 +103,12 @@
     <string name="name_INDIC_SYLLABIC_CATEGORY">Indic syllabic category</string>
     <string name="name_VERTICAL_ORIENTATION">Vertical orientation</string>
     <string name="name_IDENTIFIER_STATUS">Identifier status</string>
+    <string name="name_INDIC_CONJUNCT_BREAK">Indic conjunct break</string>
     <string name="name_PLANE">Plane</string>
 
     <string name="name_GENERAL_CATEGORY_MASK">General category mask</string>
 
-    <string name="name_NUMERIC_VALUE">Numeric value</string>
+    <string name="name_NumericValue">Numeric value</string>
 
     <string name="name_AGE">Age</string>
     <string name="name_BIDI_MIRRORING_GLYPH">Bidi mirroring glyph</string>

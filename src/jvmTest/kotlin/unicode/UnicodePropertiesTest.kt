@@ -51,7 +51,7 @@ class UnicodePropertiesTest : FreeSpec({
     "Booleans" - {
         @Suppress("DEPRECATION")
         propertyCollectionSpecs(
-            expectedStart = 0, expectedCount = 75, expectedLimit = 75,
+            expectedStart = 0, expectedCount = 76, expectedLimit = 76,
             icuStartVal = UProperty::BINARY_START, icuLimitVal = UProperty::BINARY_LIMIT,
             collection = UnicodeProperties.Booleans
         )
@@ -60,7 +60,7 @@ class UnicodePropertiesTest : FreeSpec({
     "Ints" - {
         @Suppress("DEPRECATION")
         propertyCollectionSpecs(
-            expectedStart = 0x1000, expectedCount = 27, expectedLimit = 0x101A,
+            expectedStart = 0x1000, expectedCount = 28, expectedLimit = 0x101B,
             icuStartVal = UProperty::INT_START, icuLimitVal = UProperty::INT_LIMIT,
             collection = UnicodeProperties.Ints
         )

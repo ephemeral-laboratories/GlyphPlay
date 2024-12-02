@@ -2,55 +2,84 @@ package garden.ephemeral.glyphplay.search
 
 import garden.ephemeral.glyphplay.unicode.CodePoint
 import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.firstToCodePoint
+import garden.ephemeral.glyphplay.unicode.rawdata.parseUPlusCodePoint
 import garden.ephemeral.glyphplay.util.formatAsDataSize
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.en.EnglishAnalyzer
+import org.apache.lucene.document.SortedNumericDocValuesField
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.index.IndexWriterConfig
 import org.apache.lucene.queryparser.classic.QueryParser
+import org.apache.lucene.queryparser.classic.QueryParserBase
+import org.apache.lucene.search.BooleanClause
 import org.apache.lucene.search.IndexSearcher
+import org.apache.lucene.search.Query
 import org.apache.lucene.store.ByteBuffersDirectory
 import search.IndexingScope
 import search.LuceneFields
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
+
 internal class LuceneMemoryTextIndex private constructor(private val indexSearcher: IndexSearcher) : SearchableIndex {
-    override fun search(query: String): Sequence<CodePoint> {
-        var viableResults: Set<CodePoint>? = null
-
-        val searchTime = measureTime {
-            // Currently still tokenising the query ourselves, because ew have two paths here which
-            // don't need the text index. If we could convince Lucene to handle those too..?
-            // We explicitly keep the punctuation for the user query so that they can type in
-            // punctuation characters to search for those directly.
-            val queryTerms = query.split(Regex("""\s+""")).filter(String::isNotEmpty)
-
-            for (term in queryTerms) {
-                val matches = if (term.startsWith("U+")) {
-                    // Special bypass if the user types in a U+ sequence directly
-                    setOf(CodePoint(term.substring("U+".length).toInt(16)))
-                } else if (term.codePointCount(0, term.length) == 1) {
-                    // Special bypass if the term was exactly one character
-                    setOf(term.firstToCodePoint())
-                } else {
-                    val termQuery = queryParser.parse(term)
-                    indexSearcher.search(termQuery, CodePointSetCollectorManager())
-                }
-
-                viableResults = viableResults?.union(matches) ?: matches
-            }
+    override fun search(queryString: String): Sequence<CodePoint> {
+        val (matches, searchTime) = measureTimedValue {
+            val query = QueryParserHelper.parseQuery(queryString)
+            indexSearcher.search(query, CodePointSetCollectorManager())
         }
         logger.info("Search time: $searchTime")
 
-        // TODO: Should this actually return all when it's null? How do we return all?
-        return viableResults?.asSequence() ?: emptySequence()
+        return matches.asSequence()
+    }
+
+    object QueryParserHelper {
+        class CustomQueryParser : QueryParser(LuceneFields.ALL_TEXT, analyzer) {
+            init {
+                // We want queries like '1/3' to become phrase queries, not weak boolean queries
+                splitOnWhitespace = true
+                autoGeneratePhraseQueries = true
+            }
+
+            override fun parse(query: String): Query {
+                val saferQuery = charsToEscapeRegex.replace(query) { QueryParserBase.escape(it.groupValues[1]) }
+                return super.parse(saferQuery)
+            }
+
+            private fun createCodePointQuery(codePoint: CodePoint): Query {
+                return SortedNumericDocValuesField.newSlowExactQuery(LuceneFields.CODE_POINT, codePoint.value.toLong())
+            }
+
+            override fun createFieldQuery(
+                analyzer: Analyzer?,
+                operator: BooleanClause.Occur?,
+                field: String?,
+                queryText: String,
+                quoted: Boolean,
+                phraseSlop: Int
+            ) = when {
+                // Special bypass if the user types in a U+ sequence directly
+                queryText.startsWith("U+") -> createCodePointQuery(parseUPlusCodePoint(queryText))
+
+                // Special bypass if the term was exactly one character
+                queryText.codePointCount(0, queryText.length) == 1 ->
+                    createCodePointQuery(queryText.firstToCodePoint())
+
+                else -> super.createFieldQuery(analyzer, operator, field, queryText, quoted, phraseSlop)
+            }
+
+            companion object {
+                private val charsToEscapeRegex = Regex("""([/])""")
+            }
+        }
+
+        private val queryParser = CustomQueryParser()
+
+        internal fun parseQuery(text: String) = queryParser.parse(text)
     }
 
     companion object {
         private val analyzer: Analyzer = EnglishAnalyzer()
-        private val queryParser = QueryParser(LuceneFields.ALL_TEXT, analyzer)
 
         /**
          * Entry point to building a new in-memory text index.

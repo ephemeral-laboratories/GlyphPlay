@@ -41,6 +41,7 @@ enum class UnicodeIndicSyllabicCategory(override val icuValue: Int) :
     VOWEL(UCharacter.IndicSyllabicCategory.VOWEL),
     VOWEL_DEPENDENT(UCharacter.IndicSyllabicCategory.VOWEL_DEPENDENT),
     VOWEL_INDEPENDENT(UCharacter.IndicSyllabicCategory.VOWEL_INDEPENDENT),
+    REORDERING_KILLER(UCharacter.IndicSyllabicCategory.REORDERING_KILLER),
     ;
 
     companion object : IcuUnicodeValueEnum.CompanionImpl<UnicodeIndicSyllabicCategory>(

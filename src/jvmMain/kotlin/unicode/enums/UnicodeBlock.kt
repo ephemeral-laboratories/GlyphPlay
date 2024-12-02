@@ -101,7 +101,6 @@ enum class UnicodeBlock(override val icuValue: Int) : IcuUnicodeValueEnum<Unicod
     CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B(UCharacter.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B_ID),
     CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT(UCharacter.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT_ID),
     TAGS(UCharacter.UnicodeBlock.TAGS_ID),
-    CYRILLIC_SUPPLEMENTARY(UCharacter.UnicodeBlock.CYRILLIC_SUPPLEMENTARY_ID),
     CYRILLIC_SUPPLEMENT(UCharacter.UnicodeBlock.CYRILLIC_SUPPLEMENT_ID),
     TAGALOG(UCharacter.UnicodeBlock.TAGALOG_ID),
     HANUNOO(UCharacter.UnicodeBlock.HANUNOO_ID),
@@ -334,6 +333,17 @@ enum class UnicodeBlock(override val icuValue: Int) : IcuUnicodeValueEnum<Unicod
     KAWI(UCharacter.UnicodeBlock.KAWI_ID), /*[11F00]*/
     NAG_MUNDARI(UCharacter.UnicodeBlock.NAG_MUNDARI_ID), /*[1E4D0]*/
     CJK_UNIFIED_IDEOGRAPHS_EXTENSION_I(UCharacter.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_I_ID), /*[2EBF0]*/
+    EGYPTIAN_HIEROGLYPHS_EXTENDED_A_ID(UCharacter.UnicodeBlock.EGYPTIAN_HIEROGLYPHS_EXTENDED_A_ID), /*[13460]*/
+    GARAY_ID(UCharacter.UnicodeBlock.GARAY_ID), /*[10D40]*/
+    GURUNG_KHEMA_ID(UCharacter.UnicodeBlock.GURUNG_KHEMA_ID), /*[16100]*/
+    KIRAT_RAI_ID(UCharacter.UnicodeBlock.KIRAT_RAI_ID), /*[16D40]*/
+    MYANMAR_EXTENDED_C_ID(UCharacter.UnicodeBlock.MYANMAR_EXTENDED_C_ID), /*[116D0]*/
+    OL_ONAL_ID(UCharacter.UnicodeBlock.OL_ONAL_ID), /*[1E5D0]*/
+    SUNUWAR_ID(UCharacter.UnicodeBlock.SUNUWAR_ID), /*[11BC0]*/
+    SYMBOLS_FOR_LEGACY_COMPUTING_SUPPLEMENT_ID(UCharacter.UnicodeBlock.SYMBOLS_FOR_LEGACY_COMPUTING_SUPPLEMENT_ID), /*[1CC00]*/
+    TODHRI_ID(UCharacter.UnicodeBlock.TODHRI_ID), /*[105C0]*/
+    TULU_TIGALARI_ID(UCharacter.UnicodeBlock.TULU_TIGALARI_ID), /*[11380]*/
+
     INVALID_CODE(UCharacter.UnicodeBlock.INVALID_CODE_ID),
     ;
 

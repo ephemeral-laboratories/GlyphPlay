@@ -213,6 +213,13 @@ enum class UnicodeScript(override val icuValue: Int, val code: String, val codeA
     KAWI(UScript.KAWI, "Kawi"),
     NAG_MUNDARI(UScript.NAG_MUNDARI, "Nagm"),
     ARABIC_NASTALIQ(UScript.ARABIC_NASTALIQ, "Aran"),
+    GARAY(UScript.GARAY, "Gara"),
+    GURUNG_KHEMA(UScript.GURUNG_KHEMA, "Gukh"),
+    KIRAT_RAI(UScript.KIRAT_RAI, "Krai"),
+    OL_ONAL(UScript.OL_ONAL, "Onao"),
+    SUNUWAR(UScript.SUNUWAR, "Sunu"),
+    TODHRI(UScript.TODHRI, "Todr"),
+    TULU_TIGALARI(UScript.TULU_TIGALARI, "Tutg"),
     ;
 
     val shortName: String get() = UScript.getShortName(icuValue)

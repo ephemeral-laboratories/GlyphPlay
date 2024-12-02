@@ -10,6 +10,6 @@ class UnicodeScriptTest : FreeSpec({
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeScript,
         expectedMin = 0, actualMinGetter = { UCharacter.getIntPropertyMinValue(UProperty.SCRIPT) },
-        expectedMax = 200, actualMaxGetter = { UCharacter.getIntPropertyMaxValue(UProperty.SCRIPT) },
+        expectedMax = 207, actualMaxGetter = { UCharacter.getIntPropertyMaxValue(UProperty.SCRIPT) },
     )
 })

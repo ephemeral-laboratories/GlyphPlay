@@ -13,6 +13,7 @@ import garden.ephemeral.glyphplay.unicode.enums.UnicodeGraphemeClusterBreak
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeHangulSyllableType
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeIdentifierStatus
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeIdentifierType
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeIndicConjunctBreak
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeIndicPositionalCategory
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeIndicSyllabicCategory
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeJoiningGroup
@@ -37,7 +38,7 @@ class CodePointPropertiesTest : FreeSpec({
         val properties = CodePointProperties.ofCodePoint("ば".firstToCodePoint()).storage
 
         "should contain all expected properties" {
-            properties.shouldHaveSize(222)
+            properties.shouldHaveSize(224)
             val unwrappedProperties = properties.map { (k, v) -> k to v.value }.toMap()
             unwrappedProperties.shouldContainExactly(
                 mapOf(
@@ -118,6 +119,7 @@ class CodePointPropertiesTest : FreeSpec({
                     UnicodeProperties.Booleans.IDS_UNARY_OPERATOR to false,
                     UnicodeProperties.Booleans.ID_COMPAT_MATH_START to false,
                     UnicodeProperties.Booleans.ID_COMPAT_MATH_CONTINUE to false,
+                    UnicodeProperties.Booleans.MODIFIER_COMBINING_MARK to false,
                     // Ints
                     UnicodeProperties.Ints.BIDI_CLASS to UnicodeCharacterDirection.LEFT_TO_RIGHT,
                     UnicodeProperties.Ints.BLOCK to UnicodeBlock.HIRAGANA,
@@ -145,6 +147,7 @@ class CodePointPropertiesTest : FreeSpec({
                     UnicodeProperties.Ints.INDIC_SYLLABIC_CATEGORY to UnicodeIndicSyllabicCategory.OTHER,
                     UnicodeProperties.Ints.VERTICAL_ORIENTATION to UnicodeVerticalOrientation.UPRIGHT,
                     UnicodeProperties.Ints.IDENTIFIER_STATUS to UnicodeIdentifierStatus.ALLOWED,
+                    UnicodeProperties.Ints.INDIC_CONJUNCT_BREAK to UnicodeIndicConjunctBreak.NONE,
                     UnicodeProperties.Ints.PLANE to UnicodePlane.BASIC_MULTILINGUAL_PLANE,
                     // Masks
                     UnicodeProperties.Masks.GENERAL_CATEGORY_MASK to setOf(UnicodeCharacterCategory.OTHER_LETTER),

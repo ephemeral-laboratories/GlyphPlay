@@ -31,6 +31,6 @@ interface IcuUnicodeValueEnum<T : IcuUnicodeValueEnum<T>> : UnicodeValueEnum<T> 
 
         override fun ofIcuValue(icuValue: Int): T = entries
             .find { entry -> entry.icuValue == icuValue }
-            ?: throw IllegalArgumentException("Unknown ICU value for enum ${enumType::class.simpleName}: $icuValue")
+            ?: throw IllegalArgumentException("Unknown ICU value for enum ${enumType.simpleName}: $icuValue")
     }
 }

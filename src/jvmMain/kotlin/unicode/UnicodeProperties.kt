@@ -22,6 +22,7 @@ import garden.ephemeral.glyphplay.unicode.enums.UnicodeGraphemeClusterBreak
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeHangulSyllableType
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeIdentifierStatus
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeIdentifierType
+import garden.ephemeral.glyphplay.unicode.enums.UnicodeIndicConjunctBreak
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeIndicPositionalCategory
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeIndicSyllabicCategory
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeJoiningGroup
@@ -98,6 +99,7 @@ import garden.ephemeral.glyphs.glyphplay.generated.resources.name_ID_COMPAT_MATH
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_ID_COMPAT_MATH_START
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_ID_CONTINUE
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_ID_START
+import garden.ephemeral.glyphs.glyphplay.generated.resources.name_INDIC_CONJUNCT_BREAK
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_INDIC_POSITIONAL_CATEGORY
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_INDIC_SYLLABIC_CATEGORY
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_JOINING_GROUP
@@ -109,6 +111,7 @@ import garden.ephemeral.glyphs.glyphplay.generated.resources.name_LOGICAL_ORDER_
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_LOWERCASE
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_LOWERCASE_MAPPING
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_MATH
+import garden.ephemeral.glyphs.glyphplay.generated.resources.name_MODIFIER_COMBINING_MARK
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_NAME
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_NAME_ALIAS
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_NFC_INERT
@@ -121,7 +124,7 @@ import garden.ephemeral.glyphs.glyphplay.generated.resources.name_NFKD_INERT
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_NFKD_QUICK_CHECK
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_NONCHARACTER_CODE_POINT
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_NUMERIC_TYPE
-import garden.ephemeral.glyphs.glyphplay.generated.resources.name_NUMERIC_VALUE
+import garden.ephemeral.glyphs.glyphplay.generated.resources.name_NumericValue
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_PATTERN_SYNTAX
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_PATTERN_WHITE_SPACE
 import garden.ephemeral.glyphs.glyphplay.generated.resources.name_PLANE
@@ -282,6 +285,8 @@ object UnicodeProperties {
             icuBooleanProperty(Res.string.name_ID_COMPAT_MATH_START, UProperty.ID_COMPAT_MATH_START)
         val ID_COMPAT_MATH_CONTINUE =
             icuBooleanProperty(Res.string.name_ID_COMPAT_MATH_CONTINUE, UProperty.ID_COMPAT_MATH_CONTINUE)
+        val MODIFIER_COMBINING_MARK =
+            icuBooleanProperty(Res.string.name_MODIFIER_COMBINING_MARK, UProperty.MODIFIER_COMBINING_MARK)
 
         override fun all(): Sequence<CodePointProperty<Boolean>> = sequenceOf(
             ALPHABETIC,
@@ -359,6 +364,7 @@ object UnicodeProperties {
             IDS_UNARY_OPERATOR,
             ID_COMPAT_MATH_START,
             ID_COMPAT_MATH_CONTINUE,
+            MODIFIER_COMBINING_MARK,
         )
     }
 
@@ -461,6 +467,9 @@ object UnicodeProperties {
         val IDENTIFIER_STATUS = icuEnumProperty(
             Res.string.name_IDENTIFIER_STATUS, UProperty.IDENTIFIER_STATUS, UnicodeIdentifierStatus.Companion
         )
+        val INDIC_CONJUNCT_BREAK = icuEnumProperty(
+            Res.string.name_INDIC_CONJUNCT_BREAK, UProperty.INDIC_CONJUNCT_BREAK, UnicodeIndicConjunctBreak.Companion
+        )
 
         val PLANE = CodePointProperty(
             displayNameResource = Res.string.name_PLANE,
@@ -495,6 +504,7 @@ object UnicodeProperties {
             INDIC_SYLLABIC_CATEGORY,
             VERTICAL_ORIENTATION,
             IDENTIFIER_STATUS,
+            INDIC_CONJUNCT_BREAK,
             PLANE,
         )
     }
@@ -533,7 +543,7 @@ object UnicodeProperties {
         }
 
         val NUMERIC_VALUE = CodePointProperty(
-            displayNameResource = Res.string.name_NUMERIC_VALUE,
+            displayNameResource = Res.string.name_NumericValue,
             propertyValueGetter = { cp -> UCharacter.getUnicodeNumericValue(cp.value) },
             propertyValueDescriber = DOUBLE_DESCRIBER
         )

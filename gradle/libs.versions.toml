@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.0.21"
 compose = "1.7.0"
-icu = "75.1"
+icu = "76.1"
 kotest = "5.9.1"
 lucene = "10.0.0"
 

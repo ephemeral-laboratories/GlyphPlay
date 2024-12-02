@@ -10,7 +10,7 @@ class UnicodeBlockTest : FreeSpec({
     commonIcuUnicodeValueEnumSpecs<UnicodeBlock>(
         companion = UnicodeBlock,
         expectedMin = 0, actualMinGetter = { UCharacter.getIntPropertyMinValue(UProperty.BLOCK) },
-        expectedMax = 328, actualMaxGetter = { UCharacter.getIntPropertyMaxValue(UProperty.BLOCK) },
+        expectedMax = 338, actualMaxGetter = { UCharacter.getIntPropertyMaxValue(UProperty.BLOCK) },
         expectedInvalidValue = -2,
     )
 })

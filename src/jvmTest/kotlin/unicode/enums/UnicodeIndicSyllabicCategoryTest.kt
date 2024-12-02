@@ -10,6 +10,6 @@ class UnicodeIndicSyllabicCategoryTest : FreeSpec({
     commonIcuUnicodeValueEnumSpecs(
         companion = UnicodeIndicSyllabicCategory,
         expectedMin = 0, actualMinGetter = { 0 },
-        expectedMax = 35, actualMaxGetter = { UCharacter.IndicSyllabicCategory::class.staticProperties.size - 1 },
+        expectedMax = 36, actualMaxGetter = { UCharacter.IndicSyllabicCategory::class.staticProperties.size - 1 },
     )
 })

@@ -29,4 +29,16 @@ class UnicodeIndicesTest : FreeSpec({
         val results = UnicodeIndices.instance.search("vomit").toList()
         results shouldContain "🤮".firstToCodePoint()
     }
+
+    "searching for term containing a slash" {
+        val results = UnicodeIndices.instance.search("1/2").toList()
+        // The matched name is "Emoji Modifier Fitzpatrick Type-1-2"
+        results shouldContain CodePoint(0x1F3FB)
+    }
+
+    "searching for manually entered phrase query" {
+        val results = UnicodeIndices.instance.search("\"business suit\"").toList()
+        // Man In Business Suit Levitating
+        results shouldContain CodePoint(0x1F574)
+    }
 })

@@ -34,8 +34,16 @@ value class CodePoint(val value: Int) : Comparable<CodePoint> {
     override fun toString() = String(intArrayOf(value), 0, 1)
 
     /**
+     * Converts to the shortened hex string seen in many data files.
+     * Fewer than 4 digits are padded with zeroes.
+     *
+     * @return the raw hex string.
+     */
+    fun toRawHexString() = "%04X".format(value)
+
+    /**
      * Converts to the standard U+ form used in Unicode documentation.
-     * Fewer than 3 digits are padded with zeroes.
+     * Fewer than 4 digits are padded with zeroes.
      *
      * @return the U+ form of the code point.
      */
@@ -71,41 +79,4 @@ value class CodePoint(val value: Int) : Comparable<CodePoint> {
 
     }
 
-    /**
-     * A range of code points.
-     *
-     * @property start the start of the range.
-     * @property endInclusive the end of the range.
-     */
-    class CodePointRange(override val start: CodePoint, override val endInclusive: CodePoint) :
-        ClosedRange<CodePoint>, Iterable<CodePoint> {
-
-        override fun iterator(): Iterator<CodePoint> = IteratorImpl(start = start, endInclusive = endInclusive)
-
-        override fun equals(other: Any?): Boolean {
-            if (other === this) return true
-            if (other !is CodePointRange) return false
-            return start == other.start && endInclusive == other.endInclusive
-        }
-
-        override fun hashCode() = start.hashCode() * 31 + endInclusive.hashCode()
-
-        override fun toString() = "${start.toUPlusString()}..${endInclusive.toUPlusString()}"
-
-        private class IteratorImpl(start: CodePoint, private val endInclusive: CodePoint) :
-            Iterator<CodePoint> {
-
-            private var next = start
-
-            override fun hasNext() = next <= endInclusive
-
-            override fun next(): CodePoint {
-                if (hasNext()) {
-                    return next++
-                } else {
-                    throw NoSuchElementException()
-                }
-            }
-        }
-    }
 }

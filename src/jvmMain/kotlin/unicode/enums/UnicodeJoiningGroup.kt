@@ -107,6 +107,7 @@ enum class UnicodeJoiningGroup(override val icuValue: Int) : IcuUnicodeValueEnum
     HANIFI_ROHINGYA_PA(UCharacter.JoiningGroup.HANIFI_ROHINGYA_PA),
     THIN_YEH(UCharacter.JoiningGroup.THIN_YEH),
     VERTICAL_TAIL(UCharacter.JoiningGroup.VERTICAL_TAIL),
+    KASHMIRI_YEH(UCharacter.JoiningGroup.KASHMIRI_YEH),
     ;
 
     companion object : IcuUnicodeValueEnum.CompanionImpl<UnicodeJoiningGroup>(
