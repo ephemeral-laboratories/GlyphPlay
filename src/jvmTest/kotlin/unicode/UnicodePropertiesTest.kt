@@ -4,6 +4,7 @@ import com.ibm.icu.lang.UProperty
 import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.toCodePoint
 import garden.ephemeral.glyphplay.unicode.enums.IcuUnicodeValueEnum
 import garden.ephemeral.glyphplay.unicode.unihan.UnihanProperties
+import garden.ephemeral.glyphplay.util.Subject
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
 import io.kotest.inspectors.shouldForAll
@@ -15,6 +16,7 @@ import io.kotest.matchers.sequences.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import kotlin.reflect.KProperty
 
+@Subject<UnicodeProperties>()
 class UnicodePropertiesTest : FreeSpec({
 
     suspend fun FreeSpecContainerScope.propertyCollectionSpecs(

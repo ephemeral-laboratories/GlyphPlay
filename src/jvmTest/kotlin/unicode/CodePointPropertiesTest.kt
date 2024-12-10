@@ -26,10 +26,12 @@ import garden.ephemeral.glyphplay.unicode.enums.UnicodeSentenceBreak
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeVerticalOrientation
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeWordBreak
 import garden.ephemeral.glyphplay.unicode.unihan.UnihanProperties
+import garden.ephemeral.glyphplay.util.Subject
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.maps.shouldHaveSize
 
+@Subject<CodePointProperties>()
 class CodePointPropertiesTest : FreeSpec({
     "CodePointProperties" - {
         val properties = CodePointProperties.ofCodePoint("ば".firstToCodePoint()).storage

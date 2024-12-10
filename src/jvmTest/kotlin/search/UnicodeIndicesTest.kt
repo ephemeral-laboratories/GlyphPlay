@@ -3,10 +3,12 @@ package garden.ephemeral.glyphplay.search
 import garden.ephemeral.glyphplay.unicode.CodePoint
 import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.firstToCodePoint
 import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.toCodePoint
+import garden.ephemeral.glyphplay.util.Subject
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
 
+@Subject<UnicodeIndices>()
 class UnicodeIndicesTest : FreeSpec({
     "entering U+ codes directly" {
         val results = UnicodeIndices.instance.search("U+1F574").toList()

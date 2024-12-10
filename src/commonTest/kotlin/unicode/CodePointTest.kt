@@ -2,6 +2,7 @@ package garden.ephemeral.glyphplay.unicode
 
 import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.firstToCodePoint
 import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.toCodePoint
+import garden.ephemeral.glyphplay.util.Subject
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContainInOrder
@@ -15,6 +16,7 @@ import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.equals.shouldNotBeEqual
 import io.kotest.matchers.shouldBe
 
+@Subject<CodePoint>()
 class CodePointTest : FreeSpec({
     val a = 'a'.toCodePoint()
     val b = 'b'.toCodePoint()

@@ -7,7 +7,9 @@ import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.toCodePoint
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
+import org.junit.platform.commons.annotation.Testable
 
+@Testable
 class ExtraFontsTest : FreeSpec({
     val resolver: FontFamily.Resolver = createFontFamilyResolver()
 
@@ -169,7 +171,7 @@ class ExtraFontsTest : FreeSpec({
         )
 
         rangeExpectations.forEach { (range, expected) ->
-            "Range $range" - {
+            "Range $range" {
                 range.forEach { codePoint ->
                     determineBestFontFamilyForCodePoint(resolver, codePoint) shouldBe expected
                 }

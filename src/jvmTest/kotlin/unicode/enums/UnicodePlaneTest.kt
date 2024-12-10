@@ -1,11 +1,11 @@
 package garden.ephemeral.glyphplay.unicode.enums
 
-import com.ibm.icu.lang.UCharacter
+import garden.ephemeral.glyphplay.util.Subject
 import io.kotest.core.spec.style.FreeSpec
 
+@Subject<UnicodePlane>()
 class UnicodePlaneTest : FreeSpec({
-    @Suppress("DEPRECATION")
     commonUnicodeValueEnumSpecs<UnicodePlane>(
-        companion = UnicodePlane.Companion,
+        companion = UnicodePlane,
     )
 })

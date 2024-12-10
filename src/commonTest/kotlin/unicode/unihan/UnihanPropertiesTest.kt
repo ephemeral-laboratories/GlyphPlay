@@ -1,8 +1,10 @@
 package garden.ephemeral.glyphplay.unicode.unihan
 
 import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.firstToCodePoint
+import garden.ephemeral.glyphplay.util.Subject
 import io.kotest.core.spec.style.FreeSpec
 
+@Subject<UnihanProperties>()
 class UnihanPropertiesTest : FreeSpec({
 
     val codePoint = "猫".firstToCodePoint()

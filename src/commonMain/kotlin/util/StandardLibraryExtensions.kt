@@ -1,12 +1,25 @@
 package garden.ephemeral.glyphplay.util
 
 import com.ibm.icu.lang.UCharacter
-import com.ibm.icu.text.BreakIterator
 import com.ibm.icu.text.ListFormatter
 
-internal fun String.toTitleCase(): String = UCharacter.toTitleCase(this, BreakIterator.getWordInstance())
+internal fun String.foldCase(): String = UCharacter.foldCase(this, UCharacter.FOLD_CASE_DEFAULT)
 
-internal fun String.prettyPrintName() = replace("_", " ").toTitleCase()
+internal fun String.titlecase(): String = UCharacter.toTitleCase(this, null)
+
+private val KNOWN_ABBREVIATIONS = setOf("cjk")
+private val KNOWN_MINOR_WORDS = setOf("in")
+
+internal fun String.prettyPrintName() = replace("_", " ")
+    .splitToSequence(Regex("""\s+"""))
+    .map { term ->
+        when (term.foldCase()) {
+            in KNOWN_MINOR_WORDS -> term.lowercase()
+            in KNOWN_ABBREVIATIONS -> term.uppercase()
+            else -> term.titlecase()
+        }
+    }
+    .joinToString(separator = " ")
 
 internal fun List<*>.formatToString(): String =
     ListFormatter.getInstance().format(this)
