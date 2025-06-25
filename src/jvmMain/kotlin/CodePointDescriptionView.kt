@@ -128,7 +128,7 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                         @Composable
                         fun PropertyLabel(nameFunc: @Composable () -> String) {
                             val name = nameFunc()
-                            Text(text = "$name:", fontWeight = FontWeight.Bold)
+                            Text(text = name, fontWeight = FontWeight.Bold)
                         }
 
                         /**

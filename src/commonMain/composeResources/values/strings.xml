@@ -8,12 +8,12 @@
     <string name="action_copy_to_clipboard">Copy to Clipboard</string>
     <string name="action_result_copied">Copied!</string>
 
-    <string name="property_section_title_location">Location</string>
-    <string name="property_section_title_mappings">Mappings</string>
-    <string name="property_section_title_decomposition">Decomposition</string>
-    <string name="property_section_title_bidirectional">Bidirectional</string>
-    <string name="property_section_title_breaking">Breaking</string>
-    <string name="property_section_title_unihan">Unihan</string>
+    <string name="property_section_title_location">Location:</string>
+    <string name="property_section_title_mappings">Mappings:</string>
+    <string name="property_section_title_decomposition">Decomposition:</string>
+    <string name="property_section_title_bidirectional">Bidirectional:</string>
+    <string name="property_section_title_breaking">Breaking:</string>
+    <string name="property_section_title_unihan">Unihan:</string>
 
     <!--
     Param 1 = code point presented as a plain string
