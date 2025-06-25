@@ -2,7 +2,7 @@ package garden.ephemeral.glyphplay.search
 
 import garden.ephemeral.glyphplay.unicode.CodePoint
 import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.firstToCodePoint
-import garden.ephemeral.glyphplay.unicode.rawdata.parseUPlusCodePoint
+import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.parseUPlusCodePoint
 import garden.ephemeral.glyphplay.util.formatAsDataSize
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.en.EnglishAnalyzer
@@ -59,7 +59,7 @@ internal class LuceneMemoryTextIndex private constructor(private val indexSearch
                 phraseSlop: Int
             ) = when {
                 // Special bypass if the user types in a U+ sequence directly
-                queryText.startsWith("U+") -> createCodePointQuery(parseUPlusCodePoint(queryText))
+                queryText.startsWith("U+") -> createCodePointQuery(queryText.parseUPlusCodePoint())
 
                 // Special bypass if the term was exactly one character
                 queryText.codePointCount(0, queryText.length) == 1 ->

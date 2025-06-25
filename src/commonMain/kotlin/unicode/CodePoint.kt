@@ -17,14 +17,19 @@ value class CodePoint(val value: Int) : Comparable<CodePoint> {
      */
     fun <T> getProperty(property: CodePointProperty<T>) = property.valueForCodePoint(this)
 
+    fun isValid() = UCharacter.isValidCodePoint(value)
+    fun isDefined() = UCharacter.isDefined(value)
+
     override fun compareTo(other: CodePoint) = value.compareTo(other.value)
 
-    operator fun rangeTo(that: CodePoint): CodePointRange =
-        CodePointRange(start = this, endInclusive = that)
+    operator fun rangeTo(that: CodePoint): CodePointRange = CodePointRange(start = this, endInclusive = that)
+    operator fun rangeUntil(that: CodePoint): CodePointRange = CodePointRange(start = this, endInclusive = that.dec())
 
     operator fun inc(): CodePoint = CodePoint(this.value + 1)
+    operator fun plus(n: Int): CodePoint = CodePoint(this.value + n)
 
     operator fun dec(): CodePoint = CodePoint(this.value - 1)
+    operator fun minus(n: Int): CodePoint = CodePoint(this.value - n)
 
     /**
      * Converts the code point to a string containing the single code point.
@@ -74,9 +79,28 @@ value class CodePoint(val value: Int) : Comparable<CodePoint> {
         val allValidCodePoints: Sequence<CodePoint>
             get() = (CodePoint(UCharacter.MIN_CODE_POINT)..CodePoint(UCharacter.MAX_CODE_POINT))
                 .asSequence()
-                .filter { UCharacter.isValidCodePoint(it.value) }
-                .filter { UCharacter.isDefined(it.value) }
+                .filter(CodePoint::isValid)
+                .filter(CodePoint::isDefined)
 
+        /**
+         * Parses a code point from the string in raw hex format.
+         *
+         * @return the code point.
+         * @throws IllegalArgumentException if not in the correct format.
+         */
+        @OptIn(ExperimentalStdlibApi::class)
+        fun String.parseRawHexCodePoint() = CodePoint(hexToInt())
+
+        /**
+         * Parses a code point from the string in U+XXXX format.
+         *
+         * @return the code point.
+         * @throws IllegalArgumentException if not in the correct format.
+         */
+        fun String.parseUPlusCodePoint(): CodePoint {
+            require (startsWith("U+")) { "Not a U+ string: $this" }
+            return substring(2).parseRawHexCodePoint()
+        }
     }
 
 }

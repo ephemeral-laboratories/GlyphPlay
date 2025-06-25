@@ -1,7 +1,7 @@
 package garden.ephemeral.glyphplay.unicode.unihan
 
 import garden.ephemeral.glyphplay.unicode.CodePoint
-import garden.ephemeral.glyphplay.unicode.rawdata.parseUPlusCodePoint
+import garden.ephemeral.glyphplay.unicode.CodePoint.Companion.parseUPlusCodePoint
 import garden.ephemeral.glyphplay.unicode.rawdata.splitAtTabs
 
 /**
@@ -22,7 +22,7 @@ data class UnihanDatabaseRecord(
         fun fromLine(line: String): UnihanDatabaseRecord {
             val (codePoint, name, value) = splitAtTabs(line, checkSize = 3)
             return UnihanDatabaseRecord(
-                codePoint = parseUPlusCodePoint(codePoint),
+                codePoint = codePoint.parseUPlusCodePoint(),
                 property = UnihanDatabaseProperty.forName(name),
                 value = value,
             )
