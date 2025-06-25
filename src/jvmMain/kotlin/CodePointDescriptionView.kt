@@ -13,10 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.ParagraphStyle
@@ -49,8 +51,10 @@ import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_ti
 import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_location
 import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_mappings
 import garden.ephemeral.glyphs.glyphplay.generated.resources.property_section_title_unihan
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import java.awt.datatransfer.StringSelection
 import kotlin.streams.asSequence
 
 val CodePointDescriptionViewTitleY = 115.dp
@@ -62,6 +66,13 @@ private fun ClickableCodePoint(description: CodePointDescription, onCodePointLin
         text = stringResource(Res.string.format_code_point_reference, description.stringFormForUI, description.name),
         modifier = Modifier.clickable { onCodePointLinkClicked(description.codePoint) }
     )
+}
+
+// Very non-portable shim to create a ClipEntry from an AnnotatedString.
+// Why this method in Compose isn't exposed to the public is a mystery.
+private fun AnnotatedString.toClipEntry(): ClipEntry {
+    val transferable = StringSelection(this.text)
+    return ClipEntry(transferable)
 }
 
 @Composable
@@ -81,10 +92,13 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                 modifier = Modifier.debugLineAtY(CodePointDescriptionViewTitleY)
             ) {
                 val flashBoxState = rememberFlashBoxState()
-                val clipboardManager = LocalClipboardManager.current
+                val clipboard = LocalClipboard.current
+                val coroutineScope = rememberCoroutineScope()
                 fun copyToClipboard() {
-                    clipboardManager.setText(AnnotatedString(description.stringForm))
-                    flashBoxState.flash()
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(AnnotatedString(description.stringForm).toClipEntry())
+                        flashBoxState.flash()
+                    }
                 }
                 FlashBox(state = flashBoxState, message = stringResource(Res.string.action_result_copied)) {
                     CodePointCell(

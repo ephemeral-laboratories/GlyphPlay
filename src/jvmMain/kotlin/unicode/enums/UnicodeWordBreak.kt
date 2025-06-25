@@ -1,7 +1,6 @@
 package garden.ephemeral.glyphplay.unicode.enums
 
 import com.ibm.icu.lang.UCharacter
-import com.ibm.icu.lang.UProperty
 
 enum class UnicodeWordBreak(override val icuValue: Int, val typeString: String) : IcuUnicodeValueEnum<UnicodeWordBreak> {
     OTHER(UCharacter.WordBreak.OTHER, "Other"),

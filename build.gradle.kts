@@ -10,6 +10,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(compose.desktop.common)
+            implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(compose.components.resources)
         }
         commonTest.dependencies {
@@ -21,7 +23,6 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(compose.material3)
             implementation(libs.icu4j)
             implementation(libs.lucene.analysis.common)
             implementation(libs.lucene.core)

@@ -1,7 +1,6 @@
 package garden.ephemeral.glyphplay.unicode.enums
 
 import com.ibm.icu.lang.UCharacterDirection
-import com.ibm.icu.lang.UProperty
 
 enum class UnicodeCharacterDirection(override val icuValue: Int, val typeString: String) :
     IcuUnicodeValueEnum<UnicodeCharacterDirection> {
@@ -29,7 +28,7 @@ enum class UnicodeCharacterDirection(override val icuValue: Int, val typeString:
     LEFT_TO_RIGHT_ISOLATE(UCharacterDirection.LEFT_TO_RIGHT_ISOLATE.toInt(), "LRI"),
     RIGHT_TO_LEFT_ISOLATE(UCharacterDirection.RIGHT_TO_LEFT_ISOLATE.toInt(), "RLI"),
     POP_DIRECTIONAL_ISOLATE(UCharacterDirection.POP_DIRECTIONAL_ISOLATE.toInt(), "PDI"),
-    UNDEFINED(UCharacterDirection.DIRECTIONALITY_UNDEFINED.toInt(), "Undefined");
+    UNDEFINED(UCharacterDirection.DIRECTIONALITY_UNDEFINED.toInt(), "Undefined"),
     ;
 
     companion object : IcuUnicodeValueEnum.CompanionImpl<UnicodeCharacterDirection>(
