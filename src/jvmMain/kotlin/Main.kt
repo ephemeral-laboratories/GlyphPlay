@@ -48,8 +48,10 @@ import garden.ephemeral.glyphplay.unicode.CodePoint
 import garden.ephemeral.glyphs.glyphplay.generated.resources.Res
 import garden.ephemeral.glyphs.glyphplay.generated.resources.icon_clear
 import garden.ephemeral.glyphs.glyphplay.generated.resources.icon_search
+import garden.ephemeral.glyphs.glyphplay.generated.resources.label_invalid_search_query
 import garden.ephemeral.glyphs.glyphplay.generated.resources.label_search_code_points
 import garden.ephemeral.glyphs.glyphplay.generated.resources.placeholder_no_code_points_found
+import org.apache.lucene.queryparser.classic.ParseException
 import org.jetbrains.compose.resources.stringResource
 
 fun main() = application {
@@ -67,14 +69,24 @@ fun main() = application {
                     // App state
                     val (currentCodePoint, setCurrentCodePoint) = remember { mutableStateOf(CodePoint(0x1F574)) }
                     val searchResults = remember { mutableStateListOf<CodePoint>() }
+                    val (isError, setIsError) = remember { mutableStateOf(false) }
 
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        SearchTextField { query ->
-                            val results = UnicodeIndices.instance.search(query)
-                            searchResults.clear()
-                            searchResults.addAll(results)
+                        println("Recomposing with isError = $isError")
+                        SearchTextField(isError = isError, setIsError = setIsError) { query ->
+                            if (query.isBlank()) {
+                                searchResults.clear()
+                            } else {
+                                try {
+                                    val results = UnicodeIndices.instance.search(query)
+                                    searchResults.clear()
+                                    searchResults.addAll(results)
+                                } catch (_: ParseException) {
+                                    setIsError(true)
+                                }
+                            }
                         }
-                        if (searchResults.size > 0) {
+                        if (searchResults.isNotEmpty()) {
                             SearchResultsGrid(
                                 codePoints = searchResults,
                                 onCodePointClicked = setCurrentCodePoint,
@@ -103,25 +115,35 @@ fun main() = application {
 }
 
 @Composable
-fun SearchTextField(onExecuteSearch: (query: String) -> Unit) {
+fun SearchTextField(isError: Boolean, setIsError: (Boolean) -> Unit, onExecuteSearch: (query: String) -> Unit) {
     val (textFieldValue, setTextFieldValue) = remember { mutableStateOf(TextFieldValue()) }
     val focusRequester = remember { FocusRequester() }
 
     OutlinedTextField(
         value = textFieldValue,
-        onValueChange = setTextFieldValue,
-        label = { Text(stringResource(Res.string.label_search_code_points)) },
+        onValueChange = { newValue ->
+            setTextFieldValue(newValue)
+            setIsError(false)
+        },
+        label = @Composable { Text(stringResource(Res.string.label_search_code_points)) },
+        supportingText = if (isError) {
+            @Composable { Text(stringResource(Res.string.label_invalid_search_query)) }
+        } else {
+            null
+        },
+        isError = isError,
         singleLine = true,
         keyboardActions = KeyboardActions(onSearch = { onExecuteSearch(textFieldValue.text.trim()) }),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         modifier = Modifier
             .requiredWidth(48.dp * 7 + 8.dp * 6)
             .focusRequester(focusRequester),
-        trailingIcon = {
+        trailingIcon = @Composable {
             Row {
                 if (textFieldValue.text.trim().isNotEmpty()) {
                     IconButton(onClick = {
                         setTextFieldValue(TextFieldValue())
+                        setIsError(false)
                         focusRequester.requestFocus()
                     }) {
                         Icon(

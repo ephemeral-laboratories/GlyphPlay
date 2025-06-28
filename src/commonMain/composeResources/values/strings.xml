@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="label_search_code_points">Search code points</string>
+    <string name="label_invalid_search_query">Invalid search query</string>
     <string name="icon_search">Search icon</string>
     <string name="icon_clear">Clear icon</string>
     <string name="placeholder_no_code_points_found">No code points found.</string>

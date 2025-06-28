@@ -10,8 +10,8 @@ import org.apache.lucene.document.SortedNumericDocValuesField
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.index.IndexWriterConfig
+import org.apache.lucene.queryparser.classic.ParseException
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.queryparser.classic.QueryParserBase
 import org.apache.lucene.search.BooleanClause
 import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.search.Query
@@ -42,7 +42,7 @@ internal class LuceneMemoryTextIndex private constructor(private val indexSearch
             }
 
             override fun parse(query: String): Query {
-                val saferQuery = charsToEscapeRegex.replace(query) { QueryParserBase.escape(it.groupValues[1]) }
+                val saferQuery = charsToEscapeRegex.replace(query) { escape(it.groupValues[1]) }
                 return super.parse(saferQuery)
             }
 
@@ -57,12 +57,17 @@ internal class LuceneMemoryTextIndex private constructor(private val indexSearch
                 queryText: String,
                 quoted: Boolean,
                 phraseSlop: Int
-            ) = when {
+            ): Query = when {
                 // Special bypass if the user types in a U+ sequence directly
-                queryText.startsWith("U+") -> createCodePointQuery(queryText.parseUPlusCodePoint())
+                field == "all-text" && queryText.startsWith("U+") ->
+                    try {
+                        createCodePointQuery(queryText.parseUPlusCodePoint())
+                    } catch (_: NumberFormatException) {
+                        throw ParseException("Invalid U+ sequence: $queryText")
+                    }
 
                 // Special bypass if the term was exactly one character
-                queryText.codePointCount(0, queryText.length) == 1 ->
+                field == "all-text" && queryText.codePointCount(0, queryText.length) == 1 ->
                     createCodePointQuery(queryText.firstToCodePoint())
 
                 else -> super.createFieldQuery(analyzer, operator, field, queryText, quoted, phraseSlop)
