@@ -180,9 +180,9 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                          * Unicode property.
                          */
                         fun <T> GridLayoutScope.propertyRow(property: CodePointProperty<T>) {
-                            description[property]?.value?.let { value ->
+                            description[property]?.let { value ->
                                 propertyRow(nameFunc = { stringResource(property.displayNameResource) }) {
-                                    Text(text = property.propertyValueDescriber(value))
+                                    Text(text = value.describeValue())
                                 }
                             }
                         }

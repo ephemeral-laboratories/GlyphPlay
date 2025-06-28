@@ -30,17 +30,17 @@ class CodePointProperty<T>(
     fun valueForCodePoint(codePoint: CodePoint) = propertyValueGetter(codePoint)
 
     /**
-     * Get the value for a code point, wrapped up in a structure which hopefully retains
-     * the generics information, which should allow the caller to get a description of the
+     * Gets the value for a code point, wrapped up in a structure which hopefully retains
+     * the type information. This should allow the caller to get a description of the
      * property value without jumping through hoops to work around generics issues.
      *
      * @param codePoint the code point to get the property for.
-     * @return the wrapped value.
+     * @return the wrapped value. Returns `null` if there is no value for
+     *         this property for the specified code point.
      */
-    fun wrappedValueForCodePoint(codePoint: CodePoint) = CodePointPropertyValue(
-        value = valueForCodePoint(codePoint),
-        property = this,
-    )
+    fun wrappedValueForCodePoint(codePoint: CodePoint) = valueForCodePoint(codePoint)?.let {
+        CodePointPropertyValue(value = it, property = this)
+    }
 
     @NonNls
     override fun toString() = runBlocking {

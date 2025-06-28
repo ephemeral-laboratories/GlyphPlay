@@ -72,7 +72,6 @@ fun main() = application {
                     val (isError, setIsError) = remember { mutableStateOf(false) }
 
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        println("Recomposing with isError = $isError")
                         SearchTextField(isError = isError, setIsError = setIsError) { query ->
                             if (query.isBlank()) {
                                 searchResults.clear()

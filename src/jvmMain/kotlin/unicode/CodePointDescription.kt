@@ -1,6 +1,7 @@
 package garden.ephemeral.glyphplay.unicode
 
 import garden.ephemeral.glyphplay.unicode.enums.UnicodeCharacterCategory
+import garden.ephemeral.glyphplay.util.prettyPrintName
 
 class CodePointDescription private constructor(val codePoint: CodePoint) {
     /**
@@ -11,7 +12,9 @@ class CodePointDescription private constructor(val codePoint: CodePoint) {
 
     operator fun <T> get(x: CodePointProperty<T>) = allProperties[x]
 
-    val name = UnicodeProperties.Strings.NAME.valueForCodePoint(codePoint) ?: ""
+    // Have to call prettyPrintName() here because we're doing the lookup outside
+    // the usual flow.
+    val name = (UnicodeProperties.Strings.NAME.valueForCodePoint(codePoint) ?: "").prettyPrintName()
 
     val uPlusForm = codePoint.toUPlusString()
     val stringForm = codePoint.toString()

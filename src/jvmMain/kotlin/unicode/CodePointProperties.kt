@@ -28,12 +28,14 @@ class CodePointProperties private constructor(
         /**
          * Looks up properties for the given code point.
          *
-         * @param codePoint the code point to look up.
+         * @param codePoint the code point to look up the properties for.
          * @return the code point properties.
          */
         fun ofCodePoint(codePoint: CodePoint): CodePointProperties {
             val storage = UnicodeProperties.all()
-                .map { property -> property to property.wrappedValueForCodePoint(codePoint) }
+                .mapNotNull { property ->
+                    property.wrappedValueForCodePoint(codePoint)?.let { property to it }
+                }
                 .toMap()
             return CodePointProperties(codePoint, storage)
         }
