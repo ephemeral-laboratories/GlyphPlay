@@ -17,7 +17,7 @@ class CodePointDescription private constructor(val codePoint: CodePoint) {
     val stringForm = codePoint.toString()
 
     /**
-     * Derived value of string form for presentation in UI.
+     * Derived value of the string form for presentation in UI.
      * Use this when you don't want the string to mangle some other text, if the value happens to be
      * something like a combining mark.
      */

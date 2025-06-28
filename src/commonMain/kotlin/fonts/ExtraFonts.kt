@@ -14,11 +14,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.skia.FontMgrWithFallback
 import org.jetbrains.skia.Typeface
-import org.jetbrains.skia.shaper.Shaper
+import org.jetbrains.skia.paragraph.FontCollection
+import org.jetbrains.skia.paragraph.TypefaceFontProviderWithFallback
 import java.io.File
 
-private data class FontInfo(
+data class FontInfo(
     val path: String,
     val weight: FontWeight = FontWeight.Normal,
     val style: FontStyle = FontStyle.Normal,
@@ -40,7 +42,7 @@ private suspend fun loadFont(info: FontInfo): Font {
 // non-Composable functions, including all the test code.
 // If we're forced to do this in a blocking fashion, we might as well load all the individual files
 // in parallel.
-private fun loadFontFamily(vararg fontInfos: FontInfo) = FontFamily(
+fun loadFontFamily(vararg fontInfos: FontInfo) = FontFamily(
     runBlocking {
         fontInfos.map { fontInfo ->
             async { loadFont(fontInfo) }
@@ -76,11 +78,14 @@ val LastResort = loadFontFamily(
 
 private val AllFontFamilies = sequenceOf(NotoSans, LastResort)
 
-private fun typefaceSupportsCodePoint(typeface: Typeface, codePoint: CodePoint): Boolean {
-    val font = org.jetbrains.skia.Font(typeface = typeface)
-    val textLine = Shaper.make().shapeLine(text = codePoint.toString(), font = font)
-    return textLine.glyphs.isNotEmpty() && textLine.glyphs.none { it == 0.toShort() }
-}
+private val fontCollection = FontCollection()
+    .setDefaultFontManager(FontMgrWithFallback(TypefaceFontProviderWithFallback()))
+
+private fun typefaceContainsCodePoint(typeface: Typeface, codePoint: CodePoint) =
+    typeface.getUTF32Glyph(codePoint.value) != 0.toShort()
+
+private fun fallbackSupportsCodePoint(typeface: Typeface, codePoint: CodePoint) =
+    fontCollection.defaultFallback(unicode = codePoint.value, style = typeface.fontStyle, locale = null) != null
 
 private fun familySupportsCodePoint(
     fontFamilyResolver: FontFamily.Resolver, fontFamily: FontFamily, codePoint: CodePoint
@@ -88,7 +93,7 @@ private fun familySupportsCodePoint(
     return when (val result = fontFamilyResolver.resolve(fontFamily).value) {
         is FontLoadResult -> {
             val skiaTypeface = checkNotNull(result.typeface)
-            typefaceSupportsCodePoint(skiaTypeface, codePoint)
+            typefaceContainsCodePoint(skiaTypeface, codePoint) || fallbackSupportsCodePoint(skiaTypeface, codePoint)
         }
 
         else -> TODO("Support for font family resolver result: $result")
