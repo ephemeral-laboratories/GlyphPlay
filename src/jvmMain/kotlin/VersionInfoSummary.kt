@@ -75,6 +75,7 @@ data class VersionInfoSummary(
             VersionInfo.UNICODE_14_0 to VersionInfoSummary("14.0.0", 2021, GregorianCalendar.SEPTEMBER, 14),
             VersionInfo.UNICODE_15_0 to VersionInfoSummary("15.0.0", 2022, GregorianCalendar.SEPTEMBER, 13),
             VersionInfo.UNICODE_15_1 to VersionInfoSummary("15.1.0", 2023, GregorianCalendar.SEPTEMBER, 12),
+            VersionInfo.UNICODE_16_0 to VersionInfoSummary("16.0.0", 2024, GregorianCalendar.OCTOBER, 10),
         )
 
         fun of(versionInfo: VersionInfo) = versionInfoMap[versionInfo]
