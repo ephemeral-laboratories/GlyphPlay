@@ -7,6 +7,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
@@ -81,13 +82,19 @@ fun GridLayout(
             @Composable {
                 val cells = row.cells
                 cells.forEachIndexed { index, cell ->
-                    Row {
-                        if (index == 0) {
-                            InvisibleText(text = sectionIndentText.repeat(row.indentLevel))
-                        } else {
-                            InvisibleText(text = "\t")
+                    // Fiddly alignment. The newline after must be aligned at the bottom.
+                    // Otherwise, for multi-line cells, it gets inserted part-way through.
+                    // But the characters before must be aligned at the top.
+                    // Otherwise, those get inserted at the end.
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        Row(verticalAlignment = Alignment.Top) {
+                            if (index == 0) {
+                                InvisibleText(text = sectionIndentText.repeat(row.indentLevel))
+                            } else {
+                                InvisibleText(text = "\t")
+                            }
+                            cell.content()
                         }
-                        cell.content()
                         if (index == cells.lastIndex) {
                             InvisibleText(text = "\n")
                         }

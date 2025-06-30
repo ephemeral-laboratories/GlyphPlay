@@ -137,11 +137,9 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             .firstBaselineToTop(CodePointDescriptionViewTitleY)
                             .debugBorder(),
                     )
-                    Row {
-                        InvisibleText(text = "\n")
-                        Text(text = description.name, style = MaterialTheme.typography.displayMedium)
-                        InvisibleText(text = "\n")
-                    }
+                    InvisibleText(text = "\n")
+                    Text(text = description.name, style = MaterialTheme.typography.displayMedium)
+                    InvisibleText(text = "\n")
 
                     GridLayout(columnCount = 2) {
                         @Composable
@@ -204,17 +202,21 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             description[property]?.value?.let { value ->
                                 propertyRow(nameFunc = { stringResource(property.displayNameResource) }) {
                                     Column {
-                                        value.codePoints()
+                                        val descriptions = value.codePoints()
                                             .asSequence()
                                             .map(::CodePoint)
                                             .map(CodePointDescription::ofCodePoint)
                                             .toList()
-                                            .forEach { description ->
-                                                ClickableCodePoint(
-                                                    description = description,
-                                                    onCodePointLinkClicked = onCodePointLinkClicked,
-                                                )
+
+                                        descriptions.forEachIndexed { index, description ->
+                                            ClickableCodePoint(
+                                                description = description,
+                                                onCodePointLinkClicked = onCodePointLinkClicked,
+                                            )
+                                            if (index < descriptions.lastIndex) {
+                                                InvisibleText(text = "\n")
                                             }
+                                        }
                                     }
                                 }
                             }
