@@ -36,12 +36,13 @@ class UnicodePropertiesTest : FreeSpec({
         }
 
         "should return properties where the ICU value matches the one passed in if present" {
+            // TODO: This currently tests nothing, and we can't filter to match the type of the value :(
             all.filterIsInstance<IcuUnicodeValueEnum<*>>().shouldForAll { property ->
                 property.icuValue.shouldBeBetween(expectedStart, expectedLimit)
             }
         }
 
-        "should return properties where the long name is set" {
+        "should have a long name set for all properties" {
             all.shouldForAll { property ->
                 property.displayNameResource.shouldNotBeNull()
             }

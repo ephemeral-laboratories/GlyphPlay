@@ -9,7 +9,7 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
 
 @Subject<UnicodeIndices>()
-class UnicodeIndicesTest : FreeSpec({
+class UnicodeIndicesSpec : FreeSpec({
     "entering U+ codes directly" {
         val results = UnicodeIndices.instance.search("U+1F574").toList()
         results shouldContainExactly listOf(CodePoint(0x1F574))
