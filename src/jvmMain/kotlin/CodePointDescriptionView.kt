@@ -140,8 +140,7 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
 
                     GridLayout(columnCount = 2) {
                         @Composable
-                        fun PropertyLabel(nameFunc: @Composable () -> String) {
-                            val name = nameFunc()
+                        fun PropertyLabel(name: String) {
                             Text(text = name, fontWeight = FontWeight.Bold)
                         }
 
@@ -155,7 +154,7 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             titleResource: StringResource,
                             content: GridLayoutScope.() -> Unit,
                         ) {
-                            section(headerContent = { PropertyLabel(nameFunc = { stringResource(titleResource) }) }) {
+                            section(headerContent = { PropertyLabel(name = stringResource(titleResource)) }) {
                                 content()
                             }
                         }
@@ -170,7 +169,7 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             valueContent: @Composable () -> Unit,
                         ) {
                             row {
-                                PropertyLabel(nameFunc = nameFunc)
+                                PropertyLabel(name = nameFunc())
                                 valueContent()
                             }
                         }

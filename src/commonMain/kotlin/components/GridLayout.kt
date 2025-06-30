@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
@@ -42,8 +44,6 @@ class GridLayoutScope(
     fun row(content: @Composable () -> Unit) {
         rows.add(CustomRow(indent = currentIndent, content = content))
     }
-
-    fun buildRowContents() = rows.toList()
 }
 
 @Composable
@@ -55,20 +55,22 @@ fun GridLayout(
     sectionIndent: Dp = 16.dp,
     content: GridLayoutScope.() -> Unit,
 ) {
-    val rows by derivedStateOf {
-        val scope = GridLayoutScope(
-            verticalArrangement = verticalArrangement,
-            sectionIndent = sectionIndent,
-            currentIndent = 0.dp
-        )
-        scope.content()
-        scope.rows
+    // State tracking is similar to `LazyGrid`
+    val latestContent = rememberUpdatedState(content)
+    val rows by remember {
+        derivedStateOf {
+            val scope = GridLayoutScope(
+                verticalArrangement = verticalArrangement,
+                sectionIndent = sectionIndent,
+                currentIndent = 0.dp
+            )
+            latestContent.value(scope)
+            scope.rows
+        }
     }
-    val rowIndents by derivedStateOf { rows.map { r -> r.indent } }
-    val rowContents by derivedStateOf { rows.map { r -> r.content } }
 
     Layout(
-        contents = rowContents,
+        contents = rows.map { r -> r.content },
         modifier = modifier
     ) { measurables: List<List<Measurable>>, constraints: Constraints ->
         val placeables = measurables.indices.map { _ -> mutableListOf<Placeable>() }
@@ -78,7 +80,7 @@ fun GridLayout(
         val rowOffsets = mutableListOf<Int>()
 
         fun cellIndent(rowIndex: Int, columnIndex: Int) =
-            if (columnIndex == 0) rowIndents[rowIndex].roundToPx() else 0
+            if (columnIndex == 0) rows[rowIndex].indent.roundToPx() else 0
 
         // Have to iterate in column order when measuring, because the remaining space depends on
         // the width of previous columns.
