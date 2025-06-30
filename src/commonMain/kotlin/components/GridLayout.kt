@@ -1,6 +1,7 @@
 package garden.ephemeral.glyphplay.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -14,35 +15,44 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-data class CustomRow(
-    val indent: Dp,
-    val content: @Composable () -> Unit,
-)
+data class CustomCell(val content: @Composable () -> Unit)
+
+data class CustomRow(val indentLevel: Int, val cells: List<CustomCell>)
+
+class RowScope() {
+    val cells = mutableListOf<CustomCell>()
+
+    fun cell(content: @Composable () -> Unit) {
+        cells.add(CustomCell(content))
+    }
+}
 
 class GridLayoutScope(
     private val verticalArrangement: Arrangement.Vertical,
-    private val sectionIndent: Dp,
-    private val currentIndent: Dp,
+    private val currentIndentLevel: Int,
 ) {
     val rows = mutableListOf<CustomRow>()
 
     fun section(headerContent: @Composable () -> Unit, nestedContent: GridLayoutScope.() -> Unit) {
         val nestedScope = GridLayoutScope(
             verticalArrangement = verticalArrangement,
-            sectionIndent = sectionIndent,
-            currentIndent = currentIndent + sectionIndent,
+            currentIndentLevel = currentIndentLevel + 1,
         )
         nestedScope.nestedContent()
         if (nestedScope.rows.isNotEmpty()) {
             row {
-                headerContent()
+                cell {
+                    headerContent()
+                }
             }
             rows.addAll(nestedScope.rows)
         }
     }
 
-    fun row(content: @Composable () -> Unit) {
-        rows.add(CustomRow(indent = currentIndent, content = content))
+    fun row(content: RowScope.() -> Unit) {
+        val rowScope = RowScope()
+        rowScope.content()
+        rows.add(CustomRow(indentLevel = currentIndentLevel, cells = rowScope.cells))
     }
 }
 
@@ -53,34 +63,53 @@ fun GridLayout(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(8.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
     sectionIndent: Dp = 16.dp,
+    sectionIndentText: String = "  ",
     content: GridLayoutScope.() -> Unit,
 ) {
     // State tracking is similar to `LazyGrid`
     val latestContent = rememberUpdatedState(content)
     val rows by remember {
         derivedStateOf {
-            val scope = GridLayoutScope(
-                verticalArrangement = verticalArrangement,
-                sectionIndent = sectionIndent,
-                currentIndent = 0.dp
-            )
+            val scope = GridLayoutScope(verticalArrangement = verticalArrangement, currentIndentLevel = 0)
             latestContent.value(scope)
             scope.rows
         }
     }
 
     Layout(
-        contents = rows.map { r -> r.content },
+        contents = rows.map { row ->
+            @Composable {
+                val cells = row.cells
+                cells.forEachIndexed { index, cell ->
+                    Row {
+                        if (index == 0) {
+                            InvisibleText(text = sectionIndentText.repeat(row.indentLevel))
+                        } else {
+                            InvisibleText(text = "\t")
+                        }
+                        cell.content()
+                        if (index == cells.lastIndex) {
+                            InvisibleText(text = "\n")
+                        }
+                    }
+                }
+            }
+        },
         modifier = modifier
     ) { measurables: List<List<Measurable>>, constraints: Constraints ->
+        println("measurables = ${measurables.map { it.toList() }}")
+
         val placeables = measurables.indices.map { _ -> mutableListOf<Placeable>() }
         val columnSpacing = horizontalArrangement.spacing.roundToPx()
         val rowSpacing = verticalArrangement.spacing.roundToPx()
         val columnOffsets = mutableListOf<Int>()
         val rowOffsets = mutableListOf<Int>()
 
-        fun cellIndent(rowIndex: Int, columnIndex: Int) =
-            if (columnIndex == 0) rows[rowIndex].indent.roundToPx() else 0
+        fun cellIndent(rowIndex: Int, columnIndex: Int) = if (columnIndex == 0) {
+            (sectionIndent * rows[rowIndex].indentLevel).roundToPx()
+        } else {
+            0
+        }
 
         // Have to iterate in column order when measuring, because the remaining space depends on
         // the width of previous columns.

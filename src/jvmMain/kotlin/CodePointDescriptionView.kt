@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import garden.ephemeral.glyphplay.components.FlashBox
 import garden.ephemeral.glyphplay.components.GridLayout
 import garden.ephemeral.glyphplay.components.GridLayoutScope
+import garden.ephemeral.glyphplay.components.InvisibleText
 import garden.ephemeral.glyphplay.components.debugBorder
 import garden.ephemeral.glyphplay.components.debugLineAtY
 import garden.ephemeral.glyphplay.components.firstBaselineToTop
@@ -136,7 +137,11 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             .firstBaselineToTop(CodePointDescriptionViewTitleY)
                             .debugBorder(),
                     )
-                    Text(text = description.name, style = MaterialTheme.typography.displayMedium)
+                    Row {
+                        InvisibleText(text = "\n")
+                        Text(text = description.name, style = MaterialTheme.typography.displayMedium)
+                        InvisibleText(text = "\n")
+                    }
 
                     GridLayout(columnCount = 2) {
                         @Composable
@@ -169,8 +174,12 @@ fun CodePointDescriptionView(codePoint: CodePoint, onCodePointLinkClicked: (Code
                             valueContent: @Composable () -> Unit,
                         ) {
                             row {
-                                PropertyLabel(name = nameFunc())
-                                valueContent()
+                                cell {
+                                    PropertyLabel(name = nameFunc())
+                                }
+                                cell {
+                                    valueContent()
+                                }
                             }
                         }
 
