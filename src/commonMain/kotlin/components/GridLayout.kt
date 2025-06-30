@@ -104,8 +104,6 @@ fun GridLayout(
         },
         modifier = modifier
     ) { measurables: List<List<Measurable>>, constraints: Constraints ->
-        println("measurables = ${measurables.map { it.toList() }}")
-
         val placeables = measurables.indices.map { _ -> mutableListOf<Placeable>() }
         val columnSpacing = horizontalArrangement.spacing.roundToPx()
         val rowSpacing = verticalArrangement.spacing.roundToPx()
